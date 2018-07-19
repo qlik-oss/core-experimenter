@@ -1,0 +1,28 @@
+{
+  "name": "core-power-playground",
+  "version": "0.0.1",
+  "description": "Playground for showing the power of Qlik Engine",
+  "main": "index.js",
+  "scripts": {
+    "start": "parcel ./index.html --open",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/qlik-trial/core-power-playground.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/qlik-trial/core-power-playground/issues"
+  },
+  "homepage": "https://github.com/qlik-trial/core-power-playground#readme",
+  "devDependencies": {
+    "babel-preset-env": "^1.7.0",
+    "eslint": "^4.19.1",
+    "eslint-config-airbnb-base": "^13.0.0",
+    "eslint-plugin-import": "^2.13.0",
+    "parcel": "^1.9.7",
+    "parcel-bundler": "^1.9.7"
+  }
+}
