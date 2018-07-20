@@ -1,3 +1,9 @@
 {
-    "extends": "airbnb-base"
+    "extends": "airbnb-base",
+    "globals": {
+      "customElements": true
+    },
+    "rules": {
+      "class-methods-use-this": 0
+    }
 }
