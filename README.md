@@ -14,7 +14,11 @@ $ npm start
 
 * ### Linting
   ```
-  $ npm lint
+  $ npm run lint
+  ```
+* ### Watch with dev server
+  ```
+  $ npm run watch
   ```
 
 ## core-power-playground metadata

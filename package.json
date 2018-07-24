@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "live-server .",
-    "watch": "concurrently --kill-others \"rollup -c --watch\" \"live-server . --watch=dist,index.html\"",
+    "watch": "concurrently --kill-others \"rollup -c --watch\" \"live-server . --watch=dist,index.html,styles.css\"",
     "lint": "eslint .",
     "build": "rollup -c",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -21,7 +21,7 @@
   },
   "homepage": "https://github.com/qlik-trial/core-power-playground#readme",
   "devDependencies": {
-    "babel-core": "^7.0.0-bridge.0",
+    "babel-core": "^6.26.3",
     "concurrently": "^3.6.0",
     "eslint": "^4.19.1",
     "eslint-config-airbnb-base": "^13.0.0",
@@ -32,8 +32,6 @@
     "rollup-watch": "^4.3.1"
   },
   "dependencies": {
-    "@babel/core": "^7.0.0-beta.54",
-    "@babel/preset-env": "^7.0.0-beta.54",
-    "lit-html-element": "^0.9.1"
+    "lit-html": "^0.10.2"
   }
 }
