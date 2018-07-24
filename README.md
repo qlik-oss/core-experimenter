@@ -10,6 +10,17 @@ _be sure to run `npm install` the first time_
 $ npm start
 ```
 
+## Available commands
+
+* ### Linting
+  ```
+  $ npm run lint
+  ```
+* ### Watch with dev server
+  ```
+  $ npm run watch
+  ```
+
 ## core-power-playground metadata
 | tag | value |
 |--------|--------|

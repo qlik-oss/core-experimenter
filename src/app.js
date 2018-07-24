@@ -1,1 +1,3 @@
-console.log('app started');
+import './components/listbox';
+
+console.log('app running');

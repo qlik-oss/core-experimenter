@@ -4,7 +4,10 @@
   "description": "Playground for showing the power of Qlik Engine",
   "main": "index.js",
   "scripts": {
-    "start": "parcel ./index.html --open",
+    "start": "live-server .",
+    "watch": "concurrently --kill-others \"rollup -c --watch\" \"live-server . --watch=dist,index.html,styles.css\"",
+    "lint": "eslint .",
+    "build": "rollup -c",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -18,11 +21,17 @@
   },
   "homepage": "https://github.com/qlik-trial/core-power-playground#readme",
   "devDependencies": {
-    "babel-preset-env": "^1.7.0",
+    "babel-core": "^6.26.3",
+    "concurrently": "^3.6.0",
     "eslint": "^4.19.1",
     "eslint-config-airbnb-base": "^13.0.0",
     "eslint-plugin-import": "^2.13.0",
-    "parcel": "^1.9.7",
-    "parcel-bundler": "^1.9.7"
+    "live-server": "^1.2.0",
+    "rollup": "^0.63.2",
+    "rollup-plugin-babel": "^3.0.7",
+    "rollup-watch": "^4.3.1"
+  },
+  "dependencies": {
+    "lit-html": "^0.10.2"
   }
 }
