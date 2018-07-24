@@ -16,10 +16,12 @@ class ListBox extends HTMLElement {
     super();
     this.dataValue = tmpdata;
     this.filterQuery = '';
-    this.root = this.attachShadow({ mode: 'open' });
+    this.root = this.attachShadow({mode: 'open'});
   }
 
-  get data() { return this.dataValue; }
+  get data() {
+    return this.dataValue;
+  }
 
   set data(val) {
     // ToDo: implement validation
@@ -29,6 +31,7 @@ class ListBox extends HTMLElement {
 
   _searchFilter(inputEl) {
     this.filterQuery = inputEl.value;
+
     this.invalidate();
     // this.data = input.value.length > 0 ? Object.keys(this.data).filter((key) => {
     //   return this.data[key].toString().indexOf(input.value) !== -1;
@@ -124,8 +127,12 @@ class ListBox extends HTMLElement {
         <div class="header">
           <div class="title">${title}</div><a href="javascript:void(0);" class="icon">clear</a>
           <div class="filter">
-            <input class="search_input" maxlength="255" placeholder="Search" spellcheck="false" type="text" on-keyup="${(e) => { this._searchFilter(e.target); }}"/>
-            <a href="javascript:void(0);" class="icon" on-click="${() => { this._resetFilter(); }}">X</a>
+            <input class="search_input" maxlength="255" placeholder="Search" spellcheck="false" type="text" on-keyup="${(e) => {
+      this._searchFilter(e.target);
+    }}"/>
+            <a href="javascript:void(0);" class="icon" on-click="${() => {
+      this._resetFilter();
+    }}">X</a>
           </div>
         </div>
         <ul>
