@@ -16,6 +16,7 @@ class Bubble extends HTMLElement {
   constructor() {
     super();
     _this = this;
+    this.selectDelegate = function () {};
     this.first = true;
     this.width = window.innerWidth;
     this.height = window.innerHeight;
@@ -73,9 +74,6 @@ class Bubble extends HTMLElement {
       y: Math.random() * 800,
     });
     render(this.template(), this.root);
-    setTimeout(() => {
-      this.chart('#vis', 30);
-    }, 3000);
     this.invalidate();
   }
 
@@ -96,8 +94,8 @@ class Bubble extends HTMLElement {
   set data(val) {
     // ToDo: implement validation
     this.nodes = val;
-    // this.chart('#vis', 30);
-    this.invalidate();
+    this.chart('#vis', this.radiusPoint);
+    // this.invalidate();
   }
 
   hideStatusText() {
@@ -142,13 +140,32 @@ class Bubble extends HTMLElement {
   }
 
   async select(d) {
-    // let all = document.getElementsByClassName('states');
-    // for (let i = 0; i < all.length; i++) {
-    //   all[i].setAttribute('stroke', 'black');
-    // }
+    const all = document.getElementsByClassName('states');
+    for (let i = 0; i < all.length; i++) {
+      all[i].setAttribute('stroke', 'black');
+    }
+    _this.selectDelegate(d);
     // let field = await curApp.getField(d.field);
     // field.lowLevelSelect([d.id], true, false);
-    // tooltip.hideTooltip();
+    _this.tooltip.hideTooltip();
+  }
+
+  nodeStatePos(d) {
+    if (d.state === 'selected_excluded') { return _this.stateCenters[d.state].x - _this.stateCircleR; }
+    return _this.stateCenters[d.state].x;
+  }
+
+  showStatusText() {
+    let stateData = d3.keys(this.stateTitleX);
+    let states = this.svg.selectAll('.state')
+      .data(stateData);
+
+    states.enter().append('text')
+      .attr('class', 'state')
+      .attr('x', (d) => {return _this.stateTitleX[d];})
+      .attr('y', this.center.y - this.stateCircleR - 20)
+      .attr('text-anchor', 'middle')
+      .text((d) => {if(d!="selected_excluded") return d.replace("_","/"); else return "" });
   }
 
   move() {

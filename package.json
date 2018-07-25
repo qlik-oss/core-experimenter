@@ -33,6 +33,7 @@
   },
   "dependencies": {
     "d3": "^5.5.0",
+    "enigma.js": "^2.2.1",
     "lit-html": "^0.10.2"
   }
 }
