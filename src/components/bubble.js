@@ -140,7 +140,7 @@ class Bubble extends HTMLElement {
   }
 
   async select(d) {
-    const all = document.getElementsByClassName('states');
+    const all = _this.root.querySelectorAll(".states");
     for (let i = 0; i < all.length; i++) {
       all[i].setAttribute('stroke', 'black');
     }
