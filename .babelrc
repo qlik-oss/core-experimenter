@@ -1,7 +1,12 @@
 {
   "presets": [
     [
-      "env"
+      "env",
+      {
+        "targets": {
+          "esmodules": false
+        }
+      }
     ]
   ]
 }

@@ -16,7 +16,7 @@ class ListBox extends HTMLElement {
     super();
     this.dataValue = tmpdata;
     this.filterQuery = '';
-    this.root = this.attachShadow({mode: 'open'});
+    this.root = this.attachShadow({ mode: 'open' });
   }
 
   get data() {
@@ -128,11 +128,11 @@ class ListBox extends HTMLElement {
           <div class="title">${title}</div><a href="javascript:void(0);" class="icon">clear</a>
           <div class="filter">
             <input class="search_input" maxlength="255" placeholder="Search" spellcheck="false" type="text" on-keyup="${(e) => {
-      this._searchFilter(e.target);
-    }}"/>
+    this._searchFilter(e.target);
+  }}"/>
             <a href="javascript:void(0);" class="icon" on-click="${() => {
-      this._resetFilter();
-    }}">X</a>
+    this._resetFilter();
+  }}">X</a>
           </div>
         </div>
         <ul>
