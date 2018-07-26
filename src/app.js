@@ -1,5 +1,6 @@
 import './components/listbox';
 import './components/bubble';
+import 'enigma.js';
 
 const schemaEnigma = {
   structs: {
