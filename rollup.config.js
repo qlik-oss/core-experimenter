@@ -11,7 +11,7 @@ export default [{
   },
   plugins: [
     string({
-      include: ['**/*.css'],
+      include: ['**/*.css', '**/*.json'],
     }),
     nodeResolve({ jsnext: true }),
   ],

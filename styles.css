@@ -4,6 +4,49 @@ html{
 body{
  margin: 0;
 }
+
+.container {
+  display: grid;
+  width: 100%;
+  height: 100%;
+  grid-template-areas: "header-0 header-1-0 header-1-1"
+  "left main right"
+  "footer-0 footer-1-0 footer-1-1";
+  grid-template-columns: 1fr 4fr 1fr;
+  grid-template-rows: 1fr 4fr 1fr;
+}
+.container > div {
+  border: 1px dashed #888;
+}
+
+.header-0 {
+  grid-area: header-0;
+}
+.header-1-0 {
+  grid-area: header-1-0;
+}
+.header-1-1 {
+  grid-area: header-1-1;
+}
+.left {
+  grid-area: left;
+}
+.main {
+  grid-area: main;
+}
+.right {
+  grid-area: right;
+}
+.footer-0 {
+  grid-area: footer-0;
+}
+.footer-1-0 {
+  grid-area: footer-1-0;
+}
+.footer-1-1 {
+  grid-area: footer-1-1;
+}
+
 .tooltip {
   position: absolute;
   top: 100px;
