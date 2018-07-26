@@ -1,5 +1,6 @@
 
 import { render, html } from '../../node_modules/lit-html/lib/lit-extended';
+import * as d3 from 'd3'
 
 
 const tmpdata = {

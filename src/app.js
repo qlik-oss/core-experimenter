@@ -1,5 +1,6 @@
 import './components/listbox';
 import './components/bubble';
+import 'enigma.js';
 
 import schema from './assets/schema-12.20.0.json';
 
