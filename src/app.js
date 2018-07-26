@@ -2426,10 +2426,10 @@ function resize() {
   const areaPerPoint = (stateCArea / nodes.length) * 0.9;
   const radiusPoint = Math.sqrt(areaPerPoint / Math.PI);
   d.radiusPoint = radiusPoint;
+  nodes.map((el) => {
+    el.radius = radiusPoint;
+  });
   d.clearChart(nodes);
-  // d.data = nodes;
-  // curApp.clearAll();
-
 }
 
 window.onresize = resize;

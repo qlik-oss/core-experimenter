@@ -22,7 +22,7 @@ class Bubble extends HTMLElement {
     this.svg = null;
     this.dataValue = tmpdata;
     this.stateCount = 4;
-    this.newSize(innerWidth, innerHeight);
+    this.newSize(innerWidth-30, innerHeight-30);
     this.stateMapping = {
       O: 'optional',
       A: 'alternative',
@@ -57,19 +57,13 @@ class Bubble extends HTMLElement {
 
   clearChart(nodes) {
     _this.root.querySelector('#vis').innerHTML = '';
-    this.nodes = nodes;
-    this.chart('#vis', this.radiusPoint);
-    // this.simulation.force('collision', d3.forceCollide().radius(d => d.radius));
-    this.simulation.force('charge', d3.forceManyBody().strength(this.charge));
-    this.simulation.force('y', d3.forceY().strength(this.forceStrength).y(this.center.y));
-    // this.simulation.force('x', d3.forceX().strength(this.forceStrength).x(this.nodeStatePos));
-    this.simulation.force('collision', d3.forceCollide().radius(d => _this.radiusPoint));
-    this.simulation.alpha(10).restart();
+    this.simulation.force('y', d3.forceY().strength(this.forceStrength).y(_this.center.y));
+    this.data = nodes;
   }
 
   newSize(w, h) {
-    this.width = w;
-    this.height = h;
+    this.width = w-30;
+    this.height = h-30;
     this.center = { x: this.width / 2, y: this.height / 2 };
     this.stateWidth = this.width / (this.stateCount);
     this.firstCenter = this.stateWidth - (this.stateWidth / 2);
@@ -276,7 +270,7 @@ class Bubble extends HTMLElement {
     }
 
     function hideTooltip() {
-      tt.style('opacity', 0.0);
+      tt.style('display', 'none');
     }
 
     hideTooltip();
@@ -313,7 +307,7 @@ class Bubble extends HTMLElement {
     }
 
     function showTooltip(content, event) {
-      tt.style('opacity', 1.0)
+      tt.style('display', 'block')
         .html(content);
 
       updatePosition(event);
