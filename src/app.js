@@ -2350,7 +2350,7 @@ function createMyList(app, field) {
           e = e[0];
           let found = false;
           nodes.map((el) => {
-            if (el.id === e.qElemNumber && el.field == field) {
+            if (el.id === e.qElemNumber && el.field === field) {
               el.state = stateMapping[e.qState];
               el.radius = radiusPoint;
               found = true;
@@ -2386,16 +2386,21 @@ async function select(d) {
   field.lowLevelSelect([d.id], true, false);
 }
 async function init() {
-  const app = await connectEngine();
-  await createMyList(app, 'title');
-  await createMyList(app, 'artist_name');
-  await createMyList(app, 'year');
-  await createMyList(app, 'release');
+  // const app = await connectEngine('music.qvf');
+
+  // await createMyList(app, 'title');
+  // await createMyList(app, 'artist_name');
+  // await createMyList(app, 'year');
+  // await createMyList(app, 'release');
+  const app = await connectEngine('fruit.qvf');
+  await createMyList(app, 'name');
+  await createMyList(app, 'color');
+  await createMyList(app, 'type');
   const d = document.getElementById('one');
   d.first = false;
 }
 
-async function connectEngine() {
+async function connectEngine(appName) {
   const session = enigma.create({
     schema: schemaEnigma,
     url: `ws://${engineHost}:${enginePort}/app/identity/${new Date()}`,
@@ -2407,10 +2412,26 @@ async function connectEngine() {
     }],
   });
   const qix = await session.open();
-  const app = await qix.openDoc('music.qvf');
+  const app = await qix.openDoc(appName);
   curApp = app;
   return app;
 }
 
+function resize() {
+  const d = document.getElementById('one');
+  d.newSize(innerWidth, innerHeight);
+  d.bubbles=null;
+  const stateCircleR = d.stateCircleR;
+  const stateCArea = stateCircleR * stateCircleR * Math.PI;
+  const areaPerPoint = (stateCArea / nodes.length) * 0.9;
+  const radiusPoint = Math.sqrt(areaPerPoint / Math.PI);
+  d.radiusPoint = radiusPoint;
+  d.clearChart(nodes);
+  // d.data = nodes;
+  // curApp.clearAll();
+
+}
+
+window.onresize = resize;
 init();
 console.log('app running');

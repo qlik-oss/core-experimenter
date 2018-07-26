@@ -18,23 +18,11 @@ class Bubble extends HTMLElement {
     _this = this;
     this.selectDelegate = function () {};
     this.first = true;
-    this.width = window.innerWidth;
-    this.height = window.innerHeight;
     this.bubbles = null;
     this.svg = null;
     this.dataValue = tmpdata;
-    this.center = { x: this.width / 2, y: this.height / 2 };
     this.stateCount = 4;
-    this.stateWidth = this.width / (this.stateCount);
-    this.firstCenter = this.stateWidth - (this.stateWidth / 2);
-    this.stateCenters = {
-      excluded: { x: this.firstCenter, y: this.height / 2 },
-      // selected_excluded: { x: firstCenter+stateWidth, y: height / 2 },
-      selected_excluded: { x: this.firstCenter + (this.stateWidth * 3), y: this.height / 2 },
-      alternative: { x: this.firstCenter + (this.stateWidth), y: this.height / 2 },
-      optional: { x: this.firstCenter + (this.stateWidth * 2), y: this.height / 2 },
-      selected: { x: this.firstCenter + (this.stateWidth * 3), y: this.height / 2 },
-    };
+    this.newSize(innerWidth, innerHeight);
     this.stateMapping = {
       O: 'optional',
       A: 'alternative',
@@ -42,14 +30,6 @@ class Bubble extends HTMLElement {
       S: 'selected',
       XS: 'selected_excluded',
 
-    };
-    this.stateCircleR = (this.width / (this.stateCount * 2)) - 10;
-    this.stateTitleX = {
-      excluded: this.stateCenters.excluded.x,
-      selected_excluded: this.stateCenters.selected_excluded.x,
-      alternative: this.stateCenters.alternative.x,
-      optional: this.stateCenters.optional.x,
-      selected: this.stateCenters.selected.x,
     };
     this.forceStrength = 0.05;
     this.root = this.attachShadow({ mode: 'open' });
@@ -73,8 +53,42 @@ class Bubble extends HTMLElement {
       x: Math.random() * 900,
       y: Math.random() * 800,
     });
-    render(this.template(), this.root);
-    this.invalidate();
+  }
+
+  clearChart(nodes) {
+    _this.root.querySelector('#vis').innerHTML = '';
+    this.nodes = nodes;
+    this.chart('#vis', this.radiusPoint);
+    // this.simulation.force('collision', d3.forceCollide().radius(d => d.radius));
+    this.simulation.force('charge', d3.forceManyBody().strength(this.charge));
+    this.simulation.force('y', d3.forceY().strength(this.forceStrength).y(this.center.y));
+    // this.simulation.force('x', d3.forceX().strength(this.forceStrength).x(this.nodeStatePos));
+    this.simulation.force('collision', d3.forceCollide().radius(d => _this.radiusPoint));
+    this.simulation.alpha(10).restart();
+  }
+
+  newSize(w, h) {
+    this.width = w;
+    this.height = h;
+    this.center = { x: this.width / 2, y: this.height / 2 };
+    this.stateWidth = this.width / (this.stateCount);
+    this.firstCenter = this.stateWidth - (this.stateWidth / 2);
+    this.stateCenters = {
+      excluded: { x: this.firstCenter, y: this.height / 2 },
+      // selected_excluded: { x: firstCenter+stateWidth, y: height / 2 },
+      selected_excluded: { x: this.firstCenter + (this.stateWidth * 3), y: this.height / 2 },
+      alternative: { x: this.firstCenter + (this.stateWidth), y: this.height / 2 },
+      optional: { x: this.firstCenter + (this.stateWidth * 2), y: this.height / 2 },
+      selected: { x: this.firstCenter + (this.stateWidth * 3), y: this.height / 2 },
+    };
+    this.stateCircleR = (this.width / (this.stateCount * 2)) - 10;
+    this.stateTitleX = {
+      excluded: this.stateCenters.excluded.x,
+      selected_excluded: this.stateCenters.selected_excluded.x,
+      alternative: this.stateCenters.alternative.x,
+      optional: this.stateCenters.optional.x,
+      selected: this.stateCenters.selected.x,
+    };
   }
 
   charge(d) {
@@ -140,7 +154,7 @@ class Bubble extends HTMLElement {
   }
 
   async select(d) {
-    const all = _this.root.querySelectorAll(".states");
+    const all = _this.root.querySelectorAll('.states');
     for (let i = 0; i < all.length; i++) {
       all[i].setAttribute('stroke', 'black');
     }
@@ -156,22 +170,26 @@ class Bubble extends HTMLElement {
   }
 
   showStatusText() {
-    let stateData = d3.keys(this.stateTitleX);
-    let states = this.svg.selectAll('.state')
+    const stateData = d3.keys(this.stateTitleX);
+    const states = this.svg.selectAll('.state')
       .data(stateData);
 
     states.enter().append('text')
       .attr('class', 'state')
-      .attr('x', (d) => {return _this.stateTitleX[d];})
+      .attr('x', d => _this.stateTitleX[d])
       .attr('y', this.center.y - this.stateCircleR - 20)
       .attr('text-anchor', 'middle')
-      .text((d) => {if(d!="selected_excluded") return d.replace("_","/"); else return "" });
+      .text((d) => { if (d != 'selected_excluded') return d.replace('_', '/'); return ''; });
   }
 
   move() {
     if (this.first) {
       this.groupBubbles();
       return;
+    }
+    const all = _this.root.querySelectorAll('.states');
+    for (let i = 0; i < all.length; i++) {
+      all[i].setAttribute('stroke', 'black');
     }
 
     this.showStatusText();
