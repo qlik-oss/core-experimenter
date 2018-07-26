@@ -1,4 +1,5 @@
 import { render, html } from '../../node_modules/lit-html/lib/lit-extended';
+import css from './listbox.css';
 
 const tmpdata = {
   stuff: 1,
@@ -30,12 +31,6 @@ class ListBox extends HTMLElement {
   _searchFilter(inputEl) {
     this.filterQuery = inputEl.value;
     this.invalidate();
-    // this.data = input.value.length > 0 ? Object.keys(this.data).filter((key) => {
-    //   return this.data[key].toString().indexOf(input.value) !== -1;
-    // }).reduce((obj, key) => {
-    //   obj[key] = this.data[key];
-    //   return obj;
-    // }, {}) : this.data;
   }
 
   invalidate() {
@@ -55,70 +50,7 @@ class ListBox extends HTMLElement {
   template() {
     return html`
       <style>
-        :host{
-          border: 1px solid #666666;
-          margin: 5px 0;
-          border-radius: 4px;
-          height: 400px;
-          overflow: hidden;
-          display: block;
-        }
-        ul{
-          overflow-y: auto;
-          height: calc(100% - 30px);
-          margin: 0;
-          padding: 0;
-          list-style-type: none;
-        }
-        li{
-          height: 30px;
-          color: #595959;
-          line-height: 20px;
-          padding: 5px 15px;
-          border-bottom: 1px solid #E6E6E6;
-          font-size: 12px;
-          cursor: pointer;
-          white-space: nowrap;
-          text-overflow: ellipsis;
-          overflow: hidden;
-          display: list-item;
-        }
-        div.title{
-          padding: 5px 15px;
-          color: #595959;
-          font-weight: bold;
-          display: inline-block;
-          width: calc(100% - 35px);
-        }
-        /* icons */
-        .icon{
-          font-size: 8px;
-          font-style: italic;
-        }
-        .clear_selections{
-          display: inline-block;
-          font-family: LUI icons;
-          font-size: 16px;
-          font-weight: 400;
-          font-style: normal;
-          text-decoration: inherit;
-          text-transform: none;
-          direction: ltr;
-        }
-        input{
-          min-width: 0;
-          border: none;
-          background: transparent;
-          color: inherit;
-          font-size: 13px;
-          outline: 0;
-          flex: 1 1 auto;
-          box-shadow: none;
-          border-radius: 0;
-          padding: 0;
-          height: 38px;
-          box-sizing: border-box;
-        }
+        ${css}
       </style>
       <div class="list-box">
         <div class="header">
