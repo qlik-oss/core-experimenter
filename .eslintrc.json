@@ -1,8 +1,11 @@
 {
     "extends": "airbnb-base",
+    "env": {
+      "browser": true
+    },
     "globals": {
-      "customElements": true,
-      "HTMLElement": true
+      "enigma": true,
+      "d3": true
     },
     "rules": {
       "class-methods-use-this": 0,
