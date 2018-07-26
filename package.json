@@ -4,7 +4,7 @@
   "description": "Playground for showing the power of Qlik Engine",
   "main": "index.js",
   "scripts": {
-    "start": "live-server .",
+    "start": "live-server . --watch=dist,index.html,styles.css",
     "watch": "concurrently --kill-others \"rollup -c --watch\" \"live-server . --watch=dist,index.html,styles.css\"",
     "lint": "eslint .",
     "build": "rollup -c",
@@ -29,6 +29,8 @@
     "live-server": "^1.2.0",
     "rollup": "^0.63.2",
     "rollup-plugin-babel": "^3.0.7",
+    "rollup-plugin-node-resolve": "^3.3.0",
+    "rollup-plugin-string": "^2.0.2",
     "rollup-watch": "^4.3.1"
   },
   "dependencies": {
