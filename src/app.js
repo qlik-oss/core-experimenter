@@ -10,8 +10,30 @@ const engineHost = 'alteirac.hd.free.fr';
 const enginePort = '9076';
 let curApp;
 
+async function select(d) {
+  const field = await curApp.getField(d.field);
+  field.lowLevelSelect([d.id], true, false);
+}
+
+async function connectEngine(appName) {
+  const session = enigma.create({
+    schema: schemaEnigma,
+    url: `ws://${engineHost}:${enginePort}/app/identity/${new Date()}`,
+    createSocket: url => new WebSocket(url),
+    responseInterceptors: [{
+      onRejected: async function retryAbortedError(/* sessionReference, request, error */) {
+        console.warn('retryAborted callback ?');
+      },
+    }],
+  });
+  const qix = await session.open();
+  const app = await qix.openDoc(appName);
+  curApp = app;
+  return app;
+}
+
 function createMyList(app, field) {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve/* , reject */) => {
     const properties = {
       qInfo: {
         qType: 'lb',
@@ -37,13 +59,12 @@ function createMyList(app, field) {
       const update = () => object.getLayout().then((layout) => {
         const mx = Math.max(nodes.length, layout.qListObject.qDataPages[0].qMatrix.length);
         const d = document.getElementById('one');
-        const stateCircleR = d.stateCircleR;
+        const { stateCircleR, stateMapping } = d;
         const stateCArea = stateCircleR * stateCircleR * Math.PI;
         const areaPerPoint = (stateCArea / mx) * 0.9;
         const radiusPoint = Math.sqrt(areaPerPoint / Math.PI);
-        const stateMapping = d.stateMapping;
         layout.qListObject.qDataPages[0].qMatrix.map((e) => {
-          e = e[0];
+          [e] = e;
           let found = false;
           nodes.map((el) => {
             if (el.id === e.qElemNumber && el.field === field) {
@@ -51,6 +72,7 @@ function createMyList(app, field) {
               el.radius = radiusPoint;
               found = true;
             }
+            return found;
           });
           if (!found) {
             nodes.push({
@@ -63,6 +85,7 @@ function createMyList(app, field) {
               y: Math.random() * 800,
             });
           }
+          return found;
         });
 
         d.radiusPoint = radiusPoint;
@@ -77,10 +100,7 @@ function createMyList(app, field) {
   });
 }
 
-async function select(d) {
-  const field = await curApp.getField(d.field);
-  field.lowLevelSelect([d.id], true, false);
-}
+
 async function init() {
   // const app = await connectEngine('music.qvf');
 
@@ -96,38 +116,11 @@ async function init() {
   d.first = false;
 }
 
-async function connectEngine(appName) {
-  const session = enigma.create({
-    schema: schemaEnigma,
-    url: `ws://${engineHost}:${enginePort}/app/identity/${new Date()}`,
-    createSocket: url => new WebSocket(url),
-    responseInterceptors: [{
-      onRejected: async function retryAbortedError(sessionReference, request, error) {
-
-      },
-    }],
-  });
-  const qix = await session.open();
-  const app = await qix.openDoc(appName);
-  curApp = app;
-  return app;
-}
-
 function resize() {
-  const d = document.getElementById('one');
-  d.newSize(innerWidth, innerHeight);
-  d.bubbles=null;
-  const stateCircleR = d.stateCircleR;
-  const stateCArea = stateCircleR * stateCircleR * Math.PI;
-  const areaPerPoint = (stateCArea / nodes.length) * 0.9;
-  const radiusPoint = Math.sqrt(areaPerPoint / Math.PI);
-  d.radiusPoint = radiusPoint;
-  nodes.map((el) => {
-    el.radius = radiusPoint;
-  });
-  d.clearChart(nodes);
+  const d = document.getElementsByTagName('bubble-chart')[0];
+  d.resize(nodes);
 }
 
-window.onresize = resize;
+window.onresize = (resize);
 init();
 console.log('app running');

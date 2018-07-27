@@ -1,15 +1,6 @@
 
+import * as d3 from 'd3';
 import { render, html } from '../../node_modules/lit-html/lib/lit-extended';
-import * as d3 from 'd3'
-
-
-const tmpdata = {
-  stuff: 1,
-  stuff1: 2,
-  stuff2: 3,
-  stuff3: 4,
-  stuff4: 5,
-};
 
 let _this;
 
@@ -21,9 +12,9 @@ class Bubble extends HTMLElement {
     this.first = true;
     this.bubbles = null;
     this.svg = null;
-    this.dataValue = tmpdata;
+    this.dataValue = {};
     this.stateCount = 4;
-    this.newSize(innerWidth-30, innerHeight-30);
+    this.newSize(this.parentElement.offsetWidth - 30, this.parentElement.offsetHeight - 30);
     this.stateMapping = {
       O: 'optional',
       A: 'alternative',
@@ -63,8 +54,8 @@ class Bubble extends HTMLElement {
   }
 
   newSize(w, h) {
-    this.width = w-30;
-    this.height = h-30;
+    this.width = w - 30;
+    this.height = h - 30;
     this.center = { x: this.width / 2, y: this.height / 2 };
     this.stateWidth = this.width / (this.stateCount);
     this.firstCenter = this.stateWidth - (this.stateWidth / 2);
@@ -174,7 +165,7 @@ class Bubble extends HTMLElement {
       .attr('x', d => _this.stateTitleX[d])
       .attr('y', this.center.y - this.stateCircleR - 20)
       .attr('text-anchor', 'middle')
-      .text((d) => { if (d != 'selected_excluded') return d.replace('_', '/'); return ''; });
+      .text((d) => { if (d !== 'selected_excluded') return d.replace('_', '/'); return ''; });
   }
 
   move() {
@@ -333,6 +324,21 @@ class Bubble extends HTMLElement {
 
   connectedCallback() {
     render(this.template(), this.root);
+  }
+
+  resize(nodes) {
+    this.newSize(this.parentElement.offsetWidth - 30, this.parentElement.offsetHeight - 30);
+    this.bubbles = null;
+    const { stateCircleR } = this;
+    const stateCArea = stateCircleR * stateCircleR * Math.PI;
+    const areaPerPoint = (stateCArea / nodes.length) * 0.9;
+    const radiusPoint = Math.sqrt(areaPerPoint / Math.PI);
+    this.radiusPoint = radiusPoint;
+    nodes.map((el) => {
+      el.radius = radiusPoint;
+      return true;
+    });
+    this.clearChart(nodes);
   }
 
   template() {

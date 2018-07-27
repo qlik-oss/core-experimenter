@@ -7,7 +7,7 @@ export default [{
   output: {
     file: 'dist/app.js',
     format: 'iife',
-    sourceMap: true,
+    sourcemap: 'inline',
   },
   plugins: [
     string({
