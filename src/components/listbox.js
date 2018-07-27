@@ -32,8 +32,17 @@ class ListBox extends HTMLElement {
 
   _searchFilter(inputEl) {
     this.filterQuery = inputEl.value;
-
     this.invalidate();
+  }
+
+  _cancelFilter() {
+    this.filterQuery = '';
+    this.root.querySelectorAll('.search_input')[0].value = '';
+    this.invalidate();
+  }
+
+  _reset() {
+    console.log('probably clear selections');
   }
 
   invalidate() {
@@ -57,14 +66,13 @@ class ListBox extends HTMLElement {
       </style>
       <div class="list-box">
         <div class="header">
-          <div class="title">${title}</div><a href="javascript:void(0);" class="icon">clear</a>
+          <div class="title">
+            ${title}<div class="icon clear_selections" on-click="${() => { this._reset(); }}">&#x232B;</div>
+          </div>
           <div class="filter">
-            <input class="search_input" maxlength="255" placeholder="Search" spellcheck="false" type="text" on-keyup="${(e) => {
-    this._searchFilter(e.target);
-  }}"/>
-            <a href="javascript:void(0);" class="icon" on-click="${() => {
-    this._resetFilter();
-  }}">X</a>
+            <div class="icon search">&#x26B2;</div>
+            <input class="search_input" maxlength="255" placeholder="Filter" spellcheck="false" type="text" on-keyup="${(e) => { this._searchFilter(e.target); }}"/>
+            <div class="icon cancel" on-click="${() => { this._cancelFilter(); }}">x</div>
           </div>
         </div>
         <ul>

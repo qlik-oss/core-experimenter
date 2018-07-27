@@ -3,6 +3,7 @@
   margin: 5px 0;
   border-radius: 4px;
   height: 400px;
+  min-width: 150px;
   overflow: hidden;
   display: block;
 }
@@ -27,6 +28,7 @@ li{
   display: list-item;
 }
 div.title{
+  position: relative;
   padding: 5px 15px;
   color: #595959;
   font-weight: bold;
@@ -35,20 +37,36 @@ div.title{
 }
 /* icons */
 .icon{
-  font-size: 8px;
-  font-style: italic;
+  cursor: pointer;
+  position: absolute;
 }
-.clear_selections{
-  display: inline-block;
-  font-family: LUI icons;
+.icon.search{
+  top: 6px;
+  left: 5px;
+  font-size: 20px;
+  transform: rotate(45deg);
+}
+.icon.cancel{
+  right:4px;
+  top:6px;
+  font-size: 18px;
+  color: #595959;
+}
+.icon.clear_selections{
   font-size: 16px;
-  font-weight: 400;
-  font-style: normal;
-  text-decoration: inherit;
-  text-transform: none;
-  direction: ltr;
+  top: 4px;
+  right: 0px;
 }
-input{
+
+.filter{
+  height:40px;
+  position:relative;
+}
+.filter input{
+  position:absolute;
+  top:0px;
+  left:20px;
+  width: calc(100% - 32px);
   min-width: 0;
   border: none;
   background: transparent;
