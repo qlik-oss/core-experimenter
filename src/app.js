@@ -102,16 +102,15 @@ function createMyList(app, field) {
 
 
 async function init() {
-  // const app = await connectEngine('music.qvf');
-
-  // await createMyList(app, 'title');
-  // await createMyList(app, 'artist_name');
-  // await createMyList(app, 'year');
-  // await createMyList(app, 'release');
-  const app = await connectEngine('fruit.qvf');
-  await createMyList(app, 'name');
-  await createMyList(app, 'color');
-  await createMyList(app, 'type');
+  const app = await connectEngine('music.qvf');
+  await createMyList(app, 'title');
+  await createMyList(app, 'artist_name');
+  await createMyList(app, 'year');
+  await createMyList(app, 'release');
+  // const app = await connectEngine('fruit.qvf');
+  // await createMyList(app, 'name');
+  // await createMyList(app, 'color');
+  // await createMyList(app, 'type');
   const d = document.getElementById('one');
   d.first = false;
 }

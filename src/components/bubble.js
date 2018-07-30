@@ -14,7 +14,7 @@ class Bubble extends HTMLElement {
     this.svg = null;
     this.dataValue = {};
     this.stateCount = 4;
-    this.newSize(this.parentElement.offsetWidth - 30, this.parentElement.offsetHeight - 30);
+    this.newSize(this.parentElement.offsetWidth, this.parentElement.offsetHeight);
     this.stateMapping = {
       O: 'optional',
       A: 'alternative',
@@ -36,38 +36,22 @@ class Bubble extends HTMLElement {
     this.simulation.stop();
     this.fillColor = d3.scaleOrdinal(d3.schemeCategory10);
     this.tooltip = this.floatingTooltip('idf', 240);
-    this.nodes.push({
-      id: 1,
-      radius: 40,
-      field: 'one',
-      value: 'toto',
-      state: 'excluded',
-      x: Math.random() * 900,
-      y: Math.random() * 800,
-    });
-  }
-
-  clearChart(nodes) {
-    _this.root.querySelector('#vis').innerHTML = '';
-    this.simulation.force('y', d3.forceY().strength(this.forceStrength).y(_this.center.y));
-    this.data = nodes;
   }
 
   newSize(w, h) {
-    this.width = w - 30;
-    this.height = h - 30;
+    this.width = w;
+    this.height = h;
     this.center = { x: this.width / 2, y: this.height / 2 };
-    this.stateWidth = this.width / (this.stateCount);
+    this.stateWidth = this.width / (this.stateCount) - 2;
     this.firstCenter = this.stateWidth - (this.stateWidth / 2);
     this.stateCenters = {
       excluded: { x: this.firstCenter, y: this.height / 2 },
-      // selected_excluded: { x: firstCenter+stateWidth, y: height / 2 },
-      selected_excluded: { x: this.firstCenter + (this.stateWidth * 3), y: this.height / 2 },
       alternative: { x: this.firstCenter + (this.stateWidth), y: this.height / 2 },
       optional: { x: this.firstCenter + (this.stateWidth * 2), y: this.height / 2 },
       selected: { x: this.firstCenter + (this.stateWidth * 3), y: this.height / 2 },
+      selected_excluded: { x: this.firstCenter + (this.stateWidth * 3), y: this.height / 2 },
     };
-    this.stateCircleR = (this.width / (this.stateCount * 2)) - 10;
+    this.stateCircleR = (this.width / (this.stateCount * 2)) - 3;
     this.stateTitleX = {
       excluded: this.stateCenters.excluded.x,
       selected_excluded: this.stateCenters.selected_excluded.x,
@@ -180,19 +164,20 @@ class Bubble extends HTMLElement {
 
     this.showStatusText();
     this.simulation.force('x', d3.forceX().strength(this.forceStrength).x(this.nodeStatePos));
-    this.simulation.alpha(1).restart();
+    this.simulation.alphaTarget(0.25).restart();
   }
 
   chart(selector, radiusPoint) {
     if (this.bubbles == null) {
       this.svg = d3.select(this.root).select(selector)
         .append('svg')
-        .attr('width', this.width)
-        .attr('height', this.height);
+        .attr('width', '100%')
+        .attr('height', '100%');
       Object.keys(this.stateCenters).forEach((e) => {
         this.svg.append('circle')
         // .attr('display', 'none')
           .classed('states', true)
+          .attr('sta', e)
           .attr('cx', this.stateCenters[e].x)
           .attr('cy', this.stateCenters[e].y)
           .attr('fill', 'none')
@@ -327,8 +312,7 @@ class Bubble extends HTMLElement {
   }
 
   resize(nodes) {
-    this.newSize(this.parentElement.offsetWidth - 30, this.parentElement.offsetHeight - 30);
-    this.bubbles = null;
+    this.newSize(this.parentElement.offsetWidth, this.parentElement.offsetHeight);
     const { stateCircleR } = this;
     const stateCArea = stateCircleR * stateCircleR * Math.PI;
     const areaPerPoint = (stateCArea / nodes.length) * 0.9;
@@ -338,12 +322,22 @@ class Bubble extends HTMLElement {
       el.radius = radiusPoint;
       return true;
     });
-    this.clearChart(nodes);
+    Object.keys(this.stateCenters).forEach((e) => {
+      this.svg.select(`[sta='${e}']`)
+        .attr('cx', this.stateCenters[e].x)
+        .attr('cy', this.stateCenters[e].y)
+        .attr('r', this.stateCircleR);
+    });
+    this.svg.selectAll('.state')
+      .attr('y', this.center.y - this.stateCircleR - 20)
+      .attr('x', d => _this.stateTitleX[d]);
+    this.data = nodes;
+    this.simulation.force('y', d3.forceY().strength(this.forceStrength).y(_this.center.y));
   }
 
   template() {
     return html`
-      <div id="vis"></div>
+      <div id="vis" style="width:100%;height:100%"></div>
     `;
   }
 }
