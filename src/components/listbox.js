@@ -1,21 +1,13 @@
 import { render, html } from '../../node_modules/lit-html/lib/lit-extended';
+import { repeat } from '../../node_modules/lit-html/lib/repeat';
 import css from './listbox.css';
-
-const tmpdata = {
-  stuff: 1,
-  stuff1: 2,
-  stuff2: 3,
-  stuff3: 4,
-  stuff4: 5,
-};
-
-const title = 'title';
-
 
 class ListBox extends HTMLElement {
   constructor() {
     super();
-    this.dataValue = tmpdata;
+    this.titleValue = '';
+    this.dataValue = {};
+    this.clickCallback = null;
     this.filterQuery = '';
     this.root = this.attachShadow({ mode: 'open' });
   }
@@ -26,7 +18,10 @@ class ListBox extends HTMLElement {
 
   set data(val) {
     // ToDo: implement validation
-    this.dataValue = val;
+    this.titleValue = val.fieldName;
+    this.dataValue = val.items;
+    this.clickCallback = this.clickCallback || val.clickCallback;
+    this.clearCallback = this.clearCallback || val.clearCallback;
     render(this.template(), this.root);
   }
 
@@ -45,6 +40,17 @@ class ListBox extends HTMLElement {
     console.log('probably clear selections');
   }
 
+  _clickCallback(item) {
+    this.clickCallback({
+      field: this.titleValue,
+      id: item[0].qElemNumber,
+    });
+  }
+
+  _clearCallback() {
+    this.clearCallback(this.titleValue);
+  }
+
   invalidate() {
     if (!this.needsRender) {
       this.needsRender = true;
@@ -60,6 +66,7 @@ class ListBox extends HTMLElement {
   }
 
   template() {
+    /* eslint-disable */
     return html`
       <style>
         ${css}
@@ -67,7 +74,7 @@ class ListBox extends HTMLElement {
       <div class="list-box">
         <div class="header">
           <div class="title">
-            ${title}<div class="icon clear_selections" on-click="${() => { this._reset(); }}">&#x232B;</div>
+            ${this.titleValue}<div class="icon clear_selections" on-click="${() => { this._clearCallback(); }}">&#x232B;</div>
           </div>
           <div class="filter">
             <div class="icon search">&#x26B2;</div>
@@ -76,10 +83,13 @@ class ListBox extends HTMLElement {
           </div>
         </div>
         <ul>
-          ${Object.keys(this.data).filter(key => this.data[key].toString().indexOf(this.filterQuery) !== -1).map(key => html`<li>${key} - ${this.data[key]}</li>`)}
+          ${repeat(Object.keys(this.data).filter(key => this.data[key][0].qText.indexOf(this.filterQuery) !== -1), key => this.data[key][0].qText, (key) => {
+            return html`<li on-click="${() => { this._clickCallback(this.data[key]);}}" class$="${this.data[key][0].qState}">${this.data[key][0].qText}</li>`;
+          })} // eslint-disable-line indent
         </ul>
       </div>
     `;
+    /* eslint-enable */
   }
 }
 customElements.define('list-box', ListBox);
