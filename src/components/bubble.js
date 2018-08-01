@@ -2,6 +2,8 @@
 import * as d3 from 'd3';
 import { render, html } from '../../node_modules/lit-html/lib/lit-extended';
 
+import utils from '../utils/utils';
+
 let _this;
 
 class Bubble extends HTMLElement {
@@ -16,14 +18,7 @@ class Bubble extends HTMLElement {
     this.dataValue = {};
     this.stateCount = 4;
     this.newSize(this.parentElement.offsetWidth, this.parentElement.offsetHeight);
-    this.stateMapping = {
-      O: 'optional',
-      A: 'alternative',
-      X: 'excluded',
-      S: 'selected',
-      XS: 'selected_excluded',
-
-    };
+    this.stateMapping = utils.states;
     this.forceStrength = 0.05;
     this.root = this.attachShadow({ mode: 'open' });
     this.nodes = [];
