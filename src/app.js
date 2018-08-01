@@ -1,5 +1,6 @@
 import './components/listbox';
 import './components/bubble';
+import './components/kpi';
 import 'enigma.js';
 
 import schema from './assets/schema-12.20.0.json';
@@ -36,6 +37,11 @@ async function connectEngine(appName) {
   const app = await qix.openDoc(appName);
   curApp = app;
   return app;
+}
+
+function resize() {
+  const d = document.getElementsByTagName('bubble-chart')[0];
+  d.resize(nodes);
 }
 
 function createMyList(app, field) {
@@ -106,6 +112,7 @@ function createMyList(app, field) {
           element: document.createElement('list-box'),
         };
         document.getElementsByClassName('footer')[0].appendChild(listbox.element);
+        resize();
         return listbox;
       }
 
@@ -129,23 +136,61 @@ function createMyList(app, field) {
 }
 
 
+function createKpi(app, exp, label = 'kpi') {
+  const props = {
+    qInfo: {
+      qType: 'kpi',
+      qId: 'yes:-)',
+    },
+    type: 'my-kpi',
+    labels: true,
+    qHyperCubeDef: {
+      qDimensions: [],
+      qMeasures: [
+        {
+          qDef: {
+            qDef: `=${exp}`,
+            qLabel: label,
+          },
+          qSortBy: {
+            qSortByNumeric: -1,
+          },
+        },
+      ],
+      qInitialDataFetch: [{
+        qTop: 0, qHeight: 20, qLeft: 0, qWidth: 17,
+      }],
+      qSuppressZero: false,
+      qSuppressMissing: true,
+    },
+  };
+  app.createSessionObject(props).then((model) => {
+    const object = model;
+
+    const update = () => object.getLayout().then((layout) => {
+      const d = document.getElementById('kp');
+      d.title = label;
+      d.data = layout.qHyperCube.qDataPages[0].qMatrix;
+    });
+
+    object.on('changed', update);
+    update();
+  });
+}
+
 async function init() {
   const app = await connectEngine('music.qvf');
   await createMyList(app, 'title');
   await createMyList(app, 'artist_name');
   await createMyList(app, 'year');
   await createMyList(app, 'release');
+  createKpi(app, 'count([title])', '# of title');
   // const app = await connectEngine('fruit.qvf');
   // await createMyList(app, 'name');
   // await createMyList(app, 'color');
   // await createMyList(app, 'type');
   const d = document.getElementById('one');
   d.first = false;
-}
-
-function resize() {
-  const d = document.getElementsByTagName('bubble-chart')[0];
-  d.resize(nodes);
 }
 
 window.onresize = (resize);
