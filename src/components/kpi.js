@@ -9,18 +9,14 @@ class KPI extends HTMLElement {
     this._title = 'No title';
     this.formula = '';
     this.data = null;
+  }
+
+  connectedCallback() {
     this.input = this.root.getElementById('frm');
     this.input.addEventListener('change', updateDisplay);
-
     function updateDisplay() {
-      //this.input.value;
       console.log(this.input.value);
     }
-  }
-  
-  connectedCallback() {
-    console.log('Custom square element added to page.');
-    updateStyle(this);
   }
 
   get data() {
