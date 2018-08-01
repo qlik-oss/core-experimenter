@@ -9,14 +9,15 @@ class KPI extends HTMLElement {
     this._title = 'No title';
     this.formula = '';
     this.data = null;
+    this.inputChangeDelegate = () => {};
   }
 
   connectedCallback() {
-    this.input = this.root.getElementById('frm');
-    this.input.addEventListener('change', updateDisplay);
-    function updateDisplay() {
-      console.log(this.input.value);
-    }
+  }
+
+  _frm(e) {
+    console.log(e.value);
+    this.inputChangeDelegate(e.value);
   }
 
   get data() {
@@ -64,7 +65,7 @@ class KPI extends HTMLElement {
     return html`
     <div>
       <h2>${this.title}</h2>
-      <input id="frm"></input><br>
+      <input on-change="${(e) => { this._frm(e.target); }}" value="${this.formula}"></input><br>
       <slot name="title">${this.data}</slot>
     </div>
     `;

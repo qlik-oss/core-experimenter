@@ -135,6 +135,14 @@ function createMyList(app, field) {
   });
 }
 
+function patchIt(val) {
+  const patches = [{
+    qPath: '/qHyperCubeDef/qMeasures/0/qDef/qDef',
+    qOp: 'replace',
+    qValue: `"=${val}"`,
+  }];
+  curApp.md.applyPatches(patches, false);
+}
 
 function createKpi(app, exp, label = 'kpi') {
   const props = {
@@ -166,7 +174,7 @@ function createKpi(app, exp, label = 'kpi') {
   };
   app.createSessionObject(props).then((model) => {
     const object = model;
-
+    curApp.mdk = model;
     const update = () => object.getLayout().then((layout) => {
       const d = document.getElementById('kp');
       d.data = layout.qHyperCube.qDataPages[0].qMatrix;
@@ -175,7 +183,8 @@ function createKpi(app, exp, label = 'kpi') {
     object.on('changed', update);
     const d = document.getElementById('kp');
     d.title = label;
-    d.formula=exp;
+    d.formula = exp;
+    d.inputChangeDelegate = patchIt;
     update();
   });
 }
@@ -191,7 +200,7 @@ async function init() {
   await createMyList(app, 'name');
   await createMyList(app, 'color');
   await createMyList(app, 'type');
-  createKpi(app, 'count([name])', '# of name');
+  createKpi(app, 'count(distinct[name])', '# of name');
   const d = document.getElementById('one');
   d.first = false;
 }
