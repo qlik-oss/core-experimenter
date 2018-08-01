@@ -22,7 +22,7 @@ class ListBox extends HTMLElement {
     this.dataValue = val.items;
     this.clickCallback = this.clickCallback || val.clickCallback;
     this.clearCallback = this.clearCallback || val.clearCallback;
-    render(this.template(), this.root);
+    this.invalidate();
   }
 
   _searchFilter(inputEl) {
@@ -62,7 +62,7 @@ class ListBox extends HTMLElement {
   }
 
   connectedCallback() {
-    render(this.template(), this.root);
+    this.invalidate();
   }
 
   template() {
@@ -85,7 +85,7 @@ class ListBox extends HTMLElement {
         <ul>
           ${repeat(Object.keys(this.data).filter(key => this.data[key][0].qText.indexOf(this.filterQuery) !== -1), key => this.data[key][0].qText, (key) => {
             return html`<li on-click="${() => { this._clickCallback(this.data[key]);}}" class$="${this.data[key][0].qState}">${this.data[key][0].qText}</li>`;
-          })} // eslint-disable-line indent
+          })}
         </ul>
       </div>
     `;
