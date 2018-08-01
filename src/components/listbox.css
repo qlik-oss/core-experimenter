@@ -40,22 +40,18 @@ li{
   text-overflow: ellipsis;
   word-wrap: none;
   text-align:left;
-  color:#E6E6E6;
 }
 li:hover{
   opacity: 1;
 }
-li.O{
-  background-color: #FF7F0E;
-}
-li.X{
-  background-color: #D62728;
-}
-li.A{
-  background-color: #1F77B4;
-}
 li.S{
-  background-color: #2CA02C;
+  background-color: #595959;
+  color: #fff;
+}
+li span.state{
+  float:right;
+  font-size: 10px;
+  font-style: italic;
 }
 div.title{
   position: relative;

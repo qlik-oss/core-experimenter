@@ -2,6 +2,8 @@ import { render, html } from '../../node_modules/lit-html/lib/lit-extended';
 import { repeat } from '../../node_modules/lit-html/lib/repeat';
 import css from './listbox.css';
 
+import utils from '../utils/utils';
+
 class ListBox extends HTMLElement {
   constructor() {
     super();
@@ -84,7 +86,7 @@ class ListBox extends HTMLElement {
         </div>
         <ul>
           ${repeat(Object.keys(this.data).filter(key => this.data[key][0].qText.indexOf(this.filterQuery) !== -1), key => this.data[key][0].qText, (key) => {
-            return html`<li on-click="${() => { this._clickCallback(this.data[key]);}}" class$="${this.data[key][0].qState}">${this.data[key][0].qText}</li>`;
+            return html`<li on-click="${() => { this._clickCallback(this.data[key]);}}" class$="${this.data[key][0].qState}">${this.data[key][0].qText} <span class="state" title="${utils.states[this.data[key][0].qState]}">${this.data[key][0].qState}</span></li>`;
           })}
         </ul>
       </div>
