@@ -169,26 +169,29 @@ function createKpi(app, exp, label = 'kpi') {
 
     const update = () => object.getLayout().then((layout) => {
       const d = document.getElementById('kp');
-      d.title = label;
       d.data = layout.qHyperCube.qDataPages[0].qMatrix;
     });
 
     object.on('changed', update);
+    const d = document.getElementById('kp');
+    d.title = label;
+    d.formula=exp;
     update();
   });
 }
 
 async function init() {
-  const app = await connectEngine('music.qvf');
-  await createMyList(app, 'title');
-  await createMyList(app, 'artist_name');
-  await createMyList(app, 'year');
-  await createMyList(app, 'release');
-  createKpi(app, 'count([title])', '# of title');
-  // const app = await connectEngine('fruit.qvf');
-  // await createMyList(app, 'name');
-  // await createMyList(app, 'color');
-  // await createMyList(app, 'type');
+  // const app = await connectEngine('music.qvf');
+  // await createMyList(app, 'title');
+  // await createMyList(app, 'artist_name');
+  // await createMyList(app, 'year');
+  // await createMyList(app, 'release');
+  // createKpi(app, 'count([title])', '# of title');
+  const app = await connectEngine('fruit.qvf');
+  await createMyList(app, 'name');
+  await createMyList(app, 'color');
+  await createMyList(app, 'type');
+  createKpi(app, 'count([name])', '# of name');
   const d = document.getElementById('one');
   d.first = false;
 }

@@ -7,7 +7,20 @@ class KPI extends HTMLElement {
     this.root = this.attachShadow({ mode: 'open' });
     this.dt = null;
     this._title = 'No title';
+    this.formula = '';
     this.data = null;
+    this.input = this.root.getElementById('frm');
+    this.input.addEventListener('change', updateDisplay);
+
+    function updateDisplay() {
+      //this.input.value;
+      console.log(this.input.value);
+    }
+  }
+  
+  connectedCallback() {
+    console.log('Custom square element added to page.');
+    updateStyle(this);
   }
 
   get data() {
@@ -31,6 +44,15 @@ class KPI extends HTMLElement {
     // this.invalidate();
   }
 
+  get formula() {
+    return this._formula;
+  }
+
+  set formula(val) {
+    this._formula = val;
+    // this.invalidate();
+  }
+
   invalidate() {
     if (!this.needsRender) {
       this.needsRender = true;
@@ -46,6 +68,7 @@ class KPI extends HTMLElement {
     return html`
     <div>
       <h2>${this.title}</h2>
+      <input id="frm"></input><br>
       <slot name="title">${this.data}</slot>
     </div>
     `;
