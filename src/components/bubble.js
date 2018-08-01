@@ -8,6 +8,7 @@ class Bubble extends HTMLElement {
   constructor() {
     super();
     _this = this;
+    this.simTime = null;
     this.selectDelegate = function () {};
     this.first = true;
     this.bubbles = null;
@@ -165,6 +166,10 @@ class Bubble extends HTMLElement {
     this.showStatusText();
     this.simulation.force('x', d3.forceX().strength(this.forceStrength).x(this.nodeStatePos));
     this.simulation.alphaTarget(0.25).restart();
+    if (this.simTime != null) { clearTimeout(this.simTime); }
+    this.simTime = setTimeout(() => {
+      this.simulation.stop();
+    }, 10000);
   }
 
   chart(selector, radiusPoint) {
