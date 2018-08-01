@@ -141,7 +141,7 @@ function patchIt(val) {
     qOp: 'replace',
     qValue: `"=${val}"`,
   }];
-  curApp.md.applyPatches(patches, false);
+  curApp.mdk.applyPatches(patches, false);
 }
 
 function createKpi(app, exp, label = 'kpi') {
