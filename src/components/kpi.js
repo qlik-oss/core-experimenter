@@ -52,7 +52,7 @@ class KPI extends HTMLElement {
   }
 
   get error() {
-    return this._formula;
+    return this._error;
   }
 
   set error(val) {

@@ -138,7 +138,12 @@ function createMyList(app, field) {
 async function patchIt(val) {
   const ck = await curApp.checkExpression(val);
   const d = document.getElementById('kp');
-  d.error = ck.qErrorMsg;
+  d.error = '';
+  ck.qBadFieldNames.map((bf) => {
+    d.error = `${d.error }The field name located between the character ${bf.qFrom} and ${bf.qFrom + bf.qCount} is wrong `;
+  });
+
+  d.error += ck.qErrorMsg;
   const patches = [{
     qPath: '/qHyperCubeDef/qMeasures/0/qDef/qDef',
     qOp: 'replace',
