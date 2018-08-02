@@ -135,7 +135,10 @@ function createMyList(app, field) {
   });
 }
 
-function patchIt(val) {
+async function patchIt(val) {
+  const ck = await curApp.checkExpression(val);
+  const d = document.getElementById('kp');
+  d.error = ck.qErrorMsg;
   const patches = [{
     qPath: '/qHyperCubeDef/qMeasures/0/qDef/qDef',
     qOp: 'replace',
@@ -200,7 +203,7 @@ async function init() {
   await createMyList(app, 'name');
   await createMyList(app, 'color');
   await createMyList(app, 'type');
-  createKpi(app, 'count(distinct[name])', '# of name');
+  createKpi(app, 'count( {$<color={Orange}>} name )', '# of orange stuff');
   const d = document.getElementById('one');
   d.first = false;
 }

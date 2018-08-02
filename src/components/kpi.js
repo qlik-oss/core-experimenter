@@ -8,6 +8,7 @@ class KPI extends HTMLElement {
     this.dt = null;
     this._title = 'No title';
     this.formula = '';
+    this._error = null;
     this.data = null;
     this.inputChangeDelegate = () => {};
   }
@@ -50,6 +51,15 @@ class KPI extends HTMLElement {
     // this.invalidate();
   }
 
+  get error() {
+    return this._formula;
+  }
+
+  set error(val) {
+    this._error = val;
+    this.invalidate();
+  }
+
   invalidate() {
     if (!this.needsRender) {
       this.needsRender = true;
@@ -65,8 +75,9 @@ class KPI extends HTMLElement {
     return html`
     <div>
       <h2>${this.title}</h2>
-      <input on-change="${(e) => { this._frm(e.target); }}" value="${this.formula}"></input><br>
-      <slot name="title">${this.data}</slot>
+      <input style="width:98%" on-change="${(e) => { this._frm(e.target); }}" value="${this.formula}"></input><br>
+      <slot style="width:98%" name="title">${this.data}</slot><br>
+      <slot style="width:98%;color:red" name="error">${this._error}</slot>
     </div>
     `;
     /* eslint-enable */
