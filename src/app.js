@@ -50,11 +50,11 @@ function createHyperCube(app, fields) {
   let object;
 
   function _fieldsToqDef(flds) {
-    return flds.map((field) => ({
-        qDef: {
-          qFieldDefs: [field],
-        },
-      }));
+    return flds.map(field => ({
+      qDef: {
+        qFieldDefs: [field],
+      },
+    }));
   }
   const properties = {
     qInfo: {
