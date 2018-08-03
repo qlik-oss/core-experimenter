@@ -1,5 +1,6 @@
 import './components/listbox';
 import './components/bubble';
+import './components/table';
 import './components/kpi';
 import 'enigma.js';
 
@@ -7,7 +8,8 @@ import schema from './assets/schema-12.20.0.json';
 
 const schemaEnigma = JSON.parse(schema);
 const nodes = [];
-const listBoxes = [];
+// const listBoxes = [];
+let table = null;
 const engineHost = 'alteirac.hd.free.fr';
 const enginePort = '9076';
 let curApp;
@@ -17,10 +19,14 @@ async function select(d) {
   field.lowLevelSelect([d.id], true, false);
 }
 
-async function clearFieldSelections(fieldName) {
-  const field = await curApp.getField(fieldName);
-  return field.clear();
-}
+// async function clearAllSelections() {
+//   await curApp.clearAll();
+// }
+
+// async function clearFieldSelections(fieldName) {
+//   const field = await curApp.getField(fieldName);
+//   return field.clear();
+// }
 
 async function connectEngine(appName) {
   const session = enigma.create({
@@ -37,6 +43,62 @@ async function connectEngine(appName) {
   const app = await qix.openDoc(appName);
   curApp = app;
   return app;
+}
+
+
+function createHyperCube(app, fields) {
+  let object;
+
+  function _fieldsToqDef(flds) {
+    return flds.map((field) => {
+      return {
+        qDef: {
+          qFieldDefs: [field],
+        },
+      };
+    });
+  }
+  const properties = {
+    qInfo: {
+      qType: 'table',
+      qId: 'table_id',
+    },
+    labels: true,
+    qHyperCubeDef: {
+      qDimensions: _fieldsToqDef(fields),
+      qInitialDataFetch: [{
+        qTop: 0, qHeight: 100, qLeft: 0, qWidth: 100,
+      }],
+      qSuppressZero: false,
+      qSuppressMissing: true,
+    },
+  };
+
+  function updateTable(layout) {
+    function _createTable() {
+      const tableEl = document.createElement('cp-table');
+      document.getElementsByClassName('footer')[0].appendChild(tableEl);
+      return tableEl;
+    }
+    table = table || _createTable();
+    table.data = {
+      headers: layout.qHyperCube.qDimensionInfo.map(dim => dim.qFallbackTitle),
+      items: layout.qHyperCube.qDataPages[0].qMatrix,
+      clickCallback: select,
+      clearCallback: curApp.clearAll.bind(curApp),
+      backCallback: curApp.back.bind(curApp),
+      forwardCallback: curApp.forward.bind(curApp),
+    };
+  }
+
+  const update = () => object.getLayout().then((layout) => {
+    updateTable(layout);
+  });
+  return app.createSessionObject(properties).then((model) => {
+    object = model;
+    model.on('changed', update);
+    update();
+  });
 }
 
 function resize() {
@@ -105,29 +167,29 @@ function createMyList(app, field) {
       resolve();
     });
 
-    const updateListBoxes = (layout) => {
-      function _createAndAppendListbox() {
-        const listbox = {
-          id: layout.qInfo.qId,
-          element: document.createElement('list-box'),
-        };
-        document.getElementsByClassName('footer')[0].appendChild(listbox.element);
-        resize();
-        return listbox;
-      }
 
-      listBoxes[layout.qInfo.qId] = listBoxes[layout.qInfo.qId] || _createAndAppendListbox();
-      listBoxes[layout.qInfo.qId].element.data = {
-        fieldName: layout.qListObject.qDimensionInfo.qFallbackTitle,
-        items: layout.qListObject.qDataPages[0].qMatrix,
-        clickCallback: select,
-        clearCallback: clearFieldSelections,
-      };
-    };
+    // const updateListBoxes = (layout) => {
+    //   function _createAndAppendListbox() {
+    //     const listbox = {
+    //       id: layout.qInfo.qId,
+    //       element: document.createElement('list-box'),
+    //     };
+    //     document.getElementsByClassName('footer')[0].appendChild(listbox.element);
+    //     return listbox;
+    //   }
+
+    //   listBoxes[layout.qInfo.qId] = listBoxes[layout.qInfo.qId] || _createAndAppendListbox();
+    //   listBoxes[layout.qInfo.qId].element.data = {
+    //     fieldName: layout.qListObject.qDimensionInfo.qFallbackTitle,
+    //     items: layout.qListObject.qDataPages[0].qMatrix,
+    //     clickCallback: select,
+    //     clearCallback: clearFieldSelections,
+    //   };
+    // };
 
     const update = () => object.getLayout().then((layout) => {
       updateBubbles(layout);
-      updateListBoxes(layout);
+      // updateListBoxes(layout);
     });
 
     object.on('changed', update);
@@ -135,12 +197,18 @@ function createMyList(app, field) {
   });
 }
 
+async function createMyLists(app, fields) {
+  const promiseArr = fields.map(field => createMyList(app, field));
+  return Promise.all(promiseArr);
+}
+
 async function patchIt(val) {
   const ck = await curApp.checkExpression(val);
   const d = document.getElementById('kp');
   d.error = '';
   ck.qBadFieldNames.map((bf) => {
-    d.error = `${d.error }The field name located between the character ${bf.qFrom} and ${bf.qFrom + bf.qCount} is wrong `;
+    d.error = `${d.error}The field name located between the character ${bf.qFrom} and ${bf.qFrom + bf.qCount} is wrong `;
+    return d.error;
   });
 
   d.error += ck.qErrorMsg;
@@ -198,16 +266,12 @@ function createKpi(app, exp, label = 'kpi') {
 }
 
 async function init() {
-  // const app = await connectEngine('music.qvf');
-  // await createMyList(app, 'title');
-  // await createMyList(app, 'artist_name');
-  // await createMyList(app, 'year');
-  // await createMyList(app, 'release');
-  // createKpi(app, 'count([title])', '# of title');
-  const app = await connectEngine('fruit.qvf');
-  await createMyList(app, 'name');
-  await createMyList(app, 'color');
-  await createMyList(app, 'type');
+  const app = await connectEngine('music.qvf');
+  const fields = ['title', 'artist_name', 'year', 'release'];
+  // const app = await connectEngine('fruit.qvf');
+  // const fields = ['name', 'color', 'type'];
+  await createMyLists(app, fields);
+  await createHyperCube(app, fields);
   createKpi(app, 'count( {$<color={Orange}>} name )', '# of orange stuff');
   const d = document.getElementById('one');
   d.first = false;

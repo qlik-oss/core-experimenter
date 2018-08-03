@@ -42,6 +42,7 @@ body{
 .footer {
   grid-area: footer;
   text-align: center;
+  overflow-y: auto;
 }
 
 list-box{

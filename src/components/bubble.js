@@ -164,7 +164,7 @@ class Bubble extends HTMLElement {
     if (this.simTime != null) { clearTimeout(this.simTime); }
     this.simTime = setTimeout(() => {
       this.simulation.stop();
-    }, 10000);
+    }, 6000);
   }
 
   chart(selector, radiusPoint) {
