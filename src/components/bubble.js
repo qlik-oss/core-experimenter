@@ -82,16 +82,6 @@ class Bubble extends HTMLElement {
     this.svg.selectAll('.state').remove();
   }
 
-  groupBubbles() {
-    this.hideStatusText();
-
-    // @v4 Reset the 'x' force to draw the bubbles to the center.
-    this.simulation.force('x', d3.forceX().strength(this.forceStrength).x(this.center.x));
-
-    // @v4 We can reset the alpha value and restart the simulation
-    this.simulation.alpha(1).restart();
-  }
-
   showDetail(d) {
     d3.select(this).attr('stroke', 'black');
 
@@ -149,15 +139,6 @@ class Bubble extends HTMLElement {
   }
 
   move() {
-    if (this.first) {
-      this.groupBubbles();
-      return;
-    }
-    const all = _this.root.querySelectorAll('.states');
-    for (let i = 0; i < all.length; i++) {
-      all[i].setAttribute('stroke', 'black');
-    }
-
     this.showStatusText();
     this.simulation.force('x', d3.forceX().strength(this.forceStrength).x(this.nodeStatePos));
     this.simulation.alphaTarget(0.25).restart();
@@ -182,14 +163,12 @@ class Bubble extends HTMLElement {
           .attr('cy', this.stateCenters[e].y)
           .attr('fill', 'none')
           .attr('stroke-width', 2)
-          .attr('stroke', 'white')
+          .attr('stroke', 'black')
           .attr('r', this.stateCircleR);
       });
       this.bubbles = this.svg.selectAll('.bubble')
         .data(this.nodes, d => d.id);
-
       this.simulation.nodes(this.nodes);
-      this.groupBubbles();
     }
     this.bubbles = this.bubbles.data(this.nodes, d => d.id);
     this.bubbles.exit().remove();
