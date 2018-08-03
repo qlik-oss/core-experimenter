@@ -50,13 +50,11 @@ function createHyperCube(app, fields) {
   let object;
 
   function _fieldsToqDef(flds) {
-    return flds.map((field) => {
-      return {
+    return flds.map((field) => ({
         qDef: {
           qFieldDefs: [field],
         },
-      };
-    });
+      }));
   }
   const properties = {
     qInfo: {
@@ -272,9 +270,10 @@ async function init() {
   // const fields = ['name', 'color', 'type'];
   await createMyLists(app, fields);
   await createHyperCube(app, fields);
-  createKpi(app, 'count( {$<color={Orange}>} name )', '# of orange stuff');
-  const d = document.getElementById('one');
-  d.first = false;
+  createKpi(app, 'count(distinct title ) /count( distinct release)', 'title per release');
+  setTimeout(() => {
+    resize();
+  }, 1000);
 }
 
 window.onresize = (resize);
