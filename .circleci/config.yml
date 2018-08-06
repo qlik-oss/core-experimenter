@@ -1,0 +1,38 @@
+version: 2
+jobs:
+  validate:
+    machine: true
+    steps:
+      - checkout
+      - restore_cache:
+          key: node_modules-cache-{{ checksum "package.json" }}
+      - run:
+          name: Install NPM packages
+          command: npm install
+      - save_cache:
+          key: node_modules-cache-{{ checksum "package.json" }}
+          paths:
+            - node_modules
+      - run:
+          name: Lint
+          command: npm run lint
+  build:
+    machine: true
+    steps:
+      - checkout
+      - restore_cache:
+          key: node_modules-cache-{{ checksum "package.json" }}
+      - run:
+          name: Install NPM packages
+          command: npm install
+      - save_cache:
+          key: node_modules-cache-{{ checksum "package.json" }}
+          paths:
+            - node_modules
+      - run: npm run build
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - validate
+      - build
