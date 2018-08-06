@@ -43,7 +43,6 @@ async function connectEngine(appName) {
 }
 
 
-
 function createHyperCube(app, fields) {
   let object;
 
