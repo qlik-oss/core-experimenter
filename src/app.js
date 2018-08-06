@@ -8,7 +8,6 @@ import 'enigma.js';
 import schema from './assets/schema-12.20.0.json';
 
 const schemaEnigma = JSON.parse(schema);
-const nodes = [];
 // const listBoxes = [];
 let table = null;
 const engineHost = 'alteirac.hd.free.fr';
@@ -79,7 +78,7 @@ function createHyperCube(app, fields) {
     table.data = {
       headers: layout.qHyperCube.qDimensionInfo.map(dim => dim.qFallbackTitle),
       items: layout.qHyperCube.qDataPages[0].qMatrix,
-      colorBy: d3.scaleOrdinal(d3.schemeCategory10),
+      colorBy: d3.scaleOrdinal(d3.schemeCategory10).domain(fields),
       clickCallback: select,
       hoverCallback: hover,
       clearCallback: curApp.clearAll.bind(curApp),
@@ -103,7 +102,7 @@ function resize() {
   d.resize();
 }
 
-function createMyList(app, field) {
+function createMyList(app, field, fields) {
   const properties = {
     qInfo: {
       qType: 'lb',
@@ -127,7 +126,6 @@ function createMyList(app, field) {
     const object = model;
 
     const updateBubbles = layout => new Promise((resolve/* , reject */) => {
-
       const d = document.getElementById('one');
       d.update(layout, field);
       resolve();
@@ -160,12 +158,13 @@ function createMyList(app, field) {
     object.on('changed', update);
     const d = document.getElementById('one');
     d.selectDelegate = select;
+    d.fields = fields;
     update();
   });
 }
 
 async function createMyLists(app, fields) {
-  const promiseArr = fields.map(field => createMyList(app, field));
+  const promiseArr = fields.map(field => createMyList(app, field, fields));
   return Promise.all(promiseArr);
 }
 

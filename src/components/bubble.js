@@ -23,6 +23,7 @@ class Bubble extends HTMLElement {
     this.forceStrength = 0.05;
     this.root = this.attachShadow({ mode: 'open' });
     this.nodes = [];
+    this.fields = [];
     this.simulation = d3.forceSimulation()
       .velocityDecay(0.27)
       .force('x', d3.forceX().strength(this.forceStrength).x(this.center.x))
@@ -31,9 +32,8 @@ class Bubble extends HTMLElement {
       .force('collision', d3.forceCollide().radius(d => d.radius))
       .on('tick', this.ticked);
     this.simulation.stop();
-    // const colors = ['#69c242', '#64bbe3', '#ffcc00', '#ff7300', '#cf2030'];
     // this.fillColor = d3.scaleOrdinal().range(colors);
-    this.fillColor = d3.scaleOrdinal(d3.schemeCategory10).domain(['title', 'artist_name', 'release']);
+    this.fillColor = d3.scaleOrdinal(d3.schemeCategory10).domain(this.fields);
     this.tooltip = this.floatingTooltip('idf', 240);
     d3.selection.prototype.moveToFront = function () {
       return this.each(function () {
@@ -43,6 +43,8 @@ class Bubble extends HTMLElement {
   }
 
   update(layout, field) {
+    this.fillColor = d3.scaleOrdinal(d3.schemeCategory10).domain(this.fields);
+    // this.fillColor = d3.scaleOrdinal(d3.schemeCategory10).domain(this.fields);
     const mx = Math.max(this.nodes.length, layout.qListObject.qDataPages[0].qMatrix.length);
     const stateCArea = this.stateCircleR * this.stateCircleR * Math.PI;
     const areaPerPoint = (stateCArea / mx) * 0.9;
