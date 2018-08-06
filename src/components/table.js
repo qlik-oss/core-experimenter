@@ -85,7 +85,7 @@ class CpTable extends HTMLElement {
             tr => html`<tr>
               ${repeat(
                 tr,
-                (item, i) => html`<td style="background-color:${this.colorBy(this.headerValues[i])}" onmouseover="${(e) => { this._hoverCallback({field: this.headerValues[i], id: item.qElemNumber});}}" class$="${item.qState}" on-click="${(e) => { this._clickCallback({field: this.headerValues[i], id: item.qElemNumber});}}">${item.qText}<span class="state" title="${utils.states[item.qState]}">(${item.qState})</span></td>`
+                (item, i) => html`<td style="color:${this.colorBy(this.headerValues[i])}" onmouseover="${(e) => { this._hoverCallback({field: this.headerValues[i], id: item.qElemNumber});}}" class$="${item.qState}" on-click="${(e) => { this._clickCallback({field: this.headerValues[i], id: item.qElemNumber});}}">${item.qText}<span class="state" title="${utils.states[item.qState]}">(${item.qState})</span></td>`
               )}
             </tr>`
           )}
