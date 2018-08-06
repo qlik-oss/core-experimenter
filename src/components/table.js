@@ -10,6 +10,7 @@ class CpTable extends HTMLElement {
     this.headerValues = [];
     this.dataValue = {};
     this.clickCallback = null;
+    this.hoverCallback = null;
     this.filterQuery = '';
     this.root = this.attachShadow({ mode: 'open' });
   }
@@ -21,6 +22,7 @@ class CpTable extends HTMLElement {
   set data(val) {
     this.headerValues = val.headers;
     this.dataValue = val.items;
+    this.hoverCallback = this.hoverCallback || val.hoverCallback;
     this.clickCallback = this.clickCallback || val.clickCallback;
     this.clearCallback = this.clearCallback || val.clearCallback;
     this.backCallback = this.backCallback || val.backCallback;
@@ -30,6 +32,10 @@ class CpTable extends HTMLElement {
 
   _clickCallback(param) {
     this.clickCallback(param);
+  }
+
+  _hoverCallback(param) {
+    this.hoverCallback(param);
   }
 
   _clearCallback() {
@@ -77,7 +83,7 @@ class CpTable extends HTMLElement {
             tr => html`<tr>
               ${repeat(
                 tr,
-                (item, i) => html`<td class$="${item.qState}" on-click="${(e) => { this._clickCallback({field: this.headerValues[i], id: item.qElemNumber});}}">${item.qText}<span class="state" title="${utils.states[item.qState]}">(${item.qState})</span></td>`
+                (item, i) => html`<td onmouseover="${(e) => { this._hoverCallback({field: this.headerValues[i], id: item.qElemNumber});}}" class$="${item.qState}" on-click="${(e) => { this._clickCallback({field: this.headerValues[i], id: item.qElemNumber});}}">${item.qText}<span class="state" title="${utils.states[item.qState]}">(${item.qState})</span></td>`
               )}
             </tr>`
           )}

@@ -32,6 +32,11 @@ class Bubble extends HTMLElement {
     this.simulation.stop();
     this.fillColor = d3.scaleOrdinal(d3.schemeCategory10);
     this.tooltip = this.floatingTooltip('idf', 240);
+    d3.selection.prototype.moveToFront = function () {
+      return this.each(function () {
+        this.parentNode.appendChild(this);
+      });
+    };
   }
 
   newSize(w, h) {
@@ -55,6 +60,16 @@ class Bubble extends HTMLElement {
       optional: this.stateCenters.optional.x,
       selected: this.stateCenters.selected.x,
     };
+  }
+
+  highlight(d) {
+    this.svg.select(`[mid='${d.field}.${d.id}']`).moveToFront()
+      .transition()
+      .duration(1500)
+      .attr('r', (d) => this.radiusPoint * 2)
+      .transition()
+      .duration(1500)
+      .attr('r', (d) => this.radiusPoint );
   }
 
   charge(d) {
@@ -176,6 +191,7 @@ class Bubble extends HTMLElement {
       .classed('bubble', true)
       .attr('r', radiusPoint)
       .attr('st', d => d.state)
+      .attr('mid', d => `${d.field}.${d.id}`)
       .attr('fill', d => this.fillColor(d.field))
       .attr('stroke', d => d3.rgb(this.fillColor(d.field)).darker())
       .attr('stroke-width', 2)

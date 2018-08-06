@@ -19,14 +19,10 @@ async function select(d) {
   field.lowLevelSelect([d.id], true, false);
 }
 
-// async function clearAllSelections() {
-//   await curApp.clearAll();
-// }
-
-// async function clearFieldSelections(fieldName) {
-//   const field = await curApp.getField(fieldName);
-//   return field.clear();
-// }
+function hover(d) {
+  const b = document.getElementById('one');
+  b.highlight(d);
+}
 
 async function connectEngine(appName) {
   const session = enigma.create({
@@ -83,6 +79,7 @@ function createHyperCube(app, fields) {
       headers: layout.qHyperCube.qDimensionInfo.map(dim => dim.qFallbackTitle),
       items: layout.qHyperCube.qDataPages[0].qMatrix,
       clickCallback: select,
+      hoverCallback: hover,
       clearCallback: curApp.clearAll.bind(curApp),
       backCallback: curApp.back.bind(curApp),
       forwardCallback: curApp.forward.bind(curApp),
@@ -108,7 +105,7 @@ function createMyList(app, field) {
   const properties = {
     qInfo: {
       qType: 'lb',
-      id: 'riderList',
+      id: 'flist',
     },
     qListObjectDef: {
       qDef: {
