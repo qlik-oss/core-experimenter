@@ -11,6 +11,7 @@ class Bubble extends HTMLElement {
     super();
     _this = this;
     this.simTime = null;
+    this.hovTime = null;
     this.selectDelegate = function () {};
     this.first = true;
     this.bubbles = null;
@@ -63,13 +64,16 @@ class Bubble extends HTMLElement {
   }
 
   highlight(d) {
-    this.svg.select(`[mid='${d.field}.${d.id}']`).moveToFront()
-      .transition()
-      .duration(1500)
-      .attr('r', (d) => this.radiusPoint * 2)
-      .transition()
-      .duration(1500)
-      .attr('r', (d) => this.radiusPoint );
+    if (this.hovTime != null) {clearTimeout(this.hovTime);}
+    this.hovTime = setTimeout(() => {
+      this.svg.select(`[mid='${d.field}.${d.id}']`).moveToFront()
+        .transition()
+        .duration(1500)
+        .attr('r', () => this.radiusPoint * 4)
+        .transition()
+        .duration(1500)
+        .attr('r', () => this.radiusPoint);
+    }, 1000);
   }
 
   charge(d) {
