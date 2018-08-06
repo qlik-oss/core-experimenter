@@ -9,6 +9,7 @@ class CpTable extends HTMLElement {
     super();
     this.headerValues = [];
     this.dataValue = {};
+    this.colorBy = null;
     this.clickCallback = null;
     this.hoverCallback = null;
     this.filterQuery = '';
@@ -22,6 +23,7 @@ class CpTable extends HTMLElement {
   set data(val) {
     this.headerValues = val.headers;
     this.dataValue = val.items;
+    this.colorBy = val.colorBy || function () { return 'white' ;};
     this.hoverCallback = this.hoverCallback || val.hoverCallback;
     this.clickCallback = this.clickCallback || val.clickCallback;
     this.clearCallback = this.clearCallback || val.clearCallback;
@@ -74,7 +76,7 @@ class CpTable extends HTMLElement {
         <table>
           <thead>
             <tr class="header">
-            ${repeat(this.headerValues, header => header.toString(), header => html`<th>${header}</th>`)}
+            ${repeat(this.headerValues, header => header.toString(), header => html`<th style="color:${this.colorBy(header)}">${header}</th>`)}
             </tr>
           </thead>
           <tbody>

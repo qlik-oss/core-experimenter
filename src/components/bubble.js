@@ -31,13 +31,48 @@ class Bubble extends HTMLElement {
       .force('collision', d3.forceCollide().radius(d => d.radius))
       .on('tick', this.ticked);
     this.simulation.stop();
-    this.fillColor = d3.scaleOrdinal(d3.schemeCategory10);
+    // const colors = ['#69c242', '#64bbe3', '#ffcc00', '#ff7300', '#cf2030'];
+    // this.fillColor = d3.scaleOrdinal().range(colors);
+    this.fillColor = d3.scaleOrdinal(d3.schemeCategory10).domain(['title', 'artist_name', 'release']);
     this.tooltip = this.floatingTooltip('idf', 240);
     d3.selection.prototype.moveToFront = function () {
       return this.each(function () {
         this.parentNode.appendChild(this);
       });
     };
+  }
+
+  update(layout, field) {
+    const mx = Math.max(this.nodes.length, layout.qListObject.qDataPages[0].qMatrix.length);
+    const stateCArea = this.stateCircleR * this.stateCircleR * Math.PI;
+    const areaPerPoint = (stateCArea / mx) * 0.9;
+    const radiusPoint = Math.sqrt(areaPerPoint / Math.PI);
+    layout.qListObject.qDataPages[0].qMatrix.map((e) => {
+      [e] = e;
+      let found = false;
+      this.nodes.map((el) => {
+        if (el.id === e.qElemNumber && el.field === field) {
+          el.state = this.stateMapping[e.qState];
+          el.radius = radiusPoint;
+          found = true;
+        }
+        return found;
+      });
+      if (!found) {
+        this.nodes.push({
+          id: e.qElemNumber,
+          radius: radiusPoint,
+          field,
+          value: e.qText,
+          state: this.stateMapping[e.qState],
+          x: Math.random() * 900,
+          y: Math.random() * 800,
+        });
+      }
+      return found;
+    });
+    this.data = this.nodes;
+    this.radiusPoint = radiusPoint;
   }
 
   newSize(w, h) {
@@ -63,8 +98,12 @@ class Bubble extends HTMLElement {
     };
   }
 
+  colorByField(fname) {
+    return this.fillColor(fname);
+  }
+
   highlight(d) {
-    if (this.hovTime != null) {clearTimeout(this.hovTime);}
+    if (this.hovTime != null) { clearTimeout(this.hovTime); }
     this.hovTime = setTimeout(() => {
       this.svg.select(`[mid='${d.field}.${d.id}']`).moveToFront()
         .transition()
@@ -310,14 +349,14 @@ class Bubble extends HTMLElement {
     render(this.template(), this.root);
   }
 
-  resize(nodes) {
+  resize() {
     this.newSize(this.parentElement.offsetWidth, this.parentElement.offsetHeight);
     const { stateCircleR } = this;
     const stateCArea = stateCircleR * stateCircleR * Math.PI;
-    const areaPerPoint = (stateCArea / nodes.length) * 0.9;
+    const areaPerPoint = (stateCArea / this.nodes.length) * 0.9;
     const radiusPoint = Math.sqrt(areaPerPoint / Math.PI);
     this.radiusPoint = radiusPoint;
-    nodes.map((el) => {
+    this.nodes.map((el) => {
       el.radius = radiusPoint;
       return true;
     });
@@ -330,7 +369,7 @@ class Bubble extends HTMLElement {
     this.svg.selectAll('.state')
       .attr('y', this.center.y - this.stateCircleR - 20)
       .attr('x', d => _this.stateTitleX[d]);
-    this.data = nodes;
+    this.data = this.nodes;
     this.simulation.force('y', d3.forceY().strength(this.forceStrength).y(_this.center.y));
   }
 

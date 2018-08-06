@@ -2,6 +2,7 @@ import './components/listbox';
 import './components/bubble';
 import './components/table';
 import './components/kpi';
+import * as d3 from 'd3';
 import 'enigma.js';
 
 import schema from './assets/schema-12.20.0.json';
@@ -78,6 +79,7 @@ function createHyperCube(app, fields) {
     table.data = {
       headers: layout.qHyperCube.qDimensionInfo.map(dim => dim.qFallbackTitle),
       items: layout.qHyperCube.qDataPages[0].qMatrix,
+      colorBy: d3.scaleOrdinal(d3.schemeCategory10),
       clickCallback: select,
       hoverCallback: hover,
       clearCallback: curApp.clearAll.bind(curApp),
@@ -98,7 +100,7 @@ function createHyperCube(app, fields) {
 
 function resize() {
   const d = document.getElementsByTagName('bubble-chart')[0];
-  d.resize(nodes);
+  d.resize();
 }
 
 function createMyList(app, field) {
@@ -125,40 +127,9 @@ function createMyList(app, field) {
     const object = model;
 
     const updateBubbles = layout => new Promise((resolve/* , reject */) => {
-      const mx = Math.max(nodes.length, layout.qListObject.qDataPages[0].qMatrix.length);
-      const d = document.getElementById('one');
-      const { stateCircleR, stateMapping } = d;
-      const stateCArea = stateCircleR * stateCircleR * Math.PI;
-      const areaPerPoint = (stateCArea / mx) * 0.9;
-      const radiusPoint = Math.sqrt(areaPerPoint / Math.PI);
-      layout.qListObject.qDataPages[0].qMatrix.map((e) => {
-        [e] = e;
-        let found = false;
-        nodes.map((el) => {
-          if (el.id === e.qElemNumber && el.field === field) {
-            el.state = stateMapping[e.qState];
-            el.radius = radiusPoint;
-            found = true;
-          }
-          return found;
-        });
-        if (!found) {
-          nodes.push({
-            id: e.qElemNumber,
-            radius: radiusPoint,
-            field,
-            value: e.qText,
-            state: stateMapping[e.qState],
-            x: Math.random() * 900,
-            y: Math.random() * 800,
-          });
-        }
-        return found;
-      });
 
-      d.radiusPoint = radiusPoint;
-      d.selectDelegate = select;
-      d.data = nodes;
+      const d = document.getElementById('one');
+      d.update(layout, field);
       resolve();
     });
 
@@ -186,8 +157,9 @@ function createMyList(app, field) {
       updateBubbles(layout);
       // updateListBoxes(layout);
     });
-
     object.on('changed', update);
+    const d = document.getElementById('one');
+    d.selectDelegate = select;
     update();
   });
 }
