@@ -12,6 +12,7 @@ const schemaEnigma = JSON.parse(schema);
 let table = null;
 const engineHost = 'alteirac.hd.free.fr';
 const enginePort = '9076';
+const colors = d3.scaleOrdinal(d3.schemeCategory10);
 let curApp;
 
 async function select(d) {
@@ -40,6 +41,7 @@ async function connectEngine(appName) {
   curApp = app;
   return app;
 }
+
 
 
 function createHyperCube(app, fields) {
@@ -78,7 +80,7 @@ function createHyperCube(app, fields) {
     table.data = {
       headers: layout.qHyperCube.qDimensionInfo.map(dim => dim.qFallbackTitle),
       items: layout.qHyperCube.qDataPages[0].qMatrix,
-      colorBy: d3.scaleOrdinal(d3.schemeCategory10).domain(fields),
+      colorBy: colors.domain(fields),
       clickCallback: select,
       hoverCallback: hover,
       clearCallback: curApp.clearAll.bind(curApp),

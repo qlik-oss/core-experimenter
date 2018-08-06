@@ -32,7 +32,6 @@ class Bubble extends HTMLElement {
       .force('collision', d3.forceCollide().radius(d => d.radius))
       .on('tick', this.ticked);
     this.simulation.stop();
-    // this.fillColor = d3.scaleOrdinal().range(colors);
     this.fillColor = d3.scaleOrdinal(d3.schemeCategory10).domain(this.fields);
     this.tooltip = this.floatingTooltip('idf', 240);
     d3.selection.prototype.moveToFront = function () {
@@ -44,7 +43,6 @@ class Bubble extends HTMLElement {
 
   update(layout, field) {
     this.fillColor = d3.scaleOrdinal(d3.schemeCategory10).domain(this.fields);
-    // this.fillColor = d3.scaleOrdinal(d3.schemeCategory10).domain(this.fields);
     const mx = Math.max(this.nodes.length, layout.qListObject.qDataPages[0].qMatrix.length);
     const stateCArea = this.stateCircleR * this.stateCircleR * Math.PI;
     const areaPerPoint = (stateCArea / mx) * 0.9;
@@ -98,10 +96,6 @@ class Bubble extends HTMLElement {
       optional: this.stateCenters.optional.x,
       selected: this.stateCenters.selected.x,
     };
-  }
-
-  colorByField(fname) {
-    return this.fillColor(fname);
   }
 
   highlight(d) {
