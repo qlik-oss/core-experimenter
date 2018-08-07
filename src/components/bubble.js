@@ -47,7 +47,7 @@ class Bubble extends HTMLElement {
       selected: { x: this.firstCenter + (this.stateWidth * 3), y: this.height / 2 },
       selected_excluded: { x: this.firstCenter + (this.stateWidth * 3), y: this.height / 2 },
     };
-    this.stateCircleR = (this.width / (this.stateCount * 2)) - 3;
+    this.stateCircleR = (this.width / (this.stateCount * 2)) - 15;
     this.stateTitleX = {
       excluded: this.stateCenters.excluded.x,
       selected_excluded: this.stateCenters.selected_excluded.x,
@@ -162,7 +162,7 @@ class Bubble extends HTMLElement {
           .attr('cx', this.stateCenters[e].x)
           .attr('cy', this.stateCenters[e].y)
           .attr('fill', 'none')
-          .attr('stroke-width', 2)
+          .attr('stroke-width', 1)
           .attr('stroke', 'black')
           .attr('r', this.stateCircleR);
       });

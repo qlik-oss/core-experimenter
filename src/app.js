@@ -75,7 +75,7 @@ function createHyperCube(app, fields) {
   function updateTable(layout) {
     function _createTable() {
       const tableEl = document.createElement('cp-table');
-      document.getElementsByClassName('footer')[0].appendChild(tableEl);
+      document.getElementsByClassName('table')[0].appendChild(tableEl);
       return tableEl;
     }
     table = table || _createTable();
@@ -172,7 +172,7 @@ function createMyList(app, field) {
     //       id: layout.qInfo.qId,
     //       element: document.createElement('list-box'),
     //     };
-    //     document.getElementsByClassName('footer')[0].appendChild(listbox.element);
+    //     document.getElementsByClassName('table')[0].appendChild(listbox.element);
     //     return listbox;
     //   }
 
