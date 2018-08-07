@@ -159,7 +159,6 @@ class Bubble extends HTMLElement {
   hideDetail(d) {
     d3.select(this)
       .attr('stroke', d3.rgb(_this.fillColor(d.field)).darker());
-    //
     _this.tooltip.hideTooltip();
   }
 
