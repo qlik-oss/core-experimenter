@@ -87,7 +87,7 @@ function createHyperCube(app, fields) {
   function updateTable(layout) {
     function _createTable() {
       const tableEl = document.createElement('cp-table');
-      document.getElementsByClassName('footer')[0].appendChild(tableEl);
+      document.getElementsByClassName('table')[0].appendChild(tableEl);
       return tableEl;
     }
 
@@ -147,7 +147,6 @@ function createMyList(app, field, fields) {
       d.update(layout, field);
       resolve();
     });
-
 
     const updateListBoxes = (layout) => {
       function _createAndAppendListbox() {
