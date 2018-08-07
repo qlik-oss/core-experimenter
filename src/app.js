@@ -17,7 +17,6 @@ const colors = d3.scaleOrdinal();
 const rangeColor = ['#64bbe3', '#ffcc00', '#ff7300', '#20cfbd'];
 
 let curApp;
-git
 const fields = ['title', 'artist_name', 'year', 'release'];
 
 async function select(d) {
@@ -189,7 +188,7 @@ function createMyList(app, field, fields) {
         items: layout.qListObject.qDataPages[0].qMatrix,
         clickCallback: select,
         clearCallback: clearFieldSelections,
-        colorBy: colors.domain(fields),
+        colorBy: colors.domain(fields).range(rangeColor),
       };
     };
 
