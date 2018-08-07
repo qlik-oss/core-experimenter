@@ -98,6 +98,8 @@ class Bubble extends HTMLElement {
   }
 
   lowlight(d) {
+    this.svg.selectAll('.bubble')
+      .attr('opacity', 1);
     this.svg.select(`[mid='${d.field}.${d.id}']`).moveToFront()
       .transition()
       .duration(300)
@@ -106,8 +108,13 @@ class Bubble extends HTMLElement {
   }
 
   highlight(d) {
+    this.svg.selectAll('.bubble')
+      .attr('opacity', 0.3);
+    this.svg.selectAll(`[fld='${d.field}']`)
+      .attr('opacity', 1);
     this.svg.select(`[mid='${d.field}.${d.id}']`).moveToFront()
       .transition()
+      .attr('opacity', 1)
       .duration(300)
       .attr('stroke', c => d3.rgb(_this.fillColor(c.field)).brighter())
       .attr('fill', c => d3.rgb(_this.fillColor(c.field)).darker());
@@ -226,6 +233,7 @@ class Bubble extends HTMLElement {
       .attr('r', radiusPoint)
       .attr('st', d => d.state)
       .attr('mid', d => `${d.field}.${d.id}`)
+      .attr('fld', d => `${d.field}`)
       .attr('fill', d => this.fillColor(d.field))
       .attr('stroke', d => d3.rgb(this.fillColor(d.field)).darker())
       .attr('stroke-width', 2)
