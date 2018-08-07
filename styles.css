@@ -38,6 +38,14 @@ body{
 }
 .right {
   grid-area: right;
+  position: relative;
+  overflow: hidden;
+}
+.right .listbox_cnt{
+  width: 1100px;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 .footer {
   grid-area: footer;

@@ -8,7 +8,7 @@ import 'enigma.js';
 import schema from './assets/schema-12.20.0.json';
 
 const schemaEnigma = JSON.parse(schema);
-// const listBoxes = [];
+const listBoxes = [];
 let table = null;
 const engineHost = 'alteirac.hd.free.fr';
 const enginePort = '9076';
@@ -18,6 +18,15 @@ let curApp;
 async function select(d) {
   const field = await curApp.getField(d.field);
   field.lowLevelSelect([d.id], true, false);
+}
+
+// async function clearAllSelections() {
+//   await curApp.clearAll();
+// }
+
+async function clearFieldSelections(fieldName) {
+  const field = await curApp.getField(fieldName);
+  return field.clear();
 }
 
 function hover(d) {
@@ -133,28 +142,28 @@ function createMyList(app, field, fields) {
     });
 
 
-    // const updateListBoxes = (layout) => {
-    //   function _createAndAppendListbox() {
-    //     const listbox = {
-    //       id: layout.qInfo.qId,
-    //       element: document.createElement('list-box'),
-    //     };
-    //     document.getElementsByClassName('footer')[0].appendChild(listbox.element);
-    //     return listbox;
-    //   }
+    const updateListBoxes = (layout) => {
+      function _createAndAppendListbox() {
+        const listbox = {
+          id: layout.qInfo.qId,
+          element: document.createElement('list-box'),
+        };
+        document.getElementsByClassName('listbox_cnt')[0].appendChild(listbox.element);
+        return listbox;
+      }
 
-    //   listBoxes[layout.qInfo.qId] = listBoxes[layout.qInfo.qId] || _createAndAppendListbox();
-    //   listBoxes[layout.qInfo.qId].element.data = {
-    //     fieldName: layout.qListObject.qDimensionInfo.qFallbackTitle,
-    //     items: layout.qListObject.qDataPages[0].qMatrix,
-    //     clickCallback: select,
-    //     clearCallback: clearFieldSelections,
-    //   };
-    // };
+      listBoxes[layout.qInfo.qId] = listBoxes[layout.qInfo.qId] || _createAndAppendListbox();
+      listBoxes[layout.qInfo.qId].element.data = {
+        fieldName: layout.qListObject.qDimensionInfo.qFallbackTitle,
+        items: layout.qListObject.qDataPages[0].qMatrix,
+        clickCallback: select,
+        clearCallback: clearFieldSelections,
+      };
+    };
 
     const update = () => object.getLayout().then((layout) => {
       updateBubbles(layout);
-      // updateListBoxes(layout);
+      updateListBoxes(layout);
     });
     object.on('changed', update);
     const d = document.getElementById('one');
