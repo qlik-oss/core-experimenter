@@ -102,7 +102,7 @@ class Bubble extends HTMLElement {
       .transition()
       .duration(300)
       .attr('stroke', c => d3.rgb(_this.fillColor(c.field)).darker())
-      .attr('fill', c => d3.rgb(_this.fillColor(c.field)))
+      .attr('fill', c => d3.rgb(_this.fillColor(c.field)));
   }
 
   highlight(d) {
