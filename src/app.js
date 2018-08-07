@@ -18,7 +18,7 @@ const colors = d3.scaleOrdinal();
 const rangeColor = ['#64bbe3', '#ffcc00', '#ff7300', '#20cfbd'];
 
 let curApp;
-const fields = ['title', 'artist_name', 'year', 'release'];
+const titleFields = ['title', 'artist_name', 'year', 'release'];
 
 async function select(d) {
   const field = await curApp.getField(d.field);
@@ -40,7 +40,7 @@ function hoverIn(d) {
 
 
   const lbs = document.getElementsByTagName('list-box');
-  var currListbox;
+  let currListbox;
   for (let i = 0; i < lbs.length; i++) {
     if (lbs[i].titleValue === d.field) {
       currListbox = lbs[i];
@@ -52,9 +52,7 @@ function hoverIn(d) {
     currListbox.style.opacity = 1;
   }
   const listboxWidth = document.getElementsByTagName('list-box')[0].offsetWidth;
-  document.getElementsByClassName('listbox_cnt')[0].style.left =
-    'calc(calc(calc(100% - ' + listboxWidth + 'px)/ ' + fields.length + ') -' +
-    ' calc(' + listboxWidth + 'px*' + fields.indexOf(d.field) + '))';
+  document.getElementsByClassName('listbox_cnt')[0].style.left = `calc(calc(calc(100% - ${listboxWidth}px)/${titleFields.length}) - calc(${listboxWidth}px*${titleFields.indexOf(d.field)}))`;
 }
 
 function hoverOut(d) {
@@ -160,7 +158,7 @@ function createMyList(app, field, fields) {
     qListObjectDef: {
       qDef: {
         qFieldDefs: [field],
-        qSortCriterias: [{qSortByState: 1, qSortByAscii: 1}],
+        qSortCriterias: [{ qSortByState: 1, qSortByAscii: 1 }],
       },
       qShowAlternatives: true,
       qInitialDataFetch: [{
@@ -286,8 +284,8 @@ async function init() {
   const app = await connectEngine('music.qvf');
   // const app = await connectEngine('fruit.qvf');
   // const fields = ['name', 'color', 'type'];
-  await createMyLists(app, fields);
-  await createHyperCube(app, fields);
+  await createMyLists(app, titleFields);
+  await createHyperCube(app, titleFields);
   document.createElement('appbar');
   createKpi(app, 'num(count(distinct title)/count(total title)*100, "#,##")', 'titles', 'kp1');
   createKpi(app, 'num(count(distinct release)/count(total release)*100, "#,##")', 'releases', 'kp2');

@@ -142,14 +142,11 @@ class Bubble extends HTMLElement {
     d3.select(this).attr('stroke', 'black');
 
     const content = `<span class="name">Field: </span><span class="value">${
-        d.field
-        }</span><br/>`
+      d.field}</span><br/>`
       + `<span class="name">Value: </span><span class="value">${
-        d.value
-        }</span><br/>`
+        d.value}</span><br/>`
       + `<span class="name">State: </span><span class="value">${
-        d.state
-        }</span>`;
+        d.state}</span>`;
     // `<button onclick="sel('${d.field}',${d.id})">Select </button>`;
 
     _this.tooltip.showTooltip(content, d3.event);
@@ -205,7 +202,7 @@ class Bubble extends HTMLElement {
 
   updateListboxes(d) {
     const listBoxes = document.getElementsByTagName('list-box');
-    var currListbox;
+    let currListbox;
     for (let i = 0; i < listBoxes.length; i++) {
       if (listBoxes[i].titleValue === d.field) {
         currListbox = listBoxes[i];
@@ -217,9 +214,7 @@ class Bubble extends HTMLElement {
       currListbox.style.opacity = 1;
     }
     const listboxWidth = document.getElementsByTagName('list-box')[0].offsetWidth;
-    document.getElementsByClassName('listbox_cnt')[0].style.left =
-      'calc(calc(calc(100% - ' + listboxWidth + 'px)/ ' + _this.fields.length + ') -' +
-      ' calc(' + listboxWidth + 'px*' + _this.fields.indexOf(d.field) + '))';
+    document.getElementsByClassName('listbox_cnt')[0].style.left = `calc(calc(calc(100% - ${listboxWidth}px)/${_this.fields.length}) - calc(${listboxWidth}px*${_this.fields.indexOf(d.field)}))`;
   }
 
 
