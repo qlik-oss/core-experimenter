@@ -4,30 +4,41 @@
   flex-direction: row;
   align-items: center;
   justify-content: center;
+  height: 100%;
+
 }
 div.cp-table{
   /* position:relative; */
   width: calc(100% - 65px);
+  height: 100%;
 }
 table {
   border-collapse: collapse;
   width: 100%;
+  height: 100%;
 }
 thead{
-  /* display: fixed; */
+  display: block;
+  width: calc(100% - 15px);
 }
 tbody {
-	overflow: auto;
+  overflow: auto;
+  display: block;
+  width: 100%;
+  height: calc(100% - 35px);
 }
 
 th, td {
+  padding: .5em 1em;
   text-align: left;
-  padding: 8px;
+  vertical-align: top;
+  border-left: 1px solid #fff;
+  width: 25vw;
 }
-th{
+th {
   border-bottom: 1px solid #e6e6e6
 }
-td{
+td {
   opacity: 0.8;
   cursor: pointer;
 }
