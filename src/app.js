@@ -9,7 +9,7 @@ import 'enigma.js';
 import schema from './assets/schema-12.20.0.json';
 
 const schemaEnigma = JSON.parse(schema);
-// const listBoxes = [];
+const listBoxes = [];
 let table = null;
 const engineHost = 'alteirac.hd.free.fr';
 const enginePort = '9076';
@@ -18,15 +18,41 @@ const colors = d3.scaleOrdinal();
 const rangeColor = ['#64bbe3', '#ffcc00', '#ff7300', '#20cfbd'];
 
 let curApp;
+const titleFields = ['title', 'artist_name', 'year', 'release'];
 
 async function select(d) {
   const field = await curApp.getField(d.field);
   field.lowLevelSelect([d.id], true, false);
 }
 
+// async function clearAllSelections() {
+//   await curApp.clearAll();
+// }
+
+async function clearFieldSelections(fieldName) {
+  const field = await curApp.getField(fieldName);
+  return field.clear();
+}
+
 function hoverIn(d) {
   const b = document.getElementById('one');
   b.highlight(d);
+
+
+  const lbs = document.getElementsByTagName('list-box');
+  let currListbox;
+  for (let i = 0; i < lbs.length; i++) {
+    if (lbs[i].titleValue === d.field) {
+      currListbox = lbs[i];
+    } else {
+      lbs[i].style.opacity = 0.4;
+    }
+  }
+  if (currListbox) {
+    currListbox.style.opacity = 1;
+  }
+  const listboxWidth = document.getElementsByTagName('list-box')[0].offsetWidth;
+  document.getElementsByClassName('listbox_cnt')[0].style.left = `calc(calc(calc(100% - ${listboxWidth}px)/${titleFields.length}) - calc(${listboxWidth}px*${titleFields.indexOf(d.field)}))`;
 }
 
 function hoverOut(d) {
@@ -62,6 +88,7 @@ function createHyperCube(app, fields) {
       },
     }));
   }
+
   const properties = {
     qInfo: {
       qType: 'table',
@@ -84,6 +111,7 @@ function createHyperCube(app, fields) {
       document.getElementsByClassName('table')[0].appendChild(tableEl);
       return tableEl;
     }
+
     table = table || _createTable();
     table.data = {
       headers: layout.qHyperCube.qDimensionInfo.map(dim => dim.qFallbackTitle),
@@ -150,29 +178,30 @@ function createMyList(app, field, fields) {
       resolve();
     });
 
+    const updateListBoxes = (layout) => {
+      function _createAndAppendListbox() {
+        const listbox = {
+          id: layout.qInfo.qId,
+          element: document.createElement('list-box'),
+        };
+        document.getElementsByClassName('listbox_cnt')[0].appendChild(listbox.element);
+        return listbox;
+      }
 
-    // const updateListBoxes = (layout) => {
-    //   function _createAndAppendListbox() {
-    //     const listbox = {
-    //       id: layout.qInfo.qId,
-    //       element: document.createElement('list-box'),
-    //     };
-    //     document.getElementsByClassName('table')[0].appendChild(listbox.element);
-    //     return listbox;
-    //   }
 
-    //   listBoxes[layout.qInfo.qId] = listBoxes[layout.qInfo.qId] || _createAndAppendListbox();
-    //   listBoxes[layout.qInfo.qId].element.data = {
-    //     fieldName: layout.qListObject.qDimensionInfo.qFallbackTitle,
-    //     items: layout.qListObject.qDataPages[0].qMatrix,
-    //     clickCallback: select,
-    //     clearCallback: clearFieldSelections,
-    //   };
-    // };
+      listBoxes[layout.qInfo.qId] = listBoxes[layout.qInfo.qId] || _createAndAppendListbox();
+      listBoxes[layout.qInfo.qId].element.data = {
+        fieldName: layout.qListObject.qDimensionInfo.qFallbackTitle,
+        items: layout.qListObject.qDataPages[0].qMatrix,
+        clickCallback: select,
+        clearCallback: clearFieldSelections,
+        colorBy: colors.domain(fields).range(rangeColor),
+      };
+    };
 
     const update = () => object.getLayout().then((layout) => {
       updateBubbles(layout);
-      // updateListBoxes(layout);
+      updateListBoxes(layout);
     });
     object.on('changed', update);
     const d = document.getElementById('one');
@@ -253,11 +282,10 @@ function createKpi(app, exp, label = 'kpi', elId) {
 
 async function init() {
   const app = await connectEngine('music.qvf');
-  const fields = ['title', 'artist_name', 'year', 'release'];
   // const app = await connectEngine('fruit.qvf');
   // const fields = ['name', 'color', 'type'];
-  await createMyLists(app, fields);
-  await createHyperCube(app, fields);
+  await createMyLists(app, titleFields);
+  await createHyperCube(app, titleFields);
   document.createElement('appbar');
   createKpi(app, 'num(count(distinct title)/count(total title)*100, "#,##")', 'titles', 'kp1');
   createKpi(app, 'num(count(distinct release)/count(total release)*100, "#,##")', 'releases', 'kp2');

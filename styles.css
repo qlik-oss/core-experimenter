@@ -42,6 +42,22 @@ body{
 
 .listbox {
   grid-area: listbox;
+  position: relative;
+  overflow: hidden;
+  border-left: 1px dashed black;
+}
+
+
+.listbox .listbox_cnt {
+  width: 1100px;
+  height: 100%;
+  position: absolute;
+  top: 0;
+
+  /*left: calc(calc(100% - 250px * 2.5) - calc(250px * 2));*/
+  left: calc(calc(calc(100% - 250px) / 4) - calc(250px * 0));
+  transition-duration: 0.3s;
+  transition-timing-function: ease-in-out;
 }
 
 list-box{

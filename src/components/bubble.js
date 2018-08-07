@@ -197,6 +197,24 @@ class Bubble extends HTMLElement {
     }, 6000);
   }
 
+  updateListboxes(d) {
+    const listBoxes = document.getElementsByTagName('list-box');
+    let currListbox;
+    for (let i = 0; i < listBoxes.length; i++) {
+      if (listBoxes[i].titleValue === d.field) {
+        currListbox = listBoxes[i];
+      } else {
+        listBoxes[i].style.opacity = 0.4;
+      }
+    }
+    if (currListbox) {
+      currListbox.style.opacity = 1;
+    }
+    const listboxWidth = document.getElementsByTagName('list-box')[0].offsetWidth;
+    document.getElementsByClassName('listbox_cnt')[0].style.left = `calc(calc(calc(100% - ${listboxWidth}px)/${_this.fields.length}) - calc(${listboxWidth}px*${_this.fields.indexOf(d.field)}))`;
+  }
+
+
   chart(selector, radiusPoint) {
     if (this.bubbles == null) {
       this.svg = d3.select(this.root).select(selector)
@@ -230,6 +248,7 @@ class Bubble extends HTMLElement {
       .attr('stroke', d => d3.rgb(this.fillColor(d.field)).darker())
       .attr('stroke-width', 2)
       .on('mouseover', this.showDetail)
+      .on('mouseover', this.updateListboxes)
       .on('mouseout', this.hideDetail)
       .on('click', this.select)
       .merge(this.bubbles);
