@@ -167,7 +167,6 @@ class KPI extends HTMLElement {
           </div>
       </div>
       <div contenteditable="true" on-input="${(e) => { this._frm(e.target); }}">${this.formula}</div>
-
     </div>
     `;
     /* eslint-enable */

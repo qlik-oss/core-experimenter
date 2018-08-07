@@ -2,6 +2,7 @@ import './components/listbox';
 import './components/bubble';
 import './components/table';
 import './components/kpi';
+import './components/appbar';
 import * as d3 from 'd3';
 import 'enigma.js';
 
@@ -91,6 +92,12 @@ function createHyperCube(app, fields) {
       clickCallback: select,
       mouseOver: hoverIn,
       mouseOut: hoverOut,
+    };
+  }
+
+  function updateAppbar() {
+    const appbar = document.getElementsByTagName('app-bar')[0];
+    appbar.data = {
       clearCallback: curApp.clearAll.bind(curApp),
       backCallback: curApp.back.bind(curApp),
       forwardCallback: curApp.forward.bind(curApp),
@@ -99,7 +106,9 @@ function createHyperCube(app, fields) {
 
   const update = () => object.getLayout().then((layout) => {
     updateTable(layout);
+    updateAppbar();
   });
+
   return app.createSessionObject(properties).then((model) => {
     object = model;
     model.on('changed', update);
@@ -249,6 +258,7 @@ async function init() {
   // const fields = ['name', 'color', 'type'];
   await createMyLists(app, fields);
   await createHyperCube(app, fields);
+  document.createElement('appbar');
   createKpi(app, 'num(count(distinct title)/count(total title)*100, "#,##")', 'titles', 'kp1');
   createKpi(app, 'num(count(distinct release)/count(total release)*100, "#,##")', 'releases', 'kp2');
   createKpi(app, 'num(count(distinct year)/count(total year)*100, "#,##")', 'years', 'kp3');
