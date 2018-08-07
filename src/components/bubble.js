@@ -141,12 +141,12 @@ class Bubble extends HTMLElement {
   showDetail(d) {
     d3.select(this).attr('stroke', 'black');
 
-    const content = `<span class="name">Field: </span><span class="value">${
+    const content = `<div class="title">${
+      d.value
+    }</div>` +
+    `<span class="name">Field: </span><span class="value">${
       d.field
     }</span><br/>`
-        + `<span class="name">Value: </span><span class="value">${
-          d.value
-        }</span><br/>`
         + `<span class="name">State: </span><span class="value">${
           d.state
         }</span>`;
