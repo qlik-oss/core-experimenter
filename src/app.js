@@ -12,9 +12,12 @@ const listBoxes = [];
 let table = null;
 const engineHost = 'alteirac.hd.free.fr';
 const enginePort = '9076';
-const colors = d3.scaleOrdinal(d3.schemeCategory10);
-let curApp;
+const colors = d3.scaleOrdinal();
 
+const rangeColor = ['#64bbe3', '#ffcc00', '#ff7300', '#20cfbd'];
+
+let curApp;
+git
 const fields = ['title', 'artist_name', 'year', 'release'];
 
 async function select(d) {
@@ -31,18 +34,18 @@ async function clearFieldSelections(fieldName) {
   return field.clear();
 }
 
-function hover(d) {
+function hoverIn(d) {
   const b = document.getElementById('one');
   b.highlight(d);
 
 
-  const listBoxes = document.getElementsByTagName('list-box');
+  const lbs = document.getElementsByTagName('list-box');
   var currListbox;
-  for (let i = 0; i < listBoxes.length; i++) {
-    if (listBoxes[i].titleValue === d.field) {
-      currListbox = listBoxes[i];
+  for (let i = 0; i < lbs.length; i++) {
+    if (lbs[i].titleValue === d.field) {
+      currListbox = lbs[i];
     } else {
-      listBoxes[i].style.opacity = 0.4;
+      lbs[i].style.opacity = 0.4;
     }
   }
   if (currListbox) {
@@ -52,6 +55,11 @@ function hover(d) {
   document.getElementsByClassName('listbox_cnt')[0].style.left =
     'calc(calc(calc(100% - ' + listboxWidth + 'px)/ ' + fields.length + ') -' +
     ' calc(' + listboxWidth + 'px*' + fields.indexOf(d.field) + '))';
+}
+
+function hoverOut(d) {
+  const b = document.getElementById('one');
+  b.lowlight(d);
 }
 
 async function connectEngine(appName) {
@@ -110,9 +118,10 @@ function createHyperCube(app, fields) {
     table.data = {
       headers: layout.qHyperCube.qDimensionInfo.map(dim => dim.qFallbackTitle),
       items: layout.qHyperCube.qDataPages[0].qMatrix,
-      colorBy: colors.domain(fields),
+      colorBy: colors.domain(fields).range(rangeColor),
       clickCallback: select,
-      hoverCallback: hover,
+      mouseOver: hoverIn,
+      mouseOut: hoverOut,
       clearCallback: curApp.clearAll.bind(curApp),
       backCallback: curApp.back.bind(curApp),
       forwardCallback: curApp.forward.bind(curApp),
@@ -192,6 +201,7 @@ function createMyList(app, field, fields) {
     const d = document.getElementById('one');
     d.selectDelegate = select;
     d.fields = fields;
+    d.fillColor = colors.domain(fields).range(rangeColor);
     update();
   });
 }
