@@ -146,6 +146,7 @@ class Bubble extends HTMLElement {
   }
 
   showDetail(d) {
+    _this.updateListboxes(d);
     d3.select(this).attr('stroke', 'black');
 
     const content = `<div class="title">${d.value}</div>`
@@ -256,7 +257,6 @@ class Bubble extends HTMLElement {
       .attr('stroke', d => d3.rgb(this.fillColor(d.field)).darker())
       .attr('stroke-width', 2)
       .on('mouseover', this.showDetail)
-      .on('mouseover', this.updateListboxes)
       .on('mouseout', this.hideDetail)
       .on('click', this.select)
       .merge(this.bubbles);
