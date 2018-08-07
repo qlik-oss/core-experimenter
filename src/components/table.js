@@ -97,11 +97,6 @@ class CpTable extends HTMLElement {
           )}
           </tbody>
         </table>
-        <nav>
-          <div class="icon clear_selections" on-click="${() => { this._clearCallback(); }}">&#x232B;</div>
-          <div class="icon back" on-click="${() => { this._backCallback(); }}">&#xab;</div>
-          <div class="icon forward" on-click="${() => { this._forwardCallback(); }}">&#xbb;</div>
-        </nav>
       </div>
     `;
     /* eslint-enable */
