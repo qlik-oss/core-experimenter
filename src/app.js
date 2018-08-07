@@ -34,8 +34,23 @@ async function clearFieldSelections(fieldName) {
 function hover(d) {
   const b = document.getElementById('one');
   b.highlight(d);
+
+
+  const listBoxes = document.getElementsByTagName('list-box');
+  var currListbox;
+  for (let i = 0; i < listBoxes.length; i++) {
+    if (listBoxes[i].titleValue === d.field) {
+      currListbox = listBoxes[i];
+    } else {
+      listBoxes[i].style.opacity = 0.4;
+    }
+  }
+  if (currListbox) {
+    currListbox.style.opacity = 1;
+  }
   const listboxWidth = document.getElementsByTagName('list-box')[0].offsetWidth;
-  document.getElementsByClassName('listbox_cnt')[0].style.left = 'calc(calc(calc(100% - ' + listboxWidth + 'px)/ ' + fields.length + ') -' +
+  document.getElementsByClassName('listbox_cnt')[0].style.left =
+    'calc(calc(calc(100% - ' + listboxWidth + 'px)/ ' + fields.length + ') -' +
     ' calc(' + listboxWidth + 'px*' + fields.indexOf(d.field) + '))';
 }
 
@@ -158,12 +173,14 @@ function createMyList(app, field, fields) {
         return listbox;
       }
 
+
       listBoxes[layout.qInfo.qId] = listBoxes[layout.qInfo.qId] || _createAndAppendListbox();
       listBoxes[layout.qInfo.qId].element.data = {
         fieldName: layout.qListObject.qDimensionInfo.qFallbackTitle,
         items: layout.qListObject.qDataPages[0].qMatrix,
         clickCallback: select,
         clearCallback: clearFieldSelections,
+        colorBy: colors.domain(fields),
       };
     };
 

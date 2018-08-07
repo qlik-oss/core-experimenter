@@ -5,22 +5,23 @@
   <meta charset="UTF-8">
   <title>Core Power Playground</title>
   <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
 </head>
 
 <body>
-<div class="container">
-  <div class="header">header</div>
-  <div class="left"><kpi-comp id="kp"></kpi-comp></div>
-  <div class="main">
-    <bubble-chart id="one"></bubble-chart>
+  <div class="container">
+    <div class="appbar"></div>
+    <div class="kpi"><kpi-comp id="kp"></kpi-comp></div>
+    <div class="bubbles">
+      <bubble-chart id="one"></bubble-chart>
+    </div>
+    <div class="table"></div>
+    <div class="listbox">
+      <div class="listbox_cnt"></div>
+    </div>
   </div>
-  <div class="right">
-    <div class="listbox_cnt"></div>
-  </div>
-  <div class="footer">footer</div>
-</div>
 
-<script src="dist/app.js"></script>
+  <script src="dist/app.js"></script>
 </body>
 
 </html>
