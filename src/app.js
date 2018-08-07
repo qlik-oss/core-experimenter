@@ -228,7 +228,7 @@ async function patchIt(val) {
   curApp.mdk.applyPatches(patches, false);
 }
 
-function createKpi(app, exp, label = 'kpi') {
+function createKpi(app, exp, label = 'kpi', elId) {
   const props = {
     qInfo: {
       qType: 'kpi',
@@ -260,12 +260,12 @@ function createKpi(app, exp, label = 'kpi') {
     const object = model;
     curApp.mdk = model;
     const update = () => object.getLayout().then((layout) => {
-      const d = document.getElementById('kp');
+      const d = document.getElementById(elId);
       d.data = layout.qHyperCube.qDataPages[0].qMatrix;
     });
 
     object.on('changed', update);
-    const d = document.getElementById('kp');
+    const d = document.getElementById(elId);
     d.title = label;
     d.formula = exp;
     d.inputChangeDelegate = patchIt;
@@ -279,7 +279,10 @@ async function init() {
   // const fields = ['name', 'color', 'type'];
   await createMyLists(app, fields);
   await createHyperCube(app, fields);
-  createKpi(app, 'count(distinct title ) /count( distinct release)', 'title per release');
+  createKpi(app, 'num(count(distinct title)/count(total title)*100, "#,##")', 'titles', 'kp1');
+  createKpi(app, 'num(count(distinct release)/count(total release)*100, "#,##")', 'releases', 'kp2');
+  createKpi(app, 'num(count(distinct year)/count(total year)*100, "#,##")', 'years', 'kp3');
+  createKpi(app, 'num(count(distinct artist_name)/count(total artist_name)*100, "#,##")', 'artists', 'kp4');
   setTimeout(() => {
     resize();
   }, 1000);
