@@ -15,6 +15,8 @@ const enginePort = '9076';
 const colors = d3.scaleOrdinal(d3.schemeCategory10);
 let curApp;
 
+const fields = ['title', 'artist_name', 'year', 'release'];
+
 async function select(d) {
   const field = await curApp.getField(d.field);
   field.lowLevelSelect([d.id], true, false);
@@ -32,6 +34,9 @@ async function clearFieldSelections(fieldName) {
 function hover(d) {
   const b = document.getElementById('one');
   b.highlight(d);
+  const listboxWidth = document.getElementsByTagName('list-box')[0].offsetWidth;
+  document.getElementsByClassName('listbox_cnt')[0].style.left = 'calc(calc(calc(100% - ' + listboxWidth + 'px)/ ' + fields.length + ') -' +
+    ' calc(' + listboxWidth + 'px*' + fields.indexOf(d.field) + '))';
 }
 
 async function connectEngine(appName) {
@@ -62,6 +67,7 @@ function createHyperCube(app, fields) {
       },
     }));
   }
+
   const properties = {
     qInfo: {
       qType: 'table',
@@ -84,6 +90,7 @@ function createHyperCube(app, fields) {
       document.getElementsByClassName('footer')[0].appendChild(tableEl);
       return tableEl;
     }
+
     table = table || _createTable();
     table.data = {
       headers: layout.qHyperCube.qDimensionInfo.map(dim => dim.qFallbackTitle),
@@ -121,7 +128,7 @@ function createMyList(app, field, fields) {
     qListObjectDef: {
       qDef: {
         qFieldDefs: [field],
-        qSortCriterias: [{ qSortByState: 1, qSortByAscii: 1 }],
+        qSortCriterias: [{qSortByState: 1, qSortByAscii: 1}],
       },
       qShowAlternatives: true,
       qInitialDataFetch: [{
@@ -243,7 +250,6 @@ function createKpi(app, exp, label = 'kpi') {
 
 async function init() {
   const app = await connectEngine('music.qvf');
-  const fields = ['title', 'artist_name', 'year', 'release'];
   // const app = await connectEngine('fruit.qvf');
   // const fields = ['name', 'color', 'type'];
   await createMyLists(app, fields);
