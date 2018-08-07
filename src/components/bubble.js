@@ -141,12 +141,9 @@ class Bubble extends HTMLElement {
   showDetail(d) {
     d3.select(this).attr('stroke', 'black');
 
-    const content = `<span class="name">Field: </span><span class="value">${
-      d.field}</span><br/>`
-      + `<span class="name">Value: </span><span class="value">${
-        d.value}</span><br/>`
-      + `<span class="name">State: </span><span class="value">${
-        d.state}</span>`;
+    const content = `<div class="title">${d.value}</div>`
+        + `<span class="name">Field: </span><span class="value">${d.field}</span><br/>`
+        + `<span class="name">State: </span><span class="value">${d.state}</span>`;
     // `<button onclick="sel('${d.field}',${d.id})">Select </button>`;
 
     _this.tooltip.showTooltip(content, d3.event);
