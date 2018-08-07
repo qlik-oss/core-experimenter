@@ -174,7 +174,7 @@ function createMyList(app, field, fields) {
 
     const updateBubbles = layout => new Promise((resolve/* , reject */) => {
       const d = document.getElementById('one');
-      d.update(layout, field);
+      d.update(layout, field, fields);
       resolve();
     });
 
@@ -291,9 +291,9 @@ async function init() {
   createKpi(app, 'num(count(distinct release)/count(total release)*100, "#,##")', 'releases', 'kp2');
   createKpi(app, 'num(count(distinct year)/count(total year)*100, "#,##")', 'years', 'kp3');
   createKpi(app, 'num(count(distinct artist_name)/count(total artist_name)*100, "#,##")', 'artists', 'kp4');
-  setTimeout(() => {
-    resize();
-  }, 1000);
+  // setTimeout(() => {
+  //   resize();
+  // }, 1000);
 }
 
 window.onresize = (resize);

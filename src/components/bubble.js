@@ -32,7 +32,7 @@ class Bubble extends HTMLElement {
       .force('collision', d3.forceCollide().radius(d => d.radius))
       .on('tick', this.ticked);
     this.simulation.stop();
-    this.fillColor = d3.scaleOrdinal(d3.schemeCategory10).domain(this.fields);
+    this.fillColor = d3.scaleOrdinal(d3.schemeCategory10);
     this.tooltip = this.floatingTooltip('idf', 240);
     d3.selection.prototype.moveToFront = function () {
       return this.each(function () {
@@ -41,7 +41,7 @@ class Bubble extends HTMLElement {
     };
   }
 
-  update(layout, field) {
+  update(layout, field, fields) {
     const mx = Math.max(this.nodes.length, layout.qListObject.qDataPages[0].qMatrix.length);
     const stateCArea = this.stateCircleR * this.stateCircleR * Math.PI;
     const areaPerPoint = (stateCArea / mx) * 0.9;
@@ -70,7 +70,13 @@ class Bubble extends HTMLElement {
       }
       return found;
     });
-    this.data = this.nodes;
+    this.fields.push(field);
+    if (this.fields.length === fields.length) {
+      setTimeout(() => {
+        this.data = this.nodes;
+        this.resize();
+      }, 100);
+    }
     this.radiusPoint = radiusPoint;
   }
 
