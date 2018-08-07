@@ -14,7 +14,7 @@ const engineHost = 'alteirac.hd.free.fr';
 const enginePort = '9076';
 const colors = d3.scaleOrdinal();
 
-const rangeColor = ['#64bbe3', '#ffcc00', '#ff7300', '#cf2030'];
+const rangeColor = ['#64bbe3', '#ffcc00', '#ff7300', '#20cfbd'];
 
 let curApp;
 
