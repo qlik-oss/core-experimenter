@@ -20,9 +20,14 @@ async function select(d) {
   field.lowLevelSelect([d.id], true, false);
 }
 
-function hover(d) {
+function hoverIn(d) {
   const b = document.getElementById('one');
   b.highlight(d);
+}
+
+function hoverOut(d) {
+  const b = document.getElementById('one');
+  b.lowlight(d);
 }
 
 async function connectEngine(appName) {
@@ -81,7 +86,8 @@ function createHyperCube(app, fields) {
       items: layout.qHyperCube.qDataPages[0].qMatrix,
       colorBy: colors.domain(fields),
       clickCallback: select,
-      hoverCallback: hover,
+      mouseOver: hoverIn,
+      mouseOut: hoverOut,
       clearCallback: curApp.clearAll.bind(curApp),
       backCallback: curApp.back.bind(curApp),
       forwardCallback: curApp.forward.bind(curApp),

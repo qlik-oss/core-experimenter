@@ -11,7 +11,8 @@ class CpTable extends HTMLElement {
     this.dataValue = {};
     this.colorBy = null;
     this.clickCallback = null;
-    this.hoverCallback = null;
+    this.mouseOver = null;
+    this.mouseOut = null;
     this.filterQuery = '';
     this.root = this.attachShadow({ mode: 'open' });
   }
@@ -24,7 +25,8 @@ class CpTable extends HTMLElement {
     this.headerValues = val.headers;
     this.dataValue = val.items;
     this.colorBy = val.colorBy || function () { return 'white'; };
-    this.hoverCallback = this.hoverCallback || val.hoverCallback;
+    this.mouseOver = this.mouseOver || val.mouseOver;
+    this.mouseOut = this.mouseOut || val.mouseOut;
     this.clickCallback = this.clickCallback || val.clickCallback;
     this.clearCallback = this.clearCallback || val.clearCallback;
     this.backCallback = this.backCallback || val.backCallback;
@@ -36,8 +38,12 @@ class CpTable extends HTMLElement {
     this.clickCallback(param);
   }
 
-  _hoverCallback(param) {
-    this.hoverCallback(param);
+  _mouseOver(param) {
+    this.mouseOver(param);
+  }
+
+  _mouseOut(param) {
+    this.mouseOut(param);
   }
 
   _clearCallback() {
@@ -85,7 +91,7 @@ class CpTable extends HTMLElement {
             tr => html`<tr>
               ${repeat(
                 tr,
-                (item, i) => html`<td style="background-color:${this.colorBy(this.headerValues[i])}" onmouseover="${(e) => { this._hoverCallback({field: this.headerValues[i], id: item.qElemNumber});}}" class$="${item.qState}" on-click="${(e) => { this._clickCallback({field: this.headerValues[i], id: item.qElemNumber});}}">${item.qText}<span class="state" title="${utils.states[item.qState]}">(${item.qState})</span></td>`
+                (item, i) => html`<td style="background-color:${this.colorBy(this.headerValues[i])}" onmouseover="${(e) => { this._mouseOver({field: this.headerValues[i], id: item.qElemNumber});}}"  onmouseout="${(e) => { this._mouseOut({field: this.headerValues[i], id: item.qElemNumber});}}" class$="${item.qState}" on-click="${(e) => { this._clickCallback({field: this.headerValues[i], id: item.qElemNumber});}}">${item.qText}<span class="state" title="${utils.states[item.qState]}">(${item.qState})</span></td>`
               )}
             </tr>`
           )}

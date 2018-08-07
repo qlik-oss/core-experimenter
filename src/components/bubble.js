@@ -97,26 +97,20 @@ class Bubble extends HTMLElement {
     };
   }
 
+  lowlight(d) {
+    this.svg.select(`[mid='${d.field}.${d.id}']`).moveToFront()
+      .transition()
+      .duration(300)
+      .attr('stroke', c => d3.rgb(_this.fillColor(c.field)).darker())
+      .attr('fill', c => d3.rgb(_this.fillColor(c.field)))
+  }
+
   highlight(d) {
-    if (this.hovTime != null) { clearTimeout(this.hovTime); }
-    this.hovTime = setTimeout(() => {
-      const f = this.svg.select(`[mid='${d.field}.${d.id}']`).moveToFront();
-      let cp = 5;
-      function rp() {
-        cp -= 1;
-        if (cp > 0) {
-          f.transition()
-            .duration(300)
-            .attr('stroke', c => d3.rgb(_this.fillColor(c.field)).brighter())
-            .attr('fill', c => d3.rgb(_this.fillColor(c.field)).darker())
-            .transition()
-            .attr('stroke', c => d3.rgb(_this.fillColor(c.field)).darker())
-            .attr('fill', c => d3.rgb(_this.fillColor(c.field)))
-            .on('end', rp);
-        }
-      }
-      rp();
-    }, 1000);
+    this.svg.select(`[mid='${d.field}.${d.id}']`).moveToFront()
+      .transition()
+      .duration(300)
+      .attr('stroke', c => d3.rgb(_this.fillColor(c.field)).brighter())
+      .attr('fill', c => d3.rgb(_this.fillColor(c.field)).darker());
   }
 
   charge(d) {
