@@ -12,7 +12,7 @@ const schemaEnigma = JSON.parse(schema);
 let table = null;
 const engineHost = 'alteirac.hd.free.fr';
 const enginePort = '9076';
-const colors = d3.scaleOrdinal(d3.schemeCategory10);
+const colors = d3.scaleOrdinal(d3.schemeSet3);
 let curApp;
 
 async function select(d) {
@@ -160,6 +160,7 @@ function createMyList(app, field, fields) {
     const d = document.getElementById('one');
     d.selectDelegate = select;
     d.fields = fields;
+    d.fillColor = colors.domain(fields);
     update();
   });
 }
