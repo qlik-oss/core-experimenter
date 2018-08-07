@@ -11,6 +11,7 @@ class ListBox extends HTMLElement {
     this.dataValue = {};
     this.clickCallback = null;
     this.filterQuery = '';
+    this.colorBy = null;
     this.root = this.attachShadow({ mode: 'open' });
   }
 
@@ -24,6 +25,7 @@ class ListBox extends HTMLElement {
     this.dataValue = val.items;
     this.clickCallback = this.clickCallback || val.clickCallback;
     this.clearCallback = this.clearCallback || val.clearCallback;
+    this.colorBy = val.colorBy;
     this.invalidate();
   }
 
@@ -72,13 +74,14 @@ class ListBox extends HTMLElement {
     return html`
       <style>
         ${css}
+        .list-box {background-color:${this.colorBy(this.titleValue) + '22'}}
       </style>
       <div class="list-box">
-        <div class="header">
-          <div class="title">
+        <div class="header" style="background-color:${this.colorBy(this.titleValue)}; opacity:0.8" >
+          <div class="title" style="color:white">
             ${this.titleValue}<div class="icon clear_selections" on-click="${() => { this._clearCallback(); }}">&#x232B;</div>
           </div>
-          <div class="filter">
+          <div class="filter"  style="background-color:white">
             <div class="icon search">&#x26B2;</div>
             <input class="search_input" maxlength="255" placeholder="Filter" spellcheck="false" type="text" on-keyup="${(e) => { this._searchFilter(e.target); }}"/>
             <div class="icon cancel" on-click="${() => { this._cancelFilter(); }}">x</div>
