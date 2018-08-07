@@ -109,7 +109,7 @@ class Bubble extends HTMLElement {
 
   highlight(d) {
     this.svg.selectAll('.bubble')
-      .attr('opacity', 0.3);
+      .attr('opacity', 0.55);
     this.svg.selectAll(`[fld='${d.field}']`)
       .attr('opacity', 1);
     this.svg.select(`[mid='${d.field}.${d.id}']`).moveToFront()
