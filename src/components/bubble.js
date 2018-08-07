@@ -11,6 +11,7 @@ class Bubble extends HTMLElement {
     super();
     _this = this;
     this.simTime = null;
+    this.hovTime = null;
     this.selectDelegate = function () {};
     this.first = true;
     this.bubbles = null;
@@ -22,6 +23,7 @@ class Bubble extends HTMLElement {
     this.forceStrength = 0.05;
     this.root = this.attachShadow({ mode: 'open' });
     this.nodes = [];
+    this.fields = [];
     this.simulation = d3.forceSimulation()
       .velocityDecay(0.27)
       .force('x', d3.forceX().strength(this.forceStrength).x(this.center.x))
@@ -30,8 +32,47 @@ class Bubble extends HTMLElement {
       .force('collision', d3.forceCollide().radius(d => d.radius))
       .on('tick', this.ticked);
     this.simulation.stop();
-    this.fillColor = d3.scaleOrdinal(d3.schemeCategory10);
+    this.fillColor = d3.scaleOrdinal(d3.schemeCategory10).domain(this.fields);
     this.tooltip = this.floatingTooltip('idf', 240);
+    d3.selection.prototype.moveToFront = function () {
+      return this.each(function () {
+        this.parentNode.appendChild(this);
+      });
+    };
+  }
+
+  update(layout, field) {
+    this.fillColor = d3.scaleOrdinal(d3.schemeCategory10).domain(this.fields);
+    const mx = Math.max(this.nodes.length, layout.qListObject.qDataPages[0].qMatrix.length);
+    const stateCArea = this.stateCircleR * this.stateCircleR * Math.PI;
+    const areaPerPoint = (stateCArea / mx) * 0.9;
+    const radiusPoint = Math.sqrt(areaPerPoint / Math.PI);
+    layout.qListObject.qDataPages[0].qMatrix.map((e) => {
+      [e] = e;
+      let found = false;
+      this.nodes.map((el) => {
+        if (el.id === e.qElemNumber && el.field === field) {
+          el.state = this.stateMapping[e.qState];
+          el.radius = radiusPoint;
+          found = true;
+        }
+        return found;
+      });
+      if (!found) {
+        this.nodes.push({
+          id: e.qElemNumber,
+          radius: radiusPoint,
+          field,
+          value: e.qText,
+          state: this.stateMapping[e.qState],
+          x: Math.random() * 900,
+          y: Math.random() * 800,
+        });
+      }
+      return found;
+    });
+    this.data = this.nodes;
+    this.radiusPoint = radiusPoint;
   }
 
   newSize(w, h) {
@@ -55,6 +96,19 @@ class Bubble extends HTMLElement {
       optional: this.stateCenters.optional.x,
       selected: this.stateCenters.selected.x,
     };
+  }
+
+  highlight(d) {
+    if (this.hovTime != null) { clearTimeout(this.hovTime); }
+    this.hovTime = setTimeout(() => {
+      this.svg.select(`[mid='${d.field}.${d.id}']`).moveToFront()
+        .transition()
+        .duration(1500)
+        .attr('r', () => this.radiusPoint * 4)
+        .transition()
+        .duration(1500)
+        .attr('r', () => this.radiusPoint);
+    }, 1000);
   }
 
   charge(d) {
@@ -105,7 +159,6 @@ class Bubble extends HTMLElement {
   hideDetail(d) {
     d3.select(this)
       .attr('stroke', d3.rgb(_this.fillColor(d.field)).darker());
-    //
     _this.tooltip.hideTooltip();
   }
 
@@ -176,6 +229,7 @@ class Bubble extends HTMLElement {
       .classed('bubble', true)
       .attr('r', radiusPoint)
       .attr('st', d => d.state)
+      .attr('mid', d => `${d.field}.${d.id}`)
       .attr('fill', d => this.fillColor(d.field))
       .attr('stroke', d => d3.rgb(this.fillColor(d.field)).darker())
       .attr('stroke-width', 2)
@@ -290,14 +344,14 @@ class Bubble extends HTMLElement {
     render(this.template(), this.root);
   }
 
-  resize(nodes) {
+  resize() {
     this.newSize(this.parentElement.offsetWidth, this.parentElement.offsetHeight);
     const { stateCircleR } = this;
     const stateCArea = stateCircleR * stateCircleR * Math.PI;
-    const areaPerPoint = (stateCArea / nodes.length) * 0.9;
+    const areaPerPoint = (stateCArea / this.nodes.length) * 0.9;
     const radiusPoint = Math.sqrt(areaPerPoint / Math.PI);
     this.radiusPoint = radiusPoint;
-    nodes.map((el) => {
+    this.nodes.map((el) => {
       el.radius = radiusPoint;
       return true;
     });
@@ -310,7 +364,7 @@ class Bubble extends HTMLElement {
     this.svg.selectAll('.state')
       .attr('y', this.center.y - this.stateCircleR - 20)
       .attr('x', d => _this.stateTitleX[d]);
-    this.data = nodes;
+    this.data = this.nodes;
     this.simulation.force('y', d3.forceY().strength(this.forceStrength).y(_this.center.y));
   }
 

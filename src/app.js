@@ -2,16 +2,17 @@ import './components/listbox';
 import './components/bubble';
 import './components/table';
 import './components/kpi';
+import * as d3 from 'd3';
 import 'enigma.js';
 
 import schema from './assets/schema-12.20.0.json';
 
 const schemaEnigma = JSON.parse(schema);
-const nodes = [];
 // const listBoxes = [];
 let table = null;
 const engineHost = 'alteirac.hd.free.fr';
 const enginePort = '9076';
+const colors = d3.scaleOrdinal(d3.schemeCategory10);
 let curApp;
 
 async function select(d) {
@@ -19,14 +20,10 @@ async function select(d) {
   field.lowLevelSelect([d.id], true, false);
 }
 
-// async function clearAllSelections() {
-//   await curApp.clearAll();
-// }
-
-// async function clearFieldSelections(fieldName) {
-//   const field = await curApp.getField(fieldName);
-//   return field.clear();
-// }
+function hover(d) {
+  const b = document.getElementById('one');
+  b.highlight(d);
+}
 
 async function connectEngine(appName) {
   const session = enigma.create({
@@ -82,7 +79,9 @@ function createHyperCube(app, fields) {
     table.data = {
       headers: layout.qHyperCube.qDimensionInfo.map(dim => dim.qFallbackTitle),
       items: layout.qHyperCube.qDataPages[0].qMatrix,
+      colorBy: colors.domain(fields),
       clickCallback: select,
+      hoverCallback: hover,
       clearCallback: curApp.clearAll.bind(curApp),
       backCallback: curApp.back.bind(curApp),
       forwardCallback: curApp.forward.bind(curApp),
@@ -101,14 +100,14 @@ function createHyperCube(app, fields) {
 
 function resize() {
   const d = document.getElementsByTagName('bubble-chart')[0];
-  d.resize(nodes);
+  d.resize();
 }
 
-function createMyList(app, field) {
+function createMyList(app, field, fields) {
   const properties = {
     qInfo: {
       qType: 'lb',
-      id: 'riderList',
+      id: 'flist',
     },
     qListObjectDef: {
       qDef: {
@@ -128,40 +127,8 @@ function createMyList(app, field) {
     const object = model;
 
     const updateBubbles = layout => new Promise((resolve/* , reject */) => {
-      const mx = Math.max(nodes.length, layout.qListObject.qDataPages[0].qMatrix.length);
       const d = document.getElementById('one');
-      const { stateCircleR, stateMapping } = d;
-      const stateCArea = stateCircleR * stateCircleR * Math.PI;
-      const areaPerPoint = (stateCArea / mx) * 0.9;
-      const radiusPoint = Math.sqrt(areaPerPoint / Math.PI);
-      layout.qListObject.qDataPages[0].qMatrix.map((e) => {
-        [e] = e;
-        let found = false;
-        nodes.map((el) => {
-          if (el.id === e.qElemNumber && el.field === field) {
-            el.state = stateMapping[e.qState];
-            el.radius = radiusPoint;
-            found = true;
-          }
-          return found;
-        });
-        if (!found) {
-          nodes.push({
-            id: e.qElemNumber,
-            radius: radiusPoint,
-            field,
-            value: e.qText,
-            state: stateMapping[e.qState],
-            x: Math.random() * 900,
-            y: Math.random() * 800,
-          });
-        }
-        return found;
-      });
-
-      d.radiusPoint = radiusPoint;
-      d.selectDelegate = select;
-      d.data = nodes;
+      d.update(layout, field);
       resolve();
     });
 
@@ -189,14 +156,16 @@ function createMyList(app, field) {
       updateBubbles(layout);
       // updateListBoxes(layout);
     });
-
     object.on('changed', update);
+    const d = document.getElementById('one');
+    d.selectDelegate = select;
+    d.fields = fields;
     update();
   });
 }
 
 async function createMyLists(app, fields) {
-  const promiseArr = fields.map(field => createMyList(app, field));
+  const promiseArr = fields.map(field => createMyList(app, field, fields));
   return Promise.all(promiseArr);
 }
 
