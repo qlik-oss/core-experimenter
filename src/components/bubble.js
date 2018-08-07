@@ -42,7 +42,6 @@ class Bubble extends HTMLElement {
   }
 
   update(layout, field) {
-    this.fillColor = d3.scaleOrdinal(d3.schemeCategory10).domain(this.fields);
     const mx = Math.max(this.nodes.length, layout.qListObject.qDataPages[0].qMatrix.length);
     const stateCArea = this.stateCircleR * this.stateCircleR * Math.PI;
     const areaPerPoint = (stateCArea / mx) * 0.9;
@@ -98,17 +97,20 @@ class Bubble extends HTMLElement {
     };
   }
 
+  lowlight(d) {
+    this.svg.select(`[mid='${d.field}.${d.id}']`).moveToFront()
+      .transition()
+      .duration(300)
+      .attr('stroke', c => d3.rgb(_this.fillColor(c.field)).darker())
+      .attr('fill', c => d3.rgb(_this.fillColor(c.field)));
+  }
+
   highlight(d) {
-    if (this.hovTime != null) { clearTimeout(this.hovTime); }
-    this.hovTime = setTimeout(() => {
-      this.svg.select(`[mid='${d.field}.${d.id}']`).moveToFront()
-        .transition()
-        .duration(1500)
-        .attr('r', () => this.radiusPoint * 4)
-        .transition()
-        .duration(1500)
-        .attr('r', () => this.radiusPoint);
-    }, 1000);
+    this.svg.select(`[mid='${d.field}.${d.id}']`).moveToFront()
+      .transition()
+      .duration(300)
+      .attr('stroke', c => d3.rgb(_this.fillColor(c.field)).brighter())
+      .attr('fill', c => d3.rgb(_this.fillColor(c.field)).darker());
   }
 
   charge(d) {

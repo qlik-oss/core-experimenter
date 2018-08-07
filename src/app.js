@@ -12,7 +12,7 @@ const schemaEnigma = JSON.parse(schema);
 let table = null;
 const engineHost = 'alteirac.hd.free.fr';
 const enginePort = '9076';
-const colors = d3.scaleOrdinal(d3.schemeCategory10);
+const colors = d3.scaleOrdinal(d3.schemeSet3);
 let curApp;
 
 async function select(d) {
@@ -20,9 +20,14 @@ async function select(d) {
   field.lowLevelSelect([d.id], true, false);
 }
 
-function hover(d) {
+function hoverIn(d) {
   const b = document.getElementById('one');
   b.highlight(d);
+}
+
+function hoverOut(d) {
+  const b = document.getElementById('one');
+  b.lowlight(d);
 }
 
 async function connectEngine(appName) {
@@ -81,7 +86,8 @@ function createHyperCube(app, fields) {
       items: layout.qHyperCube.qDataPages[0].qMatrix,
       colorBy: colors.domain(fields),
       clickCallback: select,
-      hoverCallback: hover,
+      mouseOver: hoverIn,
+      mouseOut: hoverOut,
       clearCallback: curApp.clearAll.bind(curApp),
       backCallback: curApp.back.bind(curApp),
       forwardCallback: curApp.forward.bind(curApp),
@@ -160,6 +166,7 @@ function createMyList(app, field, fields) {
     const d = document.getElementById('one');
     d.selectDelegate = select;
     d.fields = fields;
+    d.fillColor = colors.domain(fields);
     update();
   });
 }
