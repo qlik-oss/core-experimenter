@@ -41,9 +41,11 @@ function hoverIn(d) {
 
   const lbs = document.getElementsByTagName('list-box');
   let currListbox;
+  let curIndex;
   for (let i = 0; i < lbs.length; i++) {
     if (lbs[i].titleValue === d.field) {
       currListbox = lbs[i];
+      curIndex = i;
     } else {
       lbs[i].style.opacity = 0.4;
     }
@@ -52,7 +54,7 @@ function hoverIn(d) {
     currListbox.style.opacity = 1;
   }
   const listboxWidth = document.getElementsByTagName('list-box')[0].offsetWidth;
-  document.getElementsByClassName('listbox_cnt')[0].style.left = `calc(calc(calc(100% - ${listboxWidth}px)/${titleFields.length}) - calc(${listboxWidth}px*${titleFields.indexOf(d.field)}))`;
+  document.getElementsByClassName('listbox_cnt')[0].style.left = `calc(calc(calc(100% - ${listboxWidth}px)/${titleFields.length}) - calc(${listboxWidth}px*${curIndex}))`;
 }
 
 function hoverOut(d) {
@@ -174,7 +176,7 @@ function createMyList(app, field, fields) {
 
     const updateBubbles = layout => new Promise((resolve/* , reject */) => {
       const d = document.getElementById('one');
-      d.update(layout, field);
+      d.update(layout, field, fields);
       resolve();
     });
 
@@ -217,9 +219,9 @@ async function createMyLists(app, fields) {
   return Promise.all(promiseArr);
 }
 
-async function patchIt(val) {
+async function patchIt(val, id) {
   const ck = await curApp.checkExpression(val);
-  const d = document.getElementById('kp');
+  const d = document.getElementById(id);
   d.error = '';
   ck.qBadFieldNames.map((bf) => {
     d.error = `${d.error}The field name located between the character ${bf.qFrom} and ${bf.qFrom + bf.qCount} is wrong `;
@@ -227,12 +229,14 @@ async function patchIt(val) {
   });
 
   d.error += ck.qErrorMsg;
-  const patches = [{
-    qPath: '/qHyperCubeDef/qMeasures/0/qDef/qDef',
-    qOp: 'replace',
-    qValue: `"=${val}"`,
-  }];
-  curApp.mdk.applyPatches(patches, false);
+  if (d.error === '') {
+    const patches = [{
+      qPath: '/qHyperCubeDef/qMeasures/0/qDef/qDef',
+      qOp: 'replace',
+      qValue: `"=${val}"`,
+    }];
+    d.model.applyPatches(patches, false);
+  }
 }
 
 function createKpi(app, exp, label = 'kpi', elId) {
@@ -265,7 +269,6 @@ function createKpi(app, exp, label = 'kpi', elId) {
   };
   app.createSessionObject(props).then((model) => {
     const object = model;
-    curApp.mdk = model;
     const update = () => object.getLayout().then((layout) => {
       const d = document.getElementById(elId);
       d.data = layout.qHyperCube.qDataPages[0].qMatrix;
@@ -273,6 +276,7 @@ function createKpi(app, exp, label = 'kpi', elId) {
 
     object.on('changed', update);
     const d = document.getElementById(elId);
+    d.model = model;
     d.title = label;
     d.formula = exp;
     d.inputChangeDelegate = patchIt;
@@ -287,13 +291,13 @@ async function init() {
   await createMyLists(app, titleFields);
   await createHyperCube(app, titleFields);
   document.createElement('appbar');
-  createKpi(app, 'num(count(distinct title)/count(total title)*100, "#,##")', 'titles', 'kp1');
-  createKpi(app, 'num(count(distinct release)/count(total release)*100, "#,##")', 'releases', 'kp2');
-  createKpi(app, 'num(count(distinct year)/count(total year)*100, "#,##")', 'years', 'kp3');
-  createKpi(app, 'num(count(distinct artist_name)/count(total artist_name)*100, "#,##")', 'artists', 'kp4');
-  setTimeout(() => {
-    resize();
-  }, 1000);
+  createKpi(app, 'count(distinct title)/count(distinct {1} title)*100', 'titles', 'kp1');
+  createKpi(app, 'count(distinct release)/count(distinct {1} release)*100', 'releases', 'kp2');
+  createKpi(app, 'count(distinct year)/count(distinct {1} year)*100', 'years', 'kp3');
+  createKpi(app, 'count(distinct artist_name)/count(distinct {1} artist_name)*100', 'artists', 'kp4');
+  // setTimeout(() => {
+  //   resize();
+  // }, 1000);
 }
 
 window.onresize = (resize);

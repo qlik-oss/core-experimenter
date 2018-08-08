@@ -32,7 +32,7 @@ class Bubble extends HTMLElement {
       .force('collision', d3.forceCollide().radius(d => d.radius))
       .on('tick', this.ticked);
     this.simulation.stop();
-    this.fillColor = d3.scaleOrdinal(d3.schemeCategory10).domain(this.fields);
+    this.fillColor = d3.scaleOrdinal(d3.schemeCategory10);
     this.tooltip = this.floatingTooltip('idf', 240);
     d3.selection.prototype.moveToFront = function () {
       return this.each(function () {
@@ -41,7 +41,7 @@ class Bubble extends HTMLElement {
     };
   }
 
-  update(layout, field) {
+  update(layout, field, fields) {
     const mx = Math.max(this.nodes.length, layout.qListObject.qDataPages[0].qMatrix.length);
     const stateCArea = this.stateCircleR * this.stateCircleR * Math.PI;
     const areaPerPoint = (stateCArea / mx) * 0.9;
@@ -70,7 +70,13 @@ class Bubble extends HTMLElement {
       }
       return found;
     });
-    this.data = this.nodes;
+    this.fields.push(field);
+    if (this.fields.length === fields.length) {
+      setTimeout(() => {
+        this.data = this.nodes;
+        this.resize();
+      }, 100);
+    }
     this.radiusPoint = radiusPoint;
   }
 
@@ -109,7 +115,7 @@ class Bubble extends HTMLElement {
 
   highlight(d) {
     this.svg.selectAll('.bubble')
-      .attr('opacity', 0.3);
+      .attr('opacity', 0.25);
     this.svg.selectAll(`[fld='${d.field}']`)
       .attr('opacity', 1);
     this.svg.select(`[mid='${d.field}.${d.id}']`).moveToFront()
@@ -146,6 +152,7 @@ class Bubble extends HTMLElement {
   }
 
   showDetail(d) {
+    _this.updateListboxes(d);
     d3.select(this).attr('stroke', 'black');
 
     const content = `<div class="title">${d.value}</div>`
@@ -189,7 +196,7 @@ class Bubble extends HTMLElement {
     states.enter().append('text')
       .attr('class', 'state')
       .attr('x', d => _this.stateTitleX[d])
-      .attr('y', this.center.y - this.stateCircleR - 20)
+      .attr('y', this.center.y - this.stateCircleR - 50)
       .attr('text-anchor', 'middle')
       .text((d) => { if (d !== 'selected_excluded') return d.replace('_', '/'); return ''; });
   }
@@ -207,9 +214,11 @@ class Bubble extends HTMLElement {
   updateListboxes(d) {
     const listBoxes = document.getElementsByTagName('list-box');
     let currListbox;
+    let curIndex;
     for (let i = 0; i < listBoxes.length; i++) {
       if (listBoxes[i].titleValue === d.field) {
         currListbox = listBoxes[i];
+        curIndex = i;
       } else {
         listBoxes[i].style.opacity = 0.4;
       }
@@ -217,8 +226,9 @@ class Bubble extends HTMLElement {
     if (currListbox) {
       currListbox.style.opacity = 1;
     }
+
     const listboxWidth = document.getElementsByTagName('list-box')[0].offsetWidth;
-    document.getElementsByClassName('listbox_cnt')[0].style.left = `calc(calc(calc(100% - ${listboxWidth}px)/${_this.fields.length}) - calc(${listboxWidth}px*${_this.fields.indexOf(d.field)}))`;
+    document.getElementsByClassName('listbox_cnt')[0].style.left = `calc(calc(calc(100% - ${listboxWidth}px)/${_this.fields.length}) - calc(${listboxWidth}px*${curIndex}))`;
   }
 
 
@@ -256,7 +266,6 @@ class Bubble extends HTMLElement {
       .attr('stroke', d => d3.rgb(this.fillColor(d.field)).darker())
       .attr('stroke-width', 2)
       .on('mouseover', this.showDetail)
-      .on('mouseover', this.updateListboxes)
       .on('mouseout', this.hideDetail)
       .on('click', this.select)
       .merge(this.bubbles);
@@ -385,7 +394,7 @@ class Bubble extends HTMLElement {
         .attr('r', this.stateCircleR);
     });
     this.svg.selectAll('.state')
-      .attr('y', this.center.y - this.stateCircleR - 20)
+      .attr('y', 15)
       .attr('x', d => _this.stateTitleX[d]);
     this.data = this.nodes;
     this.simulation.force('y', d3.forceY().strength(this.forceStrength).y(_this.center.y));
