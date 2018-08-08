@@ -14,7 +14,6 @@ class ListBox extends HTMLElement {
     this.onmouseleave = e => this.mouseLeft(e);
     this.onmouseenter = e => this.mouseEntered(e);
     this.colorBy = null;
-    this.enterTimeStamp = 0;
     this.myTimeout = null;
     this.root = this.attachShadow({ mode: 'open' });
   }
