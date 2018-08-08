@@ -14,6 +14,7 @@ let table = null;
 const engineHost = 'alteirac.hd.free.fr';
 const enginePort = '9076';
 const colors = d3.scaleOrdinal();
+const _this = this;
 
 const rangeColor = ['#64bbe3', '#ffcc00', '#ff7300', '#20cfbd'];
 
@@ -32,6 +33,33 @@ async function select(d) {
 async function clearFieldSelections(fieldName) {
   const field = await curApp.getField(fieldName);
   return field.clear();
+}
+
+function setUpListboxScroll() {
+  const scrollArea = document.getElementsByClassName('scrollArea')[0];
+  scrollArea.addEventListener('mouseenter', () => {
+    scrollArea.style.opacity = 1;
+    _this.scrollTimeout = setInterval(() => {
+      const container = document.getElementsByClassName('listbox_cnt')[0];
+      const distance = 270;
+      const leftDist = container.style.left;
+      const newLeft = parseInt(leftDist.substring(0, leftDist.length - 2), 10) + distance;
+      if (newLeft < 0) {
+        document.getElementsByClassName('listbox_cnt')[0].style.left = `${newLeft}px`;
+      } else {
+        document.getElementsByClassName('listbox_cnt')[0].style.left = '20px';
+        setTimeout(() => {
+          document.getElementsByClassName('listbox_cnt')[0].style.left = '00px';
+        }, 100);
+      }
+    }, 500);
+  }, true);
+  scrollArea.addEventListener('mouseleave', () => {
+    scrollArea.style.opacity = 0.5;
+    if (_this.scrollTimeout) {
+      clearInterval(_this.scrollTimeout);
+    }
+  }, true);
 }
 
 function hoverIn(d) {
@@ -53,8 +81,10 @@ function hoverIn(d) {
   if (currListbox) {
     currListbox.style.opacity = 1;
   }
-  const listboxWidth = document.getElementsByTagName('list-box')[0].offsetWidth;
-  document.getElementsByClassName('listbox_cnt')[0].style.left = `calc(calc(calc(100% - ${listboxWidth}px)/${titleFields.length}) - calc(${listboxWidth}px*${curIndex}))`;
+
+  const listboxWidth = document.getElementsByTagName('list-box')[0].offsetWidth + 20;
+  const newLeft = listboxWidth * -1 * curIndex;
+  document.getElementsByClassName('listbox_cnt')[0].style.left = `${newLeft}px`;
 }
 
 function hoverOut(d) {
@@ -295,6 +325,7 @@ async function init() {
   createKpi(app, 'count(distinct release)/count(distinct {1} release)*100', 'releases', 'kp2');
   createKpi(app, 'count(distinct year)/count(distinct {1} year)*100', 'years', 'kp3');
   createKpi(app, 'count(distinct artist_name)/count(distinct {1} artist_name)*100', 'artists', 'kp4');
+  setUpListboxScroll();
   // setTimeout(() => {
   //   resize();
   // }, 1000);
