@@ -22,8 +22,6 @@
 ul{
   list-style-type: none;
   height: 100%;
-  max-height:630px;
-  /*height:330px;*/
   margin: 70px 0;
   padding: 0;
   overflow-y: auto;
