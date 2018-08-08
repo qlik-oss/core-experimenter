@@ -219,9 +219,9 @@ async function createMyLists(app, fields) {
   return Promise.all(promiseArr);
 }
 
-async function patchIt(val) {
+async function patchIt(val, id) {
   const ck = await curApp.checkExpression(val);
-  const d = document.getElementById('kp');
+  const d = document.getElementById(id);
   d.error = '';
   ck.qBadFieldNames.map((bf) => {
     d.error = `${d.error}The field name located between the character ${bf.qFrom} and ${bf.qFrom + bf.qCount} is wrong `;
@@ -229,12 +229,14 @@ async function patchIt(val) {
   });
 
   d.error += ck.qErrorMsg;
-  const patches = [{
-    qPath: '/qHyperCubeDef/qMeasures/0/qDef/qDef',
-    qOp: 'replace',
-    qValue: `"=${val}"`,
-  }];
-  curApp.mdk.applyPatches(patches, false);
+  if (d.error === '') {
+    const patches = [{
+      qPath: '/qHyperCubeDef/qMeasures/0/qDef/qDef',
+      qOp: 'replace',
+      qValue: `"=${val}"`,
+    }];
+    d.model.applyPatches(patches, false);
+  }
 }
 
 function createKpi(app, exp, label = 'kpi', elId) {
@@ -267,7 +269,6 @@ function createKpi(app, exp, label = 'kpi', elId) {
   };
   app.createSessionObject(props).then((model) => {
     const object = model;
-    curApp.mdk = model;
     const update = () => object.getLayout().then((layout) => {
       const d = document.getElementById(elId);
       d.data = layout.qHyperCube.qDataPages[0].qMatrix;
@@ -275,6 +276,7 @@ function createKpi(app, exp, label = 'kpi', elId) {
 
     object.on('changed', update);
     const d = document.getElementById(elId);
+    d.model = model;
     d.title = label;
     d.formula = exp;
     d.inputChangeDelegate = patchIt;

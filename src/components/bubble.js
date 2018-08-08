@@ -196,7 +196,7 @@ class Bubble extends HTMLElement {
     states.enter().append('text')
       .attr('class', 'state')
       .attr('x', d => _this.stateTitleX[d])
-      .attr('y', this.center.y - this.stateCircleR - 20)
+      .attr('y', this.center.y - this.stateCircleR - 50)
       .attr('text-anchor', 'middle')
       .text((d) => { if (d !== 'selected_excluded') return d.replace('_', '/'); return ''; });
   }
@@ -394,7 +394,7 @@ class Bubble extends HTMLElement {
         .attr('r', this.stateCircleR);
     });
     this.svg.selectAll('.state')
-      .attr('y', this.center.y - this.stateCircleR - 20)
+      .attr('y', 15)
       .attr('x', d => _this.stateTitleX[d]);
     this.data = this.nodes;
     this.simulation.force('y', d3.forceY().strength(this.forceStrength).y(_this.center.y));
