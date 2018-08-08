@@ -291,10 +291,10 @@ async function init() {
   await createMyLists(app, titleFields);
   await createHyperCube(app, titleFields);
   document.createElement('appbar');
-  createKpi(app, 'num(count(distinct title)/count(total title)*100, "#,##")', 'titles', 'kp1');
-  createKpi(app, 'num(count(distinct release)/count(total release)*100, "#,##")', 'releases', 'kp2');
-  createKpi(app, 'num(count(distinct year)/count(total year)*100, "#,##")', 'years', 'kp3');
-  createKpi(app, 'num(count(distinct artist_name)/count(total artist_name)*100, "#,##")', 'artists', 'kp4');
+  createKpi(app, 'count(distinct title)/count(distinct {1} title)*100', 'titles', 'kp1');
+  createKpi(app, 'count(distinct release)/count(distinct {1} release)*100', 'releases', 'kp2');
+  createKpi(app, 'count(distinct year)/count(distinct {1} year)*100', 'years', 'kp3');
+  createKpi(app, 'count(distinct artist_name)/count(distinct {1} artist_name)*100', 'artists', 'kp4');
   // setTimeout(() => {
   //   resize();
   // }, 1000);
