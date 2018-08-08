@@ -54,7 +54,7 @@ class KPI extends HTMLElement {
   }
 
   _frm(el) {
-    this.inputChangeDelegate(el.innerText);
+    this.inputChangeDelegate(el.innerText, this.id);
   }
 
   get data() {
@@ -147,7 +147,7 @@ class KPI extends HTMLElement {
         font-size: 22px;
         display: inline-block;
         max-width: 100%;
-        height: 22px;
+        /* height: 22px; */
         /* text-overflow: ellipsis; */
         overflow: hidden;
         white-space: nowrap;
