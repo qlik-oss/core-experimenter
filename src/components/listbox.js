@@ -74,7 +74,7 @@ class ListBox extends HTMLElement {
     return html`
       <style>
         ${css}
-        .list-box {background-color:${this.colorBy(this.titleValue) + '22'}}
+        .list-box {background-color:${this.colorBy(this.titleValue) + '22'}; height: calc(100% - 70px)}
       </style>
       <div class="list-box">
         <div class="header" style="background-color:${this.colorBy(this.titleValue)}; opacity:0.8" >

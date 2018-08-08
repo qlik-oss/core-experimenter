@@ -214,9 +214,11 @@ class Bubble extends HTMLElement {
   updateListboxes(d) {
     const listBoxes = document.getElementsByTagName('list-box');
     let currListbox;
+    let curIndex;
     for (let i = 0; i < listBoxes.length; i++) {
       if (listBoxes[i].titleValue === d.field) {
         currListbox = listBoxes[i];
+        curIndex = i;
       } else {
         listBoxes[i].style.opacity = 0.4;
       }
@@ -224,8 +226,9 @@ class Bubble extends HTMLElement {
     if (currListbox) {
       currListbox.style.opacity = 1;
     }
+
     const listboxWidth = document.getElementsByTagName('list-box')[0].offsetWidth;
-    document.getElementsByClassName('listbox_cnt')[0].style.left = `calc(calc(calc(100% - ${listboxWidth}px)/${_this.fields.length}) - calc(${listboxWidth}px*${_this.fields.indexOf(d.field)}))`;
+    document.getElementsByClassName('listbox_cnt')[0].style.left = `calc(calc(calc(100% - ${listboxWidth}px)/${_this.fields.length}) - calc(${listboxWidth}px*${curIndex}))`;
   }
 
 

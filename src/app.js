@@ -41,9 +41,11 @@ function hoverIn(d) {
 
   const lbs = document.getElementsByTagName('list-box');
   let currListbox;
+  let curIndex;
   for (let i = 0; i < lbs.length; i++) {
     if (lbs[i].titleValue === d.field) {
       currListbox = lbs[i];
+      curIndex = i;
     } else {
       lbs[i].style.opacity = 0.4;
     }
@@ -52,7 +54,7 @@ function hoverIn(d) {
     currListbox.style.opacity = 1;
   }
   const listboxWidth = document.getElementsByTagName('list-box')[0].offsetWidth;
-  document.getElementsByClassName('listbox_cnt')[0].style.left = `calc(calc(calc(100% - ${listboxWidth}px)/${titleFields.length}) - calc(${listboxWidth}px*${titleFields.indexOf(d.field)}))`;
+  document.getElementsByClassName('listbox_cnt')[0].style.left = `calc(calc(calc(100% - ${listboxWidth}px)/${titleFields.length}) - calc(${listboxWidth}px*${curIndex}))`;
 }
 
 function hoverOut(d) {
