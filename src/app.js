@@ -13,23 +13,19 @@ const listBoxes = [];
 let table = null;
 const engineHost = 'alteirac.hd.free.fr';
 const enginePort = '9076';
-// const colors = d3.scaleOrdinal();
-const colors = d3.scaleOrdinal(d3.schemeCategory10);
+const colors = d3.scaleOrdinal();
+const dataSources = ['music', 'fruit', 'car'];
 const _this = this;
 
 const rangeColor = ['#64bbe3', '#ffcc00', '#ff7300', '#20cfbd'];
 
 let curApp;
-const titleFields = ['title', 'artist_name', 'year', 'release'];
+
 
 async function select(d) {
   const field = await curApp.getField(d.field);
   field.lowLevelSelect([d.id], true, false);
 }
-
-// async function clearAllSelections() {
-//   await curApp.clearAll();
-// }
 
 async function clearFieldSelections(fieldName) {
   const field = await curApp.getField(fieldName);
@@ -116,17 +112,23 @@ function hoverIn(d) {
     }
   }
 
-  if (d.source !== 'listBox') {
-    currListBox.awaitSetInFocus(0);
-  }
+  currListBox.awaitSetInFocus(0);
 }
 
 function hoverOut(d) {
   const b = document.getElementById('one');
   b.lowlight(d);
   lowLightListBox(d);
-}
 
+  let currListBox = null;
+  const lbs = document.getElementsByTagName('list-box');
+  for (let i = 0; i < lbs.length; i++) {
+    if (lbs[i].titleValue === d.field) {
+      currListBox = lbs[i];
+    }
+  }
+  currListBox.cancelSetInFocus();
+}
 
 async function connectEngine(appName) {
   const session = enigma.create({
@@ -144,7 +146,6 @@ async function connectEngine(appName) {
   curApp = app;
   return app;
 }
-
 
 function createHyperCube(app, fields) {
   let object;
@@ -194,6 +195,9 @@ function createHyperCube(app, fields) {
   function updateAppbar() {
     const appbar = document.getElementsByTagName('app-bar')[0];
     appbar.data = {
+      ds: dataSources,
+      // eslint-disable-next-line no-use-before-define
+      dsChange: newDS,
       clearCallback: curApp.clearAll.bind(curApp),
       backCallback: curApp.back.bind(curApp),
       forwardCallback: curApp.forward.bind(curApp),
@@ -339,34 +343,50 @@ function createKpi(app, exp, label = 'kpi', elId) {
     const object = model;
     const update = () => object.getLayout().then((layout) => {
       const d = document.getElementById(elId);
-      d.data = layout.qHyperCube.qDataPages[0].qMatrix;
+      if (d) { d.data = layout.qHyperCube.qDataPages[0].qMatrix; }
     });
 
     object.on('changed', update);
     const d = document.getElementById(elId);
-    d.model = model;
-    d.title = label;
-    d.formula = exp;
-    d.inputChangeDelegate = patchIt;
+    if (d) {
+      d.model = model;
+      d.title = label;
+      d.formula = exp;
+      d.inputChangeDelegate = patchIt;
+    }
     update();
   });
 }
 
-async function init() {
-  const app = await connectEngine('music.qvf');
-  // const app = await connectEngine('fruit.qvf');
-  // const fields = ['name', 'color', 'type'];
+async function newDS(e) {
+  let titleFields = [];
+  document.getElementsByClassName('listbox_cnt')[0].innerHTML = '';
+  document.getElementById('one').data = [];
+  switch (e) {
+    case 'fruit':
+      titleFields = ['name', 'color', 'type', 'name'];
+      break;
+
+    case 'car':
+      titleFields = ['Make', 'Model', 'Price', 'TopSpeed'];
+      break;
+
+    default:
+      titleFields = ['title', 'artist_name', 'year', 'release'];
+      break;
+  }
+
+  const app = await connectEngine(`${e}.qvf`);
   await createMyLists(app, titleFields);
   await createHyperCube(app, titleFields);
-  document.createElement('appbar');
-  createKpi(app, 'count(distinct title)/count(distinct {1} title)*100', 'titles', 'kp1');
-  createKpi(app, 'count(distinct release)/count(distinct {1} release)*100', 'releases', 'kp2');
-  createKpi(app, 'count(distinct year)/count(distinct {1} year)*100', 'years', 'kp3');
-  createKpi(app, 'count(distinct artist_name)/count(distinct {1} artist_name)*100', 'artists', 'kp4');
+  titleFields.forEach((en, i) => {
+    createKpi(app, `count(distinct ${en})/count(distinct {1} ${en})*100`, en, `kp${i + 1}`);
+  });
+}
+
+async function init() {
+  newDS('music');
   setUpListboxScroll();
-  // setTimeout(() => {
-  //   resize();
-  // }, 1000);
 }
 
 window.onresize = (resize);
