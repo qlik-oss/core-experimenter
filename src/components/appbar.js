@@ -1,10 +1,12 @@
 import { render, html } from '../../node_modules/lit-html/lib/lit-extended';
 import css from './appbar.css';
+import { repeat } from '../../node_modules/lit-html/lib/repeat';
 
 class Appbar extends HTMLElement {
   constructor() {
     super();
     this.root = this.attachShadow({ mode: 'open' });
+    this.ds = ['one', 'two'];
   }
 
   get data() {
@@ -12,11 +14,16 @@ class Appbar extends HTMLElement {
   }
 
   set data(val) {
+    this.ds = val.ds;
     this.dataValue = val.items;
     this.clearCallback = this.clearCallback || val.clearCallback;
     this.backCallback = this.backCallback || val.backCallback;
     this.forwardCallback = this.forwardCallback || val.forwardCallback;
     this.invalidate();
+  }
+
+  _changeDS(e) {
+    // alert(e.value);
   }
 
   _clearCallback() {
@@ -67,6 +74,11 @@ class Appbar extends HTMLElement {
                 <button on-click="${() => { this._backCallback(); }}" >Back</button>
                 <button on-click="${() => { this._forwardCallback(); }}" >Forward</button>
             </div>
+            <div>
+            <select onchange="${(e) => {this._changeDS(e.target);}}">
+            ${repeat(this.ds, d => d.toString(), d => html` <option value="${d}">${d}</option>`)}
+              </select>
+          </div>
         </div>
       `;
     /* eslint-enable */

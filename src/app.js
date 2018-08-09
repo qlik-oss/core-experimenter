@@ -14,12 +14,13 @@ let table = null;
 const engineHost = 'alteirac.hd.free.fr';
 const enginePort = '9076';
 const colors = d3.scaleOrdinal();
+const dataSources = ['music', 'fruit', 'car'];
 const _this = this;
 
 const rangeColor = ['#64bbe3', '#ffcc00', '#ff7300', '#20cfbd'];
 
 let curApp;
-const titleFields = ['title', 'artist_name', 'year', 'release'];
+
 
 async function select(d) {
   const field = await curApp.getField(d.field);
@@ -158,6 +159,7 @@ function createHyperCube(app, fields) {
   function updateAppbar() {
     const appbar = document.getElementsByTagName('app-bar')[0];
     appbar.data = {
+      ds: dataSources,
       clearCallback: curApp.clearAll.bind(curApp),
       backCallback: curApp.back.bind(curApp),
       forwardCallback: curApp.forward.bind(curApp),
@@ -317,20 +319,35 @@ function createKpi(app, exp, label = 'kpi', elId) {
 }
 
 async function init() {
+  const titleFields = ['title', 'artist_name', 'year', 'release'];
   const app = await connectEngine('music.qvf');
   // const app = await connectEngine('fruit.qvf');
   // const fields = ['name', 'color', 'type'];
   await createMyLists(app, titleFields);
   await createHyperCube(app, titleFields);
-  document.createElement('appbar');
+  // document.createElement('appbar');
   createKpi(app, 'count(distinct title)/count(distinct {1} title)*100', 'titles', 'kp1');
   createKpi(app, 'count(distinct release)/count(distinct {1} release)*100', 'releases', 'kp2');
   createKpi(app, 'count(distinct year)/count(distinct {1} year)*100', 'years', 'kp3');
   createKpi(app, 'count(distinct artist_name)/count(distinct {1} artist_name)*100', 'artists', 'kp4');
   setUpListboxScroll();
-  // setTimeout(() => {
-  //   resize();
-  // }, 1000);
+  setTimeout(() => {
+    newDS();
+  },  5000);
+
+}
+
+async function newDS() {
+  document.getElementsByClassName('listbox_cnt')[0].innerHTML = '';
+  document.getElementById('one').data = [];
+  const titleFields = ['name', 'color', 'type'];
+  const app = await connectEngine('fruit.qvf');
+  await createMyLists(app, titleFields);
+  await createHyperCube(app, titleFields);
+  createKpi(app, 'count(distinct name)/count(distinct {1} name)*100', 'names', 'kp1');
+  createKpi(app, 'count(distinct color)/count(distinct {1} color)*100', 'colors', 'kp2');
+  createKpi(app, 'count(distinct type)/count(distinct {1} type)*100', 'types', 'kp3');
+  // setUpListboxScroll();
 }
 
 window.onresize = (resize);
