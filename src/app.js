@@ -379,17 +379,16 @@ async function init() {
   // },  5000);
 }
 
-async function newDS() {
+async function newDS(e) {
   document.getElementsByClassName('listbox_cnt')[0].innerHTML = '';
   document.getElementById('one').data = [];
   const titleFields = ['name', 'color', 'type'];
-  const app = await connectEngine('fruit.qvf');
+  const app = await connectEngine(`${e}.qvf`);
   await createMyLists(app, titleFields);
   await createHyperCube(app, titleFields);
-  createKpi(app, 'count(distinct name)/count(distinct {1} name)*100', 'names', 'kp1');
-  createKpi(app, 'count(distinct color)/count(distinct {1} color)*100', 'colors', 'kp2');
-  createKpi(app, 'count(distinct type)/count(distinct {1} type)*100', 'types', 'kp3');
-  // setUpListboxScroll();
+  createKpi(app, `count(distinct ${titleFields[0]})/count(distinct {1} ${titleFields[0]})*100`, titleFields[0], 'kp1');
+  createKpi(app, `count(distinct ${titleFields[1]})/count(distinct {1} ${titleFields[1]})*100`, titleFields[1], 'kp2');
+  createKpi(app, `count(distinct type)/count(distinct {1} type)*100`, 'types', 'kp3');
 }
 
 window.onresize = (resize);
