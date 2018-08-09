@@ -27,10 +27,6 @@ async function select(d) {
   field.lowLevelSelect([d.id], true, false);
 }
 
-// async function clearAllSelections() {
-//   await curApp.clearAll();
-// }
-
 async function clearFieldSelections(fieldName) {
   const field = await curApp.getField(fieldName);
   return field.clear();
@@ -134,7 +130,6 @@ function hoverOut(d) {
   currListBox.cancelSetInFocus();
 }
 
-
 async function connectEngine(appName) {
   const session = enigma.create({
     schema: schemaEnigma,
@@ -151,7 +146,6 @@ async function connectEngine(appName) {
   curApp = app;
   return app;
 }
-
 
 function createHyperCube(app, fields) {
   let object;
