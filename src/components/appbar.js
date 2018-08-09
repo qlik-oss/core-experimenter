@@ -6,7 +6,7 @@ class Appbar extends HTMLElement {
   constructor() {
     super();
     this.root = this.attachShadow({ mode: 'open' });
-    this.ds = ['one', 'two'];
+    this.ds = [];
   }
 
   get data() {
@@ -70,16 +70,16 @@ class Appbar extends HTMLElement {
         <div class="app-bar">
                 <img class="icon" src="src/assets/cppg.svg" alt="Core Power Playground">
                 <span class="app-title">Core Power Playground</span>
-            <div class="buttons">
+            <div style="display:flex">
+              <div class="buttons">
                 <button on-click="${() => { this._clearCallback(); }}" >Clear all</button>
                 <button on-click="${() => { this._backCallback(); }}" >Back</button>
                 <button on-click="${() => { this._forwardCallback(); }}" >Forward</button>
-            </div>
-            <div>
-            <select onchange="${(e) => {this._changeDS(e.target);}}">
-            ${repeat(this.ds, d => d.toString(), d => html` <option value="${d}">${d}</option>`)}
+              </div>
+              <select onchange="${(e) => {this._changeDS(e.target);}}">
+                ${repeat(this.ds, d => d.toString(), d => html` <option value="${d}">${d.toUpperCase()}</option>`)}
               </select>
-          </div>
+            </div>
         </div>
       `;
     /* eslint-enable */

@@ -366,21 +366,16 @@ async function newDS(e) {
   let titleFields = [];
   document.getElementsByClassName('listbox_cnt')[0].innerHTML = '';
   document.getElementById('one').data = [];
-  switch (e) {
-    case 'fruit':
-      titleFields = ['Name', 'Color', 'Type'];
-      break;
-
-    case 'car':
-      titleFields = ['Make', 'Model', 'Price', 'TopSpeed'];
-      break;
-
-    default:
-      titleFields = ['Song', 'Artist', 'Year', 'Album'];
-      break;
-  }
-
+  const properties = {
+    qInfo: {
+      qType: 'flist',
+    },
+    qFieldListDef: {},
+  };
   const app = await connectEngine(`${e}.qvf`);
+  const obj = await app.createObject(properties);
+  const lay = await obj.getLayout();
+  titleFields = lay.qFieldList.qItems.map(f => f.qName);
   curApp = app;
   await createMyLists(app, titleFields);
   await createHyperCube(app, titleFields);
