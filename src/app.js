@@ -356,7 +356,7 @@ async function newDS(e) {
   document.getElementById('one').data = [];
   switch (e) {
     case 'fruit':
-      titleFields = ['name', 'color', 'type', 'name'];
+      titleFields = ['Name', 'Color', 'Type', 'Name'];
       break;
 
     case 'car':
@@ -364,7 +364,7 @@ async function newDS(e) {
       break;
 
     default:
-      titleFields = ['title', 'artist_name', 'year', 'release'];
+      titleFields = ['Song', 'Artist', 'Year', 'Album'];
       break;
   }
 
