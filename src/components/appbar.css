@@ -16,6 +16,19 @@
     margin-right: 50px;
     height: 100%;
 }
+
+select {
+  margin-right: 10px;
+  padding: 2px 25px 0px 25px;
+  color: rgb(128, 119, 119);
+  font-size: 13px;
+  border: 1px solid rgb(253, 253, 253);
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background: url(src/assets/burg.png) -5px / 35% no-repeat rgb(255, 255, 255);
+}
+
 button {
     background: none;
     color: inherit;
