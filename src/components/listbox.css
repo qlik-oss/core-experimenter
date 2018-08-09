@@ -54,6 +54,11 @@ li.X {
   border-left: 3px solid rgb(127,127,127);
   color: rgba(0,0,0,0.5);
 }
+li > div{
+  word-wrap: break-word;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 li span.state{
   float:right;
   font-weight:900;
