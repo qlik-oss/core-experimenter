@@ -1,5 +1,5 @@
-import { render, html } from '../../node_modules/lit-html/lib/lit-extended';
-import { repeat } from '../../node_modules/lit-html/lib/repeat';
+import {render, html} from '../../node_modules/lit-html/lib/lit-extended';
+import {repeat} from '../../node_modules/lit-html/lib/repeat';
 import css from './listbox.css';
 
 import utils from '../utils/utils';
@@ -11,13 +11,13 @@ class ListBox extends HTMLElement {
     this.dataValue = {};
     this.clickCallback = null;
     this.filterQuery = '';
-    this.onmouseleave = e => this.mouseLeftListbox(e);
-    this.onmouseenter = e => this.mouseEnteredListbox(e);
+    this.onmouseleave = e => this._mouseLeftListbox(e);
+    this.onmouseenter = e => this._mouseEnteredListbox(e);
     this.mouseOverList = null;
     this.mouseOutList = null;
     this.colorBy = null;
     this.myTimeout = null;
-    this.root = this.attachShadow({ mode: 'open' });
+    this.root = this.attachShadow({mode: 'open'});
   }
 
   get data() {
@@ -36,34 +36,38 @@ class ListBox extends HTMLElement {
     this.invalidate();
   }
 
-  mouseEnteredListbox() {
-    const _this = this;
-    this.myTimeout = setTimeout(() => {
-      _this._setInFocus();
-    }, 250);
+  _mouseEnteredListbox() {
+    this.awaitSetInFocus(250);
   }
 
-  _setInFocus() {
-    const lbs = document.getElementsByTagName('list-box');
-    let curIndex;
-    for (let i = 0; i < lbs.length; i++) {
-      if (lbs[i].titleValue === this.titleValue) {
-        curIndex = i;
-        this.style.opacity = 1;
-      } else {
-        lbs[i].style.opacity = 0.4;
-      }
-    }
-
-    const listboxWidth = document.getElementsByTagName('list-box')[0].offsetWidth + 20;
-    const newLeft = listboxWidth * -1 * curIndex;
-    document.getElementsByClassName('listbox_cnt')[0].style.left = `${newLeft}px`;
+  _mouseLeftListbox() {
+    this.cancelSetInFocus();
   }
 
-  mouseLeftListbox() {
+  cancelSetInFocus() {
     if (this.myTimeout) {
       clearTimeout(this.myTimeout);
     }
+  }
+
+  awaitSetInFocus(delay) {
+    this.myTimeout = setTimeout(() => {
+      const lbs = document.getElementsByTagName('list-box');
+      let curIndex;
+      for (let i = 0; i < lbs.length; i++) {
+        if (lbs[i].titleValue === this.titleValue) {
+          curIndex = i;
+          this.style.opacity = 1;
+        } else {
+          lbs[i].style.opacity = 0.4;
+        }
+      }
+
+      const listboxWidth = document.getElementsByTagName('list-box')[0].offsetWidth + 20;
+      const newLeft = listboxWidth * -1 * curIndex;
+      document.getElementsByClassName('listbox_cnt')[0].style.left = `${newLeft}px`;
+
+    }, delay);
   }
 
   _mouseOverList(param) {
@@ -140,9 +144,16 @@ class ListBox extends HTMLElement {
         </div>
         <ul>
           ${repeat(Object.keys(this.data).filter(key => this.data[key][0].qText.indexOf(this.filterQuery) !== -1), key => this.data[key][0].qText, (key) => {
-      return html`<li onmouseover="${(e) => { this._mouseOverList({field: this.titleValue, id: this.data[key][0].qElemNumber});}}"  onmouseout="${(e) => { this._mouseOutList({field: this.titleValue, id: this.data[key][0].qElemNumber});}}" on-click="${() => {
+      return html`<li title="${this.data[key][0].qText}" onmouseover="${(e) => {
+        this._mouseOverList({field: this.titleValue, id: this.data[key][0].qElemNumber});
+      }}"  onmouseout="${(e) => {
+        this._mouseOutList({field: this.titleValue, id: this.data[key][0].qElemNumber});
+      }}" on-click="${() => {
         this._clickCallback(this.data[key]);
-      }}" class$="${this.data[key][0].qState}">${this.data[key][0].qText} <span class="state" title="${utils.states[this.data[key][0].qState]}">${this.data[key][0].qState}</span></li>`;
+      }}" 
+class$="${this.data[key][0].qState}"><span class="state" title="${utils.states[this.data[key][0].qState]}">${this.data[key][0].qState}</span><div 
+class="titleText"c>${this.data[key][0].qText} </div>
+</li>`;
     })}
         </ul>
       </div>

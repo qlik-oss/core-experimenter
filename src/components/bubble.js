@@ -1,6 +1,5 @@
-
 import * as d3 from 'd3';
-import { render, html } from '../../node_modules/lit-html/lib/lit-extended';
+import {render, html} from '../../node_modules/lit-html/lib/lit-extended';
 
 import utils from '../utils/utils';
 
@@ -12,7 +11,8 @@ class Bubble extends HTMLElement {
     _this = this;
     this.simTime = null;
     this.hovTime = null;
-    this.selectDelegate = function () {};
+    this.selectDelegate = function () {
+    };
     this.first = true;
     this.bubbles = null;
     this.svg = null;
@@ -21,7 +21,7 @@ class Bubble extends HTMLElement {
     this.newSize(this.parentElement.offsetWidth, this.parentElement.offsetHeight);
     this.stateMapping = utils.states;
     this.forceStrength = 0.05;
-    this.root = this.attachShadow({ mode: 'open' });
+    this.root = this.attachShadow({mode: 'open'});
     this.nodes = [];
     this.fields = [];
     this.simulation = d3.forceSimulation()
@@ -83,15 +83,15 @@ class Bubble extends HTMLElement {
   newSize(w, h) {
     this.width = w;
     this.height = h;
-    this.center = { x: this.width / 2, y: this.height / 2 };
+    this.center = {x: this.width / 2, y: this.height / 2};
     this.stateWidth = this.width / (this.stateCount) - 2;
     this.firstCenter = this.stateWidth - (this.stateWidth / 2);
     this.stateCenters = {
-      excluded: { x: this.firstCenter, y: this.height / 2 },
-      alternative: { x: this.firstCenter + (this.stateWidth), y: this.height / 2 },
-      optional: { x: this.firstCenter + (this.stateWidth * 2), y: this.height / 2 },
-      selected: { x: this.firstCenter + (this.stateWidth * 3), y: this.height / 2 },
-      selected_excluded: { x: this.firstCenter + (this.stateWidth * 3), y: this.height / 2 },
+      excluded: {x: this.firstCenter, y: this.height / 2},
+      alternative: {x: this.firstCenter + (this.stateWidth), y: this.height / 2},
+      optional: {x: this.firstCenter + (this.stateWidth * 2), y: this.height / 2},
+      selected: {x: this.firstCenter + (this.stateWidth * 3), y: this.height / 2},
+      selected_excluded: {x: this.firstCenter + (this.stateWidth * 3), y: this.height / 2},
     };
     this.stateCircleR = (this.width / (this.stateCount * 2)) - 15;
     this.stateTitleX = {
@@ -152,15 +152,15 @@ class Bubble extends HTMLElement {
   }
 
   showDetail(d) {
-    _this.updateListboxes(d);
     d3.select(this).attr('stroke', 'black');
 
     const content = `<div class="title">${d.value}</div>`
-        + `<span class="name">Field: </span><span class="value">${d.field}</span><br/>`
-        + `<span class="name">State: </span><span class="value">${d.state}</span>`;
+      + `<span class="name">Field: </span><span class="value">${d.field}</span><br/>`
+      + `<span class="name">State: </span><span class="value">${d.state}</span>`;
     // `<button onclick="sel('${d.field}',${d.id})">Select </button>`;
 
     _this.tooltip.showTooltip(content, d3.event);
+    _this.highlightListBox(d);
     // setTimeout(()=>{
     //    tooltip.hideTooltip();
     // },3000)
@@ -170,6 +170,7 @@ class Bubble extends HTMLElement {
     d3.select(this)
       .attr('stroke', d3.rgb(_this.fillColor(d.field)).darker());
     _this.tooltip.hideTooltip();
+    _this.lowLightListBox(d);
   }
 
   async select(d) {
@@ -184,7 +185,9 @@ class Bubble extends HTMLElement {
   }
 
   nodeStatePos(d) {
-    if (d.state === 'selected_excluded') { return _this.stateCenters[d.state].x - _this.stateCircleR; }
+    if (d.state === 'selected_excluded') {
+      return _this.stateCenters[d.state].x - _this.stateCircleR;
+    }
     return _this.stateCenters[d.state].x;
   }
 
@@ -198,38 +201,59 @@ class Bubble extends HTMLElement {
       .attr('x', d => _this.stateTitleX[d])
       .attr('y', this.center.y - this.stateCircleR - 50)
       .attr('text-anchor', 'middle')
-      .text((d) => { if (d !== 'selected_excluded') return d.replace('_', '/'); return ''; });
+      .text((d) => {
+        if (d !== 'selected_excluded') return d.replace('_', '/');
+        return '';
+      });
   }
 
   move() {
     this.showStatusText();
     this.simulation.force('x', d3.forceX().strength(this.forceStrength).x(this.nodeStatePos));
     this.simulation.alphaTarget(0.25).restart();
-    if (this.simTime != null) { clearTimeout(this.simTime); }
+    if (this.simTime != null) {
+      clearTimeout(this.simTime);
+    }
     this.simTime = setTimeout(() => {
       this.simulation.stop();
     }, 6000);
   }
 
-  updateListboxes(d) {
-    const listBoxes = document.getElementsByTagName('list-box');
-    let currListbox;
-    let curIndex;
-    for (let i = 0; i < listBoxes.length; i++) {
-      if (listBoxes[i].titleValue === d.field) {
-        currListbox = listBoxes[i];
-        curIndex = i;
-      } else {
-        listBoxes[i].style.opacity = 0.4;
+  _getListboxObjects(d) {
+    console.log(d);
+    const lbs = document.getElementsByTagName('list-box');
+    let currListBox;
+    for (let i = 0; i < lbs.length; i++) {
+      if (lbs[i].titleValue === d.field) {
+        currListBox = lbs[i];
       }
     }
-    if (currListbox) {
-      currListbox.style.opacity = 1;
+    const lis = currListBox.shadowRoot.childNodes[3].getElementsByTagName('ul')[0].getElementsByTagName('li');
+    let i = 0;
+    let found = false;
+    let res;
+    while (i < lis.length && !found) {
+      if (lis[i].title === d.value) {
+        found = true;
+        res = lis[i];
+      }
+      i += 1;
     }
+    return { listObject: res, listBox: currListBox };
+  }
 
-    const listboxWidth = document.getElementsByTagName('list-box')[0].offsetWidth + 20;
-    const newLeft = listboxWidth * -1 * curIndex;
-    document.getElementsByClassName('listbox_cnt')[0].style.left = `${newLeft}px`;
+  lowLightListBox(d) {
+    const res = _this._getListboxObjects(d).listObject;
+    res.style.background = 'transparent';
+    res.style.color = '#595959';
+  }
+
+  highlightListBox(d) {
+    const res = _this._getListboxObjects(d);
+    res.listBox.awaitSetInFocus(0);
+    res.listObject.parentNode.scrollTop = res.listObject.offsetTop - res.listObject.parentNode.offsetTop;
+    res.listObject.style.background = d3.rgb(this.fillColor(d.field)).darker();
+    res.listObject.style.color = '#fff';
   }
 
 
@@ -267,34 +291,46 @@ class Bubble extends HTMLElement {
       .attr('stroke', d => d3.rgb(this.fillColor(d.field)).darker())
       .attr('stroke-width', 2)
       .on('mouseover', this.showDetail)
+      // .on('mouseover', this.highlightListBox)
       .on('mouseout', this.hideDetail)
+      // .on('mouseout', this.lowLightListBox)
       .on('click', this.select)
       .merge(this.bubbles);
     this.simulation.nodes(this.nodes);
     this.bubbles.transition()
       .duration(1500)
       .attr('stroke-width', (d) => {
-        if (d.state === this.stateMapping.XS) { return 5; }
+        if (d.state === this.stateMapping.XS) {
+          return 5;
+        }
         return 2;
       })
       .attr('r', (d) => {
-        if (d.state === this.stateMapping.XS) { return radiusPoint * 2; }
+        if (d.state === this.stateMapping.XS) {
+          return radiusPoint * 2;
+        }
         return radiusPoint;
       })
       .attr('fill', (d) => {
-        if (d.state === this.stateMapping.XS) { return 'white'; }
+        if (d.state === this.stateMapping.XS) {
+          return 'white';
+        }
         return this.fillColor(d.field);
       })
       .transition()
       .duration(1500)
       .attr('r', (d) => {
-        if (d.state === this.stateMapping.XS) { return radiusPoint * 0.1; }
+        if (d.state === this.stateMapping.XS) {
+          return radiusPoint * 0.1;
+        }
         return radiusPoint;
       })
       .transition()
       .duration(1500)
       .attr('r', (d) => {
-        if (d.state === this.stateMapping.XS) { return radiusPoint * 1; }
+        if (d.state === this.stateMapping.XS) {
+          return radiusPoint * 1;
+        }
         return radiusPoint;
       });
     this.move();
@@ -379,7 +415,7 @@ class Bubble extends HTMLElement {
 
   resize() {
     this.newSize(this.parentElement.offsetWidth, this.parentElement.offsetHeight);
-    const { stateCircleR } = this;
+    const {stateCircleR} = this;
     const stateCArea = stateCircleR * stateCircleR * Math.PI;
     const areaPerPoint = (stateCArea / this.nodes.length) * 0.9;
     const radiusPoint = Math.sqrt(areaPerPoint / Math.PI);
@@ -407,4 +443,5 @@ class Bubble extends HTMLElement {
     `;
   }
 }
+
 customElements.define('bubble-chart', Bubble);
