@@ -15,6 +15,7 @@ class Appbar extends HTMLElement {
 
   set data(val) {
     this.ds = val.ds;
+    this.dsChangeCallBack = val.dsChange;
     this.dataValue = val.items;
     this.clearCallback = this.clearCallback || val.clearCallback;
     this.backCallback = this.backCallback || val.backCallback;
@@ -23,7 +24,7 @@ class Appbar extends HTMLElement {
   }
 
   _changeDS(e) {
-    // alert(e.value);
+    this.dsChangeCallBack(e.value);
   }
 
   _clearCallback() {

@@ -160,6 +160,7 @@ function createHyperCube(app, fields) {
     const appbar = document.getElementsByTagName('app-bar')[0];
     appbar.data = {
       ds: dataSources,
+      dsChange: newDS,
       clearCallback: curApp.clearAll.bind(curApp),
       backCallback: curApp.back.bind(curApp),
       forwardCallback: curApp.forward.bind(curApp),
@@ -331,10 +332,9 @@ async function init() {
   createKpi(app, 'count(distinct year)/count(distinct {1} year)*100', 'years', 'kp3');
   createKpi(app, 'count(distinct artist_name)/count(distinct {1} artist_name)*100', 'artists', 'kp4');
   setUpListboxScroll();
-  setTimeout(() => {
-    newDS();
-  },  5000);
-
+  // setTimeout(() => {
+  //   newDS();
+  // },  5000);
 }
 
 async function newDS() {
