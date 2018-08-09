@@ -227,8 +227,9 @@ class Bubble extends HTMLElement {
       currListbox.style.opacity = 1;
     }
 
-    const listboxWidth = document.getElementsByTagName('list-box')[0].offsetWidth;
-    document.getElementsByClassName('listbox_cnt')[0].style.left = `calc(calc(calc(100% - ${listboxWidth}px)/${_this.fields.length}) - calc(${listboxWidth}px*${curIndex}))`;
+    const listboxWidth = document.getElementsByTagName('list-box')[0].offsetWidth + 20;
+    const newLeft = listboxWidth * -1 * curIndex;
+    document.getElementsByClassName('listbox_cnt')[0].style.left = `${newLeft}px`;
   }
 
 
