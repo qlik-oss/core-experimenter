@@ -116,22 +116,15 @@ function hoverIn(d) {
     }
   }
 
-  currListBox.awaitSetInFocus(0);
+  if (d.source !== 'listBox') {
+    currListBox.awaitSetInFocus(0);
+  }
 }
 
 function hoverOut(d) {
   const b = document.getElementById('one');
   b.lowlight(d);
   lowLightListBox(d);
-
-  let currListBox = null;
-  const lbs = document.getElementsByTagName('list-box');
-  for (let i = 0; i < lbs.length; i++) {
-    if (lbs[i].titleValue === d.field) {
-      currListBox = lbs[i];
-    }
-  }
-  currListBox.cancelSetInFocus();
 }
 
 
