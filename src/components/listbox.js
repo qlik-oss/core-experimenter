@@ -11,8 +11,10 @@ class ListBox extends HTMLElement {
     this.dataValue = {};
     this.clickCallback = null;
     this.filterQuery = '';
-    this.onmouseleave = e => this.mouseLeft(e);
-    this.onmouseenter = e => this.mouseEntered(e);
+    this.onmouseleave = e => this.mouseLeftListbox(e);
+    this.onmouseenter = e => this.mouseEnteredListbox(e);
+    this.mouseOverList = null;
+    this.mouseOutList = null;
     this.colorBy = null;
     this.myTimeout = null;
     this.root = this.attachShadow({ mode: 'open' });
@@ -28,11 +30,13 @@ class ListBox extends HTMLElement {
     this.dataValue = val.items;
     this.clickCallback = this.clickCallback || val.clickCallback;
     this.clearCallback = this.clearCallback || val.clearCallback;
+    this.mouseOverList = this.mouseOverList || val.mouseOver;
+    this.mouseOutList = this.mouseOutList || val.mouseOut;
     this.colorBy = val.colorBy;
     this.invalidate();
   }
 
-  mouseEntered() {
+  mouseEnteredListbox() {
     const _this = this;
     this.myTimeout = setTimeout(() => {
       _this._setInFocus();
@@ -56,10 +60,18 @@ class ListBox extends HTMLElement {
     document.getElementsByClassName('listbox_cnt')[0].style.left = `${newLeft}px`;
   }
 
-  mouseLeft() {
+  mouseLeftListbox() {
     if (this.myTimeout) {
       clearTimeout(this.myTimeout);
     }
+  }
+
+  _mouseOverList(param) {
+    this.mouseOverList(param);
+  }
+
+  _mouseOutList(param) {
+    this.mouseOutList(param);
   }
 
   _searchFilter(inputEl) {
@@ -128,7 +140,7 @@ class ListBox extends HTMLElement {
         </div>
         <ul>
           ${repeat(Object.keys(this.data).filter(key => this.data[key][0].qText.indexOf(this.filterQuery) !== -1), key => this.data[key][0].qText, (key) => {
-      return html`<li on-click="${() => {
+      return html`<li onmouseover="${(e) => { this._mouseOverList({field: this.titleValue, id: this.data[key][0].qElemNumber});}}"  onmouseout="${(e) => { this._mouseOutList({field: this.titleValue, id: this.data[key][0].qElemNumber});}}" on-click="${() => {
         this._clickCallback(this.data[key]);
       }}" class$="${this.data[key][0].qState}">${this.data[key][0].qText} <span class="state" title="${utils.states[this.data[key][0].qState]}">${this.data[key][0].qState}</span></li>`;
     })}

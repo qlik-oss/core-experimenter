@@ -227,6 +227,8 @@ function createMyList(app, field, fields) {
         items: layout.qListObject.qDataPages[0].qMatrix,
         clickCallback: select,
         clearCallback: clearFieldSelections,
+        mouseOver: hoverIn,
+        mouseOut: hoverOut,
         colorBy: colors.domain(fields).range(rangeColor),
       };
     };
