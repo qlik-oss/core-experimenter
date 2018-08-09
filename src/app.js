@@ -370,7 +370,7 @@ async function newDS(e) {
   document.getElementById('one').data = [];
   switch (e) {
     case 'fruit':
-      titleFields = ['name', 'color', 'type'];
+      titleFields = ['name', 'color', 'type', 'name'];
       break;
 
     case 'car':
