@@ -86,10 +86,10 @@ function _getListboxObjects(d) {
 }
 
 function lowLightListBox(d) {
-  const { listObject } = _getListboxObjects(d).listObject;
-  if (listObject) {
-    listObject.style.background = 'transparent';
-    listObject.style.color = '#595959';
+  const res = _getListboxObjects(d);
+  if (res.listObject) {
+    res.listObject.style.background = 'transparent';
+    res.listObject.style.color = '#595959';
   }
 }
 
