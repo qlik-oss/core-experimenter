@@ -220,7 +220,6 @@ class Bubble extends HTMLElement {
   }
 
   _getListboxObjects(d) {
-    console.log(d);
     const lbs = document.getElementsByTagName('list-box');
     let currListBox;
     for (let i = 0; i < lbs.length; i++) {

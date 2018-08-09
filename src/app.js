@@ -116,15 +116,22 @@ function hoverIn(d) {
     }
   }
 
-  if (d.source !== 'listBox') {
-    currListBox.awaitSetInFocus(0);
-  }
+  currListBox.awaitSetInFocus(0);
 }
 
 function hoverOut(d) {
   const b = document.getElementById('one');
   b.lowlight(d);
   lowLightListBox(d);
+
+  let currListBox = null;
+  const lbs = document.getElementsByTagName('list-box');
+  for (let i = 0; i < lbs.length; i++) {
+    if (lbs[i].titleValue === d.field) {
+      currListBox = lbs[i];
+    }
+  }
+  currListBox.cancelSetInFocus();
 }
 
 
@@ -195,6 +202,7 @@ function createHyperCube(app, fields) {
     const appbar = document.getElementsByTagName('app-bar')[0];
     appbar.data = {
       ds: dataSources,
+      // eslint-disable-next-line no-use-before-define
       dsChange: newDS,
       clearCallback: curApp.clearAll.bind(curApp),
       backCallback: curApp.back.bind(curApp),
@@ -341,47 +349,50 @@ function createKpi(app, exp, label = 'kpi', elId) {
     const object = model;
     const update = () => object.getLayout().then((layout) => {
       const d = document.getElementById(elId);
-      d.data = layout.qHyperCube.qDataPages[0].qMatrix;
+      if (d) { d.data = layout.qHyperCube.qDataPages[0].qMatrix; }
     });
 
     object.on('changed', update);
     const d = document.getElementById(elId);
-    d.model = model;
-    d.title = label;
-    d.formula = exp;
-    d.inputChangeDelegate = patchIt;
+    if (d) {
+      d.model = model;
+      d.title = label;
+      d.formula = exp;
+      d.inputChangeDelegate = patchIt;
+    }
     update();
   });
 }
 
-async function init() {
-  const titleFields = ['title', 'artist_name', 'year', 'release'];
-  const app = await connectEngine('music.qvf');
-  // const app = await connectEngine('fruit.qvf');
-  // const fields = ['name', 'color', 'type'];
-  await createMyLists(app, titleFields);
-  await createHyperCube(app, titleFields);
-  // document.createElement('appbar');
-  createKpi(app, 'count(distinct title)/count(distinct {1} title)*100', 'titles', 'kp1');
-  createKpi(app, 'count(distinct release)/count(distinct {1} release)*100', 'releases', 'kp2');
-  createKpi(app, 'count(distinct year)/count(distinct {1} year)*100', 'years', 'kp3');
-  createKpi(app, 'count(distinct artist_name)/count(distinct {1} artist_name)*100', 'artists', 'kp4');
-  setUpListboxScroll();
-  // setTimeout(() => {
-  //   newDS();
-  // },  5000);
-}
-
 async function newDS(e) {
+  let titleFields = [];
   document.getElementsByClassName('listbox_cnt')[0].innerHTML = '';
   document.getElementById('one').data = [];
-  const titleFields = ['name', 'color', 'type'];
+  switch (e) {
+    case 'fruit':
+      titleFields = ['name', 'color', 'type'];
+      break;
+
+    case 'car':
+      titleFields = ['Make', 'Model', 'Price', 'TopSpeed'];
+      break;
+
+    default:
+      titleFields = ['title', 'artist_name', 'year', 'release'];
+      break;
+  }
+
   const app = await connectEngine(`${e}.qvf`);
   await createMyLists(app, titleFields);
   await createHyperCube(app, titleFields);
-  createKpi(app, `count(distinct ${titleFields[0]})/count(distinct {1} ${titleFields[0]})*100`, titleFields[0], 'kp1');
-  createKpi(app, `count(distinct ${titleFields[1]})/count(distinct {1} ${titleFields[1]})*100`, titleFields[1], 'kp2');
-  createKpi(app, `count(distinct type)/count(distinct {1} type)*100`, 'types', 'kp3');
+  titleFields.forEach((en, i) => {
+    createKpi(app, `count(distinct ${en})/count(distinct {1} ${en})*100`, en, `kp${i + 1}`);
+  });
+}
+
+async function init() {
+  newDS('music');
+  setUpListboxScroll();
 }
 
 window.onresize = (resize);
