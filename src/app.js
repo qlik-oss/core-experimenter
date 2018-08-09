@@ -63,35 +63,77 @@ function setUpListboxScroll() {
   }, true);
 }
 
+function _getListboxObjects(d) {
+  const lbs = document.getElementsByTagName('list-box');
+  let currListBox;
+  for (let i = 0; i < lbs.length; i++) {
+    if (lbs[i].titleValue === d.field) {
+      currListBox = lbs[i];
+    }
+  }
+  const lis = currListBox.shadowRoot.childNodes[3].getElementsByTagName('ul')[0].getElementsByTagName('li');
+  let i = 0;
+  let found = false;
+  let res;
+  while (i < lis.length && !found) {
+    if (lis[i].title === d.value) {
+      found = true;
+      res = lis[i];
+    }
+    i += 1;
+  }
+  return { listObject: res, listBox: currListBox };
+}
+
+function lowLightListBox(d) {
+  const res = _getListboxObjects(d);
+  if (res.listObject) {
+    res.listObject.style.background = 'transparent';
+    res.listObject.style.color = '#595959';
+  }
+}
+
+function highlightListBox(d) {
+  const res = _getListboxObjects(d);
+  if (res.listObject) {
+    res.listObject.parentNode.scrollTop = res.listObject.offsetTop
+      - res.listObject.parentNode.offsetTop;
+    res.listObject.style.background = d3.rgb(colors(d.field)).darker();
+    res.listObject.style.color = '#fff';
+  }
+}
+
 function hoverIn(d) {
   const b = document.getElementById('one');
   b.highlight(d);
+  highlightListBox(d);
 
-
+  let currListBox = null;
   const lbs = document.getElementsByTagName('list-box');
-  let currListbox;
-  let curIndex;
   for (let i = 0; i < lbs.length; i++) {
     if (lbs[i].titleValue === d.field) {
-      currListbox = lbs[i];
-      curIndex = i;
-    } else {
-      lbs[i].style.opacity = 0.4;
+      currListBox = lbs[i];
     }
   }
-  if (currListbox) {
-    currListbox.style.opacity = 1;
-  }
 
-  const listboxWidth = document.getElementsByTagName('list-box')[0].offsetWidth + 20;
-  const newLeft = listboxWidth * -1 * curIndex;
-  document.getElementsByClassName('listbox_cnt')[0].style.left = `${newLeft}px`;
+  currListBox.awaitSetInFocus(0);
 }
 
 function hoverOut(d) {
   const b = document.getElementById('one');
   b.lowlight(d);
+  lowLightListBox(d);
+
+  let currListBox = null;
+  const lbs = document.getElementsByTagName('list-box');
+  for (let i = 0; i < lbs.length; i++) {
+    if (lbs[i].titleValue === d.field) {
+      currListBox = lbs[i];
+    }
+  }
+  currListBox.cancelSetInFocus();
 }
+
 
 async function connectEngine(appName) {
   const session = enigma.create({
