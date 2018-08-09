@@ -139,6 +139,18 @@ async function connectEngine(appName) {
   return app;
 }
 
+function clear() {
+  curApp.clearAll();
+}
+
+function back() {
+  curApp.back();
+}
+
+function forward() {
+  curApp.forward();
+}
+
 function createHyperCube(app, fields) {
   let object;
 
@@ -190,9 +202,9 @@ function createHyperCube(app, fields) {
       ds: dataSources,
       // eslint-disable-next-line no-use-before-define
       dsChange: newDS,
-      clearCallback: curApp.clearAll.bind(curApp),
-      backCallback: curApp.back.bind(curApp),
-      forwardCallback: curApp.forward.bind(curApp),
+      clearCallback: clear,
+      backCallback: back,
+      forwardCallback: forward,
     };
   }
 
@@ -356,7 +368,7 @@ async function newDS(e) {
   document.getElementById('one').data = [];
   switch (e) {
     case 'fruit':
-      titleFields = ['Name', 'Color', 'Type', 'Name'];
+      titleFields = ['Name', 'Color', 'Type'];
       break;
 
     case 'car':
@@ -369,6 +381,7 @@ async function newDS(e) {
   }
 
   const app = await connectEngine(`${e}.qvf`);
+  curApp = app;
   await createMyLists(app, titleFields);
   await createHyperCube(app, titleFields);
   titleFields.forEach((en, i) => {
