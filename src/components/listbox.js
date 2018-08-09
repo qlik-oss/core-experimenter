@@ -1,5 +1,5 @@
-import {render, html} from '../../node_modules/lit-html/lib/lit-extended';
-import {repeat} from '../../node_modules/lit-html/lib/repeat';
+import { render, html } from '../../node_modules/lit-html/lib/lit-extended';
+import { repeat } from '../../node_modules/lit-html/lib/repeat';
 import css from './listbox.css';
 
 import utils from '../utils/utils';
@@ -17,7 +17,7 @@ class ListBox extends HTMLElement {
     this.mouseOutList = null;
     this.colorBy = null;
     this.myTimeout = null;
-    this.root = this.attachShadow({mode: 'open'});
+    this.root = this.attachShadow({ mode: 'open' });
   }
 
   get data() {
@@ -66,7 +66,6 @@ class ListBox extends HTMLElement {
       const listboxWidth = document.getElementsByTagName('list-box')[0].offsetWidth + 20;
       const newLeft = listboxWidth * -1 * curIndex;
       document.getElementsByClassName('listbox_cnt')[0].style.left = `${newLeft}px`;
-
     }, delay);
   }
 

@@ -20,7 +20,6 @@ const _this = this;
 const rangeColor = ['#64bbe3', '#ffcc00', '#ff7300', '#20cfbd'];
 
 let curApp;
-let myTimeout;
 const titleFields = ['title', 'artist_name', 'year', 'release'];
 
 async function select(d) {
@@ -83,11 +82,11 @@ function _getListboxObjects(d) {
     }
     i += 1;
   }
-  return {listObject: res, listBox: currListBox};
+  return { listObject: res, listBox: currListBox };
 }
 
 function lowLightListBox(d) {
-  const listObject = _getListboxObjects(d).listObject;
+  const { listObject } = _getListboxObjects(d).listObject;
   if (listObject) {
     listObject.style.background = 'transparent';
     listObject.style.color = '#595959';
@@ -97,7 +96,8 @@ function lowLightListBox(d) {
 function highlightListBox(d) {
   const res = _getListboxObjects(d);
   if (res.listObject) {
-    res.listObject.parentNode.scrollTop = res.listObject.offsetTop - res.listObject.parentNode.offsetTop;
+    res.listObject.parentNode.scrollTop = res.listObject.offsetTop
+      - res.listObject.parentNode.offsetTop;
     res.listObject.style.background = d3.rgb(colors(d.field)).darker();
     res.listObject.style.color = '#fff';
   }
@@ -233,7 +233,7 @@ function createMyList(app, field, fields) {
     qListObjectDef: {
       qDef: {
         qFieldDefs: [field],
-        qSortCriterias: [{qSortByState: 1, qSortByAscii: 1}],
+        qSortCriterias: [{ qSortByState: 1, qSortByAscii: 1 }],
       },
       qShowAlternatives: true,
       qInitialDataFetch: [{

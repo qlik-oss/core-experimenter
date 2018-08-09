@@ -1,5 +1,5 @@
 import * as d3 from 'd3';
-import {render, html} from '../../node_modules/lit-html/lib/lit-extended';
+import { render, html } from '../../node_modules/lit-html/lib/lit-extended';
 
 import utils from '../utils/utils';
 
@@ -21,7 +21,7 @@ class Bubble extends HTMLElement {
     this.newSize(this.parentElement.offsetWidth, this.parentElement.offsetHeight);
     this.stateMapping = utils.states;
     this.forceStrength = 0.05;
-    this.root = this.attachShadow({mode: 'open'});
+    this.root = this.attachShadow({ mode: 'open' });
     this.nodes = [];
     this.fields = [];
     this.simulation = d3.forceSimulation()
@@ -83,15 +83,15 @@ class Bubble extends HTMLElement {
   newSize(w, h) {
     this.width = w;
     this.height = h;
-    this.center = {x: this.width / 2, y: this.height / 2};
+    this.center = { x: this.width / 2, y: this.height / 2 };
     this.stateWidth = this.width / (this.stateCount) - 2;
     this.firstCenter = this.stateWidth - (this.stateWidth / 2);
     this.stateCenters = {
-      excluded: {x: this.firstCenter, y: this.height / 2},
-      alternative: {x: this.firstCenter + (this.stateWidth), y: this.height / 2},
-      optional: {x: this.firstCenter + (this.stateWidth * 2), y: this.height / 2},
-      selected: {x: this.firstCenter + (this.stateWidth * 3), y: this.height / 2},
-      selected_excluded: {x: this.firstCenter + (this.stateWidth * 3), y: this.height / 2},
+      excluded: { x: this.firstCenter, y: this.height / 2 },
+      alternative: { x: this.firstCenter + (this.stateWidth), y: this.height / 2 },
+      optional: { x: this.firstCenter + (this.stateWidth * 2), y: this.height / 2 },
+      selected: { x: this.firstCenter + (this.stateWidth * 3), y: this.height / 2 },
+      selected_excluded: { x: this.firstCenter + (this.stateWidth * 3), y: this.height / 2 },
     };
     this.stateCircleR = (this.width / (this.stateCount * 2)) - 15;
     this.stateTitleX = {
@@ -251,7 +251,8 @@ class Bubble extends HTMLElement {
   highlightListBox(d) {
     const res = _this._getListboxObjects(d);
     res.listBox.awaitSetInFocus(0);
-    res.listObject.parentNode.scrollTop = res.listObject.offsetTop - res.listObject.parentNode.offsetTop;
+    res.listObject.parentNode.scrollTop = res.listObject.offsetTop
+      - res.listObject.parentNode.offsetTop;
     res.listObject.style.background = d3.rgb(this.fillColor(d.field)).darker();
     res.listObject.style.color = '#fff';
   }
@@ -415,7 +416,7 @@ class Bubble extends HTMLElement {
 
   resize() {
     this.newSize(this.parentElement.offsetWidth, this.parentElement.offsetHeight);
-    const {stateCircleR} = this;
+    const { stateCircleR } = this;
     const stateCArea = stateCircleR * stateCircleR * Math.PI;
     const areaPerPoint = (stateCArea / this.nodes.length) * 0.9;
     const radiusPoint = Math.sqrt(areaPerPoint / Math.PI);
