@@ -129,7 +129,7 @@ class ListBox extends HTMLElement {
           <div class="title" style="color:white">
             ${this.titleValue}<div class="icon clear_selections" on-click="${() => {
       this._clearCallback();
-    }}">&#x232B;</div>
+    }}">clear</div>
           </div>
           <div class="filter"  style="background-color:white">
             <div class="icon search">&#x26B2;</div>

@@ -24,12 +24,26 @@ ul{
   padding: 0;
   overflow-y: auto;
 }
+
+ul::-webkit-scrollbar { 
+  width: 5px !important 
+}
+ul::-webkit-scrollbar-track {
+  background: white; 
+}
+ul::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.527); 
+}
+ul::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.527); 
+}
+
 li{
   height: 20px;
   opacity: 0.8;
   color: #595959;
   line-height: 20px;
-  padding: 5px 15px;
+  padding: 5px 10px;
   border-bottom: 1px solid #E6E6E6;
   font-size: 12px;
   cursor: pointer;
@@ -67,11 +81,12 @@ li span.state{
 }
 div.title{
   position: relative;
-  padding: 5px 15px;
+  padding: 5px 0 5px 15px;
   color: #595959;
   font-weight: bold;
   display: inline-block;
-  width: calc(100% - 35px);
+  width: 100%;
+  box-sizing: border-box;
 }
 /* icons */
 .icon{
@@ -80,20 +95,23 @@ div.title{
 }
 .icon.search{
   top: 6px;
-  left: 5px;
+  left: 10px;
   font-size: 20px;
   transform: rotate(45deg);
 }
+.search_input {
+  margin-left:10px;
+}
 .icon.cancel{
-  right:4px;
+  right:10px;
   top:6px;
   font-size: 18px;
   color: #595959;
 }
 .icon.clear_selections{
-  font-size: 16px;
-  top: 4px;
-  right: 5px;
+  font-size: 10px;
+  top: 8px;
+  right: 10px;
 }
 
 .filter{
