@@ -269,11 +269,11 @@ function createMyList(app, field, fields) {
         return listbox;
       }
 
-
-      listBoxes[layout.qInfo.qId] = listBoxes[layout.qInfo.qId] ||
-        _createAndAppendListbox(layout.qListObject.qDimensionInfo.qFallbackTitle);
+      const _fieldName = layout.qListObject.qDimensionInfo.qFallbackTitle;
+      listBoxes[layout.qInfo.qId] = listBoxes[layout.qInfo.qId]
+        || _createAndAppendListbox(_fieldName);
       listBoxes[layout.qInfo.qId].element.data = {
-        fieldName: layout.qListObject.qDimensionInfo.qFallbackTitle,
+        fieldName: _fieldName,
         items: layout.qListObject.qDataPages[0].qMatrix,
         clickCallback: select,
         clearCallback: clearFieldSelections,
