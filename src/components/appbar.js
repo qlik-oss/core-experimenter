@@ -70,7 +70,7 @@ class Appbar extends HTMLElement {
         <div class="app-bar">
                 <img class="icon" src="src/assets/cppg.svg" alt="Core Power Playground">
                 <span class="app-title">Core Power Playground</span>
-            <div style="display:flex">
+            <div>
               <div class="buttons">
                 <button on-click="${() => { this._clearCallback(); }}" >Clear all</button>
                 <button on-click="${() => { this._backCallback(); }}" >Back</button>

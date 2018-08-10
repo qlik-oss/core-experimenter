@@ -1,21 +1,27 @@
 .app-bar {
     height: 60px;
-    display: flex;
+    display: grid;
+    grid-template-areas: 'a b c';
+    grid-template-columns: 1fr 1fr 1fr;
     align-items: center;
     border-bottom: 1px solid rgba(0, 0, 0, 0.562);
-    justify-content: space-between;
-    box-sizing: border-box;
+    padding:0 50px 0 50px;
 }
 .app-title {
     font-size: 20px;
+    grid-area:b;
+    justify-self:center;
 }
 .icon {
+    grid-area:a;
     height: 45px;
-    margin-left: 50px;
+    float:left;
 }
 .buttons {
+    grid-area:c;
     margin-right: 50px;
     height: 100%;
+    float:right;
 }
 
 .divider {
