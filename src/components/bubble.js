@@ -18,7 +18,7 @@ class Bubble extends HTMLElement {
     this.svg = null;
     this.dataValue = {};
     this.stateCount = 4;
-    this.newSize(this.parentElement.offsetWidth, this.parentElement.offsetHeight);
+    this.newSize(this.parentElement.offsetWidth, this.parentElement.offsetHeight + 20);
     this.stateMapping = utils.states;
     this.forceStrength = 0.05;
     this.root = this.attachShadow({ mode: 'open' });
@@ -93,7 +93,7 @@ class Bubble extends HTMLElement {
       selected: { x: this.firstCenter + (this.stateWidth * 3), y: this.height / 2 },
       selected_excluded: { x: this.firstCenter + (this.stateWidth * 3), y: this.height / 2 },
     };
-    this.stateCircleR = (this.width / (this.stateCount * 2)) - 15;
+    this.stateCircleR = (this.width / (this.stateCount * 2)) - 20;
     this.stateTitleX = {
       excluded: this.stateCenters.excluded.x,
       selected_excluded: this.stateCenters.selected_excluded.x,
@@ -199,7 +199,7 @@ class Bubble extends HTMLElement {
     states.enter().append('text')
       .attr('class', 'state')
       .attr('x', d => _this.stateTitleX[d])
-      .attr('y', this.center.y - this.stateCircleR - 50)
+      .attr('y', 30)
       .attr('text-anchor', 'middle')
       .text((d) => {
         if (d !== 'selected_excluded') return d.replace('_', '/');
@@ -414,7 +414,7 @@ class Bubble extends HTMLElement {
   }
 
   resize() {
-    this.newSize(this.parentElement.offsetWidth, this.parentElement.offsetHeight);
+    this.newSize(this.parentElement.offsetWidth, this.parentElement.offsetHeight + 20);
     const { stateCircleR } = this;
     const stateCArea = stateCircleR * stateCircleR * Math.PI;
     const areaPerPoint = (stateCArea / this.nodes.length) * 0.9;
@@ -431,7 +431,7 @@ class Bubble extends HTMLElement {
         .attr('r', this.stateCircleR);
     });
     this.svg.selectAll('.state')
-      .attr('y', 15)
+      .attr('y', 30)
       .attr('x', d => _this.stateTitleX[d]);
     this.data = this.nodes;
     this.simulation.force('y', d3.forceY().strength(this.forceStrength).y(_this.center.y));
