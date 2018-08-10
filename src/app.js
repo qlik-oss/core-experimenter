@@ -115,7 +115,6 @@ function hoverIn(d) {
   if (d.source !== 'listBox') {
     currListBox.awaitSetInFocus(0);
   }
-
 }
 
 function hoverOut(d) {
