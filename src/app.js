@@ -253,7 +253,6 @@ function createMyList(app, field, fields) {
       d.update(layout, field, fields);
       resolve();
     });
-
     const updateListBoxes = (layout) => {
       function _createAndAppendListbox(fieldName) {
         const listbox = {
@@ -271,7 +270,8 @@ function createMyList(app, field, fields) {
       }
 
 
-      listBoxes[layout.qInfo.qId] = listBoxes[layout.qInfo.qId] || _createAndAppendListbox(layout.qListObject.qDimensionInfo.qFallbackTitle);
+      listBoxes[layout.qInfo.qId] = listBoxes[layout.qInfo.qId] ||
+        _createAndAppendListbox(layout.qListObject.qDimensionInfo.qFallbackTitle);
       listBoxes[layout.qInfo.qId].element.data = {
         fieldName: layout.qListObject.qDimensionInfo.qFallbackTitle,
         items: layout.qListObject.qDataPages[0].qMatrix,
@@ -370,6 +370,7 @@ function createKpi(app, exp, label = 'kpi', elId) {
 
 async function newDS(e) {
   let titleFields = [];
+  tableOrder = [];
   document.getElementsByClassName('listbox_cnt')[0].innerHTML = '';
   document.getElementById('one').data = [];
   const properties = {
