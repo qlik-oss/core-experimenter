@@ -130,7 +130,7 @@ class ListBox extends HTMLElement {
           <div class="title" style="color:white">
             ${this.titleValue}<div class="icon clear_selections" on-click="${() => {
       this._clearCallback();
-    }}">&#x232B;</div>
+    }}">clear</div>
           </div>
           <div class="filter"  style="background-color:white">
             <div class="icon search">&#x26B2;</div>
@@ -143,15 +143,15 @@ class ListBox extends HTMLElement {
           </div>
         </div>
         <ul>
-          ${repeat(Object.keys(this.data).filter(key => this.data[key][0].qText.indexOf(this.filterQuery) !== -1), key => this.data[key][0].qText, (key) => {
+          ${repeat(Object.keys(this.data).filter(key => this.data[key][0].qText.toLowerCase().indexOf(this.filterQuery.toLowerCase()) !== -1), key => this.data[key][0].qText, (key) => {
       return html`<li title="${this.data[key][0].qText}" onmouseover="${(e) => {
         this._mouseOverList({field: this.titleValue, id: this.data[key][0].qElemNumber, source: 'listBox'});
       }}"  onmouseout="${(e) => {
         this._mouseOutList({field: this.titleValue, id: this.data[key][0].qElemNumber, source: 'listBox'});
       }}" on-click="${() => {
         this._clickCallback(this.data[key]);
-      }}" 
-class$="${this.data[key][0].qState}"><span class="state" title="${utils.states[this.data[key][0].qState]}">${this.data[key][0].qState}</span><div 
+      }}"
+class$="${this.data[key][0].qState}"><span class="state" title="${utils.states[this.data[key][0].qState]}">${this.data[key][0].qState}</span><div
 class="titleText"c>${this.data[key][0].qText} </div>
 </li>`;
     })}

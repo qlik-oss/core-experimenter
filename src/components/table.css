@@ -5,11 +5,9 @@
   align-items: center;
   justify-content: center;
   height: 100%;
-
 }
 div.cp-table{
-  /* position:relative; */
-  /* width: calc(100% - 65px); */
+  width: calc(100% - 5px);
   height: 100%;
 }
 table {
@@ -19,28 +17,45 @@ table {
 }
 thead{
   display: block;
-  width: calc(100% - 15px);
+  width: calc(100% - 5px);
 }
 tbody {
   overflow: auto;
   display: block;
   width: 100%;
-  height: calc(100% - 35px);
+  height: calc(100% - 65px);
+}
+
+tbody::-webkit-scrollbar { 
+  width: 5px !important 
+}
+tbody::-webkit-scrollbar-track {
+  background: white; 
+}
+tbody::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.527); 
+}
+tbody::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.527); 
 }
 
 th, td {
-  padding: .5em 1em;
+  padding: 8px 20px;
   text-align: left;
   vertical-align: top;
-  border-left: 1px solid #fff;
-  width: 25vw;
+  width: 25%;
+  font-weight: normal;
+  flex: 1 1 auto;
 }
-th {
-  border-bottom: 1px solid #e6e6e6
+tr {
+  position: relative;
+  width: 100%;
+  display: flex;
 }
 td {
   opacity: 0.8;
   cursor: pointer;
+  font-size: 12px;
 }
 td:hover {
   opacity:1;
@@ -50,7 +65,7 @@ td span.state{
   float:right;
   font-size: 10px;
   font-style: italic;
-  margin-top: 6px;
+  margin-top: 1px;
 }
 /* icons */
 .icon{
