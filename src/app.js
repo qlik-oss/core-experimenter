@@ -18,7 +18,7 @@ const dataSources = ['music', 'fruit', 'car'];
 const _this = this;
 
 const rangeColor = ['#64bbe3', '#ffcc00', '#ff7300', '#20cfbd'];
-
+let tableOrder = [];
 let curApp;
 
 
@@ -245,9 +245,9 @@ function createMyList(app, field, fields) {
       }],
     },
   };
+  tableOrder.push(properties.qListObjectDef.qDef.qFieldDefs[0]);
   app.createSessionObject(properties).then((model) => {
     const object = model;
-
     const updateBubbles = layout => new Promise((resolve/* , reject */) => {
       const d = document.getElementById('one');
       d.update(layout, field, fields);
@@ -255,17 +255,23 @@ function createMyList(app, field, fields) {
     });
 
     const updateListBoxes = (layout) => {
-      function _createAndAppendListbox() {
+      function _createAndAppendListbox(fieldName) {
         const listbox = {
           id: layout.qInfo.qId,
           element: document.createElement('list-box'),
         };
-        document.getElementsByClassName('listbox_cnt')[0].appendChild(listbox.element);
+        const container = document.getElementsByClassName('listbox_cnt')[0];
+        const index = tableOrder.indexOf(fieldName);
+        if ((index + 1) > container.childNodes.length) {
+          container.append(listbox.element);
+        } else {
+          container.insertBefore(listbox.element, container.childNodes[index]);
+        }
         return listbox;
       }
 
 
-      listBoxes[layout.qInfo.qId] = listBoxes[layout.qInfo.qId] || _createAndAppendListbox();
+      listBoxes[layout.qInfo.qId] = listBoxes[layout.qInfo.qId] || _createAndAppendListbox(layout.qListObject.qDimensionInfo.qFallbackTitle);
       listBoxes[layout.qInfo.qId].element.data = {
         fieldName: layout.qListObject.qDimensionInfo.qFallbackTitle,
         items: layout.qListObject.qDataPages[0].qMatrix,
