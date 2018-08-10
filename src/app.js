@@ -260,6 +260,7 @@ function createMyList(app, field, fields) {
             }
           }
         }
+        container.style.left = 0;
       }
     };
 

@@ -75,10 +75,12 @@ class Appbar extends HTMLElement {
                 <button on-click="${() => { this._clearCallback(); }}" >Clear all</button>
                 <button on-click="${() => { this._backCallback(); }}" >Back</button>
                 <button on-click="${() => { this._forwardCallback(); }}" >Forward</button>
+                <div class="divider"></div>
+                <span>|</span>
+                <select onchange="${(e) => {this._changeDS(e.target);}}">
+                  ${repeat(this.ds, d => d.toString(), d => html` <option value="${d}">${d}</option>`)}
+                </select>
               </div>
-              <select onchange="${(e) => {this._changeDS(e.target);}}">
-                ${repeat(this.ds, d => d.toString(), d => html` <option value="${d}">${d.toUpperCase()}</option>`)}
-              </select>
             </div>
         </div>
       `;
