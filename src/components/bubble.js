@@ -18,7 +18,7 @@ class Bubble extends HTMLElement {
     this.svg = null;
     this.dataValue = {};
     this.stateCount = 4;
-    this.newSize(this.parentElement.offsetWidth, this.parentElement.offsetHeight);
+    this.newSize(this.parentElement.offsetWidth, this.parentElement.offsetHeight + 20);
     this.stateMapping = utils.states;
     this.forceStrength = 0.05;
     this.root = this.attachShadow({ mode: 'open' });
@@ -87,7 +87,7 @@ class Bubble extends HTMLElement {
       selected: { x: this.firstCenter + (this.stateWidth * 3), y: this.height / 2 },
       selected_excluded: { x: this.firstCenter + (this.stateWidth * 3), y: this.height / 2 },
     };
-    this.stateCircleR = (this.width / (this.stateCount * 2)) - 15;
+    this.stateCircleR = (this.width / (this.stateCount * 2)) - 50;
     this.stateTitleX = {
       excluded: this.stateCenters.excluded.x,
       selected_excluded: this.stateCenters.selected_excluded.x,
@@ -217,8 +217,8 @@ class Bubble extends HTMLElement {
     if (currListbox) {
       currListbox.style.opacity = 1;
     }
-    const listboxWidth = document.getElementsByTagName('list-box')[0].offsetWidth;
-    document.getElementsByClassName('listbox_cnt')[0].style.left = `calc(calc(calc(100% - ${listboxWidth}px)/${_this.fields.length}) - calc(${listboxWidth}px*${_this.fields.indexOf(d.field)}))`;
+    const listboxWidth = document.getElementsByTagName('list-box')[0].offsetWidth + 20;
+    document.getElementsByClassName('listbox_cnt')[0].style.left = `calc(${listboxWidth}px* -${_this.fields.indexOf(d.field)})`;
   }
 
 
@@ -368,7 +368,7 @@ class Bubble extends HTMLElement {
   }
 
   resize() {
-    this.newSize(this.parentElement.offsetWidth, this.parentElement.offsetHeight);
+    this.newSize(this.parentElement.offsetWidth, this.parentElement.offsetHeight + 20);
     const { stateCircleR } = this;
     const stateCArea = stateCircleR * stateCircleR * Math.PI;
     const areaPerPoint = (stateCArea / this.nodes.length) * 0.9;

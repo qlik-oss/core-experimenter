@@ -13,17 +13,17 @@ body{
 .container {
   display: grid;
   width: 100%;
-  height: 100%;
-  grid-template-areas: "appbar appbar appbar appbar"
-  "kpi kpi kpi kpi"
+  height: calc(100% - 70px);
+  grid-template-areas:
+  "table table table table"
   "bubbles bubbles bubbles listbox"
-  "table table table table";
+  "kpi kpi kpi kpi"
+  ;
   grid-template-columns: 1fr 2fr 4fr 4fr;
-  grid-template-rows: 1fr 3fr 5fr 6fr;
+  grid-template-rows: 5fr 5fr 3fr;
 }
 
 .appbar {
-  grid-area: appbar;
   padding-bottom:10px;
 }
 .kpi {
@@ -44,7 +44,8 @@ body{
   grid-area: listbox;
   position: relative;
   overflow: hidden;
-  border-left: 1px dashed black;
+  border-left: 1px solid rgba(0, 0, 0, 0.493);
+  margin: 20px;
 }
 
 
@@ -55,7 +56,8 @@ body{
   top: 0;
 
   /*left: calc(calc(100% - 250px * 2.5) - calc(250px * 2));*/
-  left: calc(calc(calc(100% - 250px) / 4) - calc(250px * 0));
+  /*left: calc(calc(calc(100% - 250px) / 4) - calc(250px * 0));*/
+  left:0;
   transition-duration: 0.3s;
   transition-timing-function: ease-in-out;
 }

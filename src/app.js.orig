@@ -9,7 +9,7 @@ import 'enigma.js';
 import schema from './assets/schema-12.20.0.json';
 
 const schemaEnigma = JSON.parse(schema);
-const listBoxes = [];
+// const listBoxes = [];
 let table = null;
 const engineHost = 'alteirac.hd.free.fr';
 const enginePort = '9076';
@@ -18,42 +18,15 @@ const colors = d3.scaleOrdinal();
 const rangeColor = ['#64bbe3', '#ffcc00', '#ff7300', '#20cfbd'];
 
 let curApp;
-const titleFields = ['title', 'artist_name', 'year', 'release'];
 
 async function select(d) {
   const field = await curApp.getField(d.field);
   field.lowLevelSelect([d.id], true, false);
 }
 
-// async function clearAllSelections() {
-//   await curApp.clearAll();
-// }
-
-async function clearFieldSelections(fieldName) {
-  const field = await curApp.getField(fieldName);
-  return field.clear();
-}
-
 function hoverIn(d) {
   const b = document.getElementById('one');
   b.highlight(d);
-
-
-  const lbs = document.getElementsByTagName('list-box');
-  let currListbox;
-  for (let i = 0; i < lbs.length; i++) {
-    if (lbs[i].titleValue === d.field) {
-      currListbox = lbs[i];
-    } else {
-      lbs[i].style.opacity = 0.4;
-    }
-  }
-  if (currListbox) {
-    currListbox.style.opacity = 1;
-  }
-  
-  const listboxWidth = document.getElementsByTagName('list-box')[0].offsetWidth + 20;
-  document.getElementsByClassName('listbox_cnt')[0].style.left = `calc(${listboxWidth}px* -${_this.fields.indexOf(d.field)})`;
 }
 
 function hoverOut(d) {
@@ -89,7 +62,6 @@ function createHyperCube(app, fields) {
       },
     }));
   }
-
   const properties = {
     qInfo: {
       qType: 'table',
@@ -112,25 +84,29 @@ function createHyperCube(app, fields) {
       document.getElementsByClassName('table')[0].appendChild(tableEl);
       return tableEl;
     }
-
     table = table || _createTable();
     table.data = {
       headers: layout.qHyperCube.qDimensionInfo.map(dim => dim.qFallbackTitle),
       items: layout.qHyperCube.qDataPages[0].qMatrix,
       colorBy: colors.domain(fields).range(rangeColor),
       clickCallback: select,
-      mouseOver: hoverIn,
-      mouseOut: hoverOut,
+<<<<<<< HEAD
+      hoverCallback: hover
     };
   }
 
   function updateAppbar() {
-    const appbar = document.getElementsByTagName('app-bar')[0];
-    appbar.data = {
+     const appbar = document.getElementsByTagName('app-bar')[0];
+     console.log(appbar);
+     appbar.data = {
+=======
+      mouseOver: hoverIn,
+      mouseOut: hoverOut,
+>>>>>>> origin
       clearCallback: curApp.clearAll.bind(curApp),
       backCallback: curApp.back.bind(curApp),
       forwardCallback: curApp.forward.bind(curApp),
-    };
+     }
   }
 
   const update = () => object.getLayout().then((layout) => {
@@ -179,30 +155,29 @@ function createMyList(app, field, fields) {
       resolve();
     });
 
-    const updateListBoxes = (layout) => {
-      function _createAndAppendListbox() {
-        const listbox = {
-          id: layout.qInfo.qId,
-          element: document.createElement('list-box'),
-        };
-        document.getElementsByClassName('listbox_cnt')[0].appendChild(listbox.element);
-        return listbox;
-      }
 
+    // const updateListBoxes = (layout) => {
+    //   function _createAndAppendListbox() {
+    //     const listbox = {
+    //       id: layout.qInfo.qId,
+    //       element: document.createElement('list-box'),
+    //     };
+    //     document.getElementsByClassName('table')[0].appendChild(listbox.element);
+    //     return listbox;
+    //   }
 
-      listBoxes[layout.qInfo.qId] = listBoxes[layout.qInfo.qId] || _createAndAppendListbox();
-      listBoxes[layout.qInfo.qId].element.data = {
-        fieldName: layout.qListObject.qDimensionInfo.qFallbackTitle,
-        items: layout.qListObject.qDataPages[0].qMatrix,
-        clickCallback: select,
-        clearCallback: clearFieldSelections,
-        colorBy: colors.domain(fields).range(rangeColor),
-      };
-    };
+    //   listBoxes[layout.qInfo.qId] = listBoxes[layout.qInfo.qId] || _createAndAppendListbox();
+    //   listBoxes[layout.qInfo.qId].element.data = {
+    //     fieldName: layout.qListObject.qDimensionInfo.qFallbackTitle,
+    //     items: layout.qListObject.qDataPages[0].qMatrix,
+    //     clickCallback: select,
+    //     clearCallback: clearFieldSelections,
+    //   };
+    // };
 
     const update = () => object.getLayout().then((layout) => {
       updateBubbles(layout);
-      updateListBoxes(layout);
+      // updateListBoxes(layout);
     });
     object.on('changed', update);
     const d = document.getElementById('one');
@@ -236,7 +211,7 @@ async function patchIt(val) {
   curApp.mdk.applyPatches(patches, false);
 }
 
-function createKpi(app, exp, label = 'kpi', elId) {
+function createKpi(app, exp, label = 'kpi') {
   const props = {
     qInfo: {
       qType: 'kpi',
@@ -268,12 +243,12 @@ function createKpi(app, exp, label = 'kpi', elId) {
     const object = model;
     curApp.mdk = model;
     const update = () => object.getLayout().then((layout) => {
-      const d = document.getElementById(elId);
+      const d = document.getElementById('kp');
       d.data = layout.qHyperCube.qDataPages[0].qMatrix;
     });
 
     object.on('changed', update);
-    const d = document.getElementById(elId);
+    const d = document.getElementById('kp');
     d.title = label;
     d.formula = exp;
     d.inputChangeDelegate = patchIt;
@@ -283,15 +258,13 @@ function createKpi(app, exp, label = 'kpi', elId) {
 
 async function init() {
   const app = await connectEngine('music.qvf');
+  const fields = ['title', 'artist_name', 'year', 'release'];
   // const app = await connectEngine('fruit.qvf');
   // const fields = ['name', 'color', 'type'];
-  await createMyLists(app, titleFields);
-  await createHyperCube(app, titleFields);
+  await createMyLists(app, fields);
+  await createHyperCube(app, fields);
   document.createElement('appbar');
-  createKpi(app, 'num(count(distinct title)/count(total title)*100, "#,##")', 'titles', 'kp1');
-  createKpi(app, 'num(count(distinct release)/count(total release)*100, "#,##")', 'releases', 'kp2');
-  createKpi(app, 'num(count(distinct year)/count(total year)*100, "#,##")', 'years', 'kp3');
-  createKpi(app, 'num(count(distinct artist_name)/count(total artist_name)*100, "#,##")', 'artists', 'kp4');
+  createKpi(app, 'count(distinct title ) /count( distinct release)', 'title per release');
   setTimeout(() => {
     resize();
   }, 1000);
