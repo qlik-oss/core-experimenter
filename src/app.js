@@ -14,51 +14,113 @@ let table = null;
 const engineHost = 'alteirac.hd.free.fr';
 const enginePort = '9076';
 const colors = d3.scaleOrdinal();
+const dataSources = ['music', 'fruit', 'car'];
+const _this = this;
 
 const rangeColor = ['#64bbe3', '#ffcc00', '#ff7300', '#20cfbd'];
 
 let curApp;
-const titleFields = ['title', 'artist_name', 'year', 'release'];
+
 
 async function select(d) {
   const field = await curApp.getField(d.field);
   field.lowLevelSelect([d.id], true, false);
 }
 
-// async function clearAllSelections() {
-//   await curApp.clearAll();
-// }
-
 async function clearFieldSelections(fieldName) {
   const field = await curApp.getField(fieldName);
   return field.clear();
 }
 
+function setUpListboxScroll() {
+  const scrollArea = document.getElementsByClassName('scrollArea')[0];
+  scrollArea.addEventListener('mouseenter', () => {
+    scrollArea.style.opacity = 1;
+    _this.scrollTimeout = setInterval(() => {
+      const container = document.getElementsByClassName('listbox_cnt')[0];
+      const distance = 270;
+      const leftDist = container.style.left;
+      const newLeft = parseInt(leftDist.substring(0, leftDist.length - 2), 10) + distance;
+      if (newLeft < 0) {
+        document.getElementsByClassName('listbox_cnt')[0].style.left = `${newLeft}px`;
+      } else {
+        document.getElementsByClassName('listbox_cnt')[0].style.left = '20px';
+        setTimeout(() => {
+          document.getElementsByClassName('listbox_cnt')[0].style.left = '00px';
+        }, 100);
+      }
+    }, 500);
+  }, true);
+  scrollArea.addEventListener('mouseleave', () => {
+    scrollArea.style.opacity = 0.5;
+    if (_this.scrollTimeout) {
+      clearInterval(_this.scrollTimeout);
+    }
+  }, true);
+}
+
+function _getListboxObjects(d) {
+  const lbs = document.getElementsByTagName('list-box');
+  let currListBox;
+  for (let i = 0; i < lbs.length; i++) {
+    if (lbs[i].titleValue === d.field) {
+      currListBox = lbs[i];
+    }
+  }
+  const lis = currListBox.shadowRoot.childNodes[3].getElementsByTagName('ul')[0].getElementsByTagName('li');
+  let i = 0;
+  let found = false;
+  let res;
+  while (i < lis.length && !found) {
+    if (lis[i].title === d.value) {
+      found = true;
+      res = lis[i];
+    }
+    i += 1;
+  }
+  return { listObject: res, listBox: currListBox };
+}
+
+function lowLightListBox(d) {
+  const res = _getListboxObjects(d);
+  if (res.listObject) {
+    res.listObject.style.background = 'transparent';
+    res.listObject.style.color = '#595959';
+  }
+}
+
+function highlightListBox(d) {
+  const res = _getListboxObjects(d);
+  if (res.listObject) {
+    res.listObject.parentNode.scrollTop = res.listObject.offsetTop
+      - res.listObject.parentNode.offsetTop;
+    res.listObject.style.background = d3.rgb(colors(d.field)).darker();
+    res.listObject.style.color = '#fff';
+  }
+}
+
 function hoverIn(d) {
   const b = document.getElementById('one');
   b.highlight(d);
+  highlightListBox(d);
 
-
+  let currListBox = null;
   const lbs = document.getElementsByTagName('list-box');
-  let currListbox;
   for (let i = 0; i < lbs.length; i++) {
     if (lbs[i].titleValue === d.field) {
-      currListbox = lbs[i];
-    } else {
-      lbs[i].style.opacity = 0.4;
+      currListBox = lbs[i];
     }
   }
-  if (currListbox) {
-    currListbox.style.opacity = 1;
+  if (d.source !== 'listBox') {
+    currListBox.awaitSetInFocus(0);
   }
-  
-  const listboxWidth = document.getElementsByTagName('list-box')[0].offsetWidth + 20;
-  document.getElementsByClassName('listbox_cnt')[0].style.left = `calc(${listboxWidth}px* -${_this.fields.indexOf(d.field)})`;
+
 }
 
 function hoverOut(d) {
   const b = document.getElementById('one');
   b.lowlight(d);
+  lowLightListBox(d);
 }
 
 async function connectEngine(appName) {
@@ -78,6 +140,17 @@ async function connectEngine(appName) {
   return app;
 }
 
+function clear() {
+  curApp.clearAll();
+}
+
+function back() {
+  curApp.back();
+}
+
+function forward() {
+  curApp.forward();
+}
 
 function createHyperCube(app, fields) {
   let object;
@@ -127,9 +200,12 @@ function createHyperCube(app, fields) {
   function updateAppbar() {
     const appbar = document.getElementsByTagName('app-bar')[0];
     appbar.data = {
-      clearCallback: curApp.clearAll.bind(curApp),
-      backCallback: curApp.back.bind(curApp),
-      forwardCallback: curApp.forward.bind(curApp),
+      ds: dataSources,
+      // eslint-disable-next-line no-use-before-define
+      dsChange: newDS,
+      clearCallback: clear,
+      backCallback: back,
+      forwardCallback: forward,
     };
   }
 
@@ -175,7 +251,7 @@ function createMyList(app, field, fields) {
 
     const updateBubbles = layout => new Promise((resolve/* , reject */) => {
       const d = document.getElementById('one');
-      d.update(layout, field);
+      d.update(layout, field, fields);
       resolve();
     });
 
@@ -196,6 +272,8 @@ function createMyList(app, field, fields) {
         items: layout.qListObject.qDataPages[0].qMatrix,
         clickCallback: select,
         clearCallback: clearFieldSelections,
+        mouseOver: hoverIn,
+        mouseOut: hoverOut,
         colorBy: colors.domain(fields).range(rangeColor),
       };
     };
@@ -218,9 +296,9 @@ async function createMyLists(app, fields) {
   return Promise.all(promiseArr);
 }
 
-async function patchIt(val) {
+async function patchIt(val, id) {
   const ck = await curApp.checkExpression(val);
-  const d = document.getElementById('kp');
+  const d = document.getElementById(id);
   d.error = '';
   ck.qBadFieldNames.map((bf) => {
     d.error = `${d.error}The field name located between the character ${bf.qFrom} and ${bf.qFrom + bf.qCount} is wrong `;
@@ -228,12 +306,14 @@ async function patchIt(val) {
   });
 
   d.error += ck.qErrorMsg;
-  const patches = [{
-    qPath: '/qHyperCubeDef/qMeasures/0/qDef/qDef',
-    qOp: 'replace',
-    qValue: `"=${val}"`,
-  }];
-  curApp.mdk.applyPatches(patches, false);
+  if (d.error === '') {
+    const patches = [{
+      qPath: '/qHyperCubeDef/qMeasures/0/qDef/qDef',
+      qOp: 'replace',
+      qValue: `"=${val}"`,
+    }];
+    d.model.applyPatches(patches, false);
+  }
 }
 
 function createKpi(app, exp, label = 'kpi', elId) {
@@ -266,35 +346,48 @@ function createKpi(app, exp, label = 'kpi', elId) {
   };
   app.createSessionObject(props).then((model) => {
     const object = model;
-    curApp.mdk = model;
     const update = () => object.getLayout().then((layout) => {
       const d = document.getElementById(elId);
-      d.data = layout.qHyperCube.qDataPages[0].qMatrix;
+      if (d) { d.data = layout.qHyperCube.qDataPages[0].qMatrix; }
     });
 
     object.on('changed', update);
     const d = document.getElementById(elId);
-    d.title = label;
-    d.formula = exp;
-    d.inputChangeDelegate = patchIt;
+    if (d) {
+      d.model = model;
+      d.title = label;
+      d.formula = exp;
+      d.inputChangeDelegate = patchIt;
+    }
     update();
   });
 }
 
-async function init() {
-  const app = await connectEngine('music.qvf');
-  // const app = await connectEngine('fruit.qvf');
-  // const fields = ['name', 'color', 'type'];
+async function newDS(e) {
+  let titleFields = [];
+  document.getElementsByClassName('listbox_cnt')[0].innerHTML = '';
+  document.getElementById('one').data = [];
+  const properties = {
+    qInfo: {
+      qType: 'flist',
+    },
+    qFieldListDef: {},
+  };
+  const app = await connectEngine(`${e}.qvf`);
+  const obj = await app.createObject(properties);
+  const lay = await obj.getLayout();
+  titleFields = lay.qFieldList.qItems.map(f => f.qName);
+  curApp = app;
   await createMyLists(app, titleFields);
   await createHyperCube(app, titleFields);
-  document.createElement('appbar');
-  createKpi(app, 'num(count(distinct title)/count(total title)*100, "#,##")', 'titles', 'kp1');
-  createKpi(app, 'num(count(distinct release)/count(total release)*100, "#,##")', 'releases', 'kp2');
-  createKpi(app, 'num(count(distinct year)/count(total year)*100, "#,##")', 'years', 'kp3');
-  createKpi(app, 'num(count(distinct artist_name)/count(total artist_name)*100, "#,##")', 'artists', 'kp4');
-  setTimeout(() => {
-    resize();
-  }, 1000);
+  titleFields.forEach((en, i) => {
+    createKpi(app, `count(distinct ${en})/count(distinct {1} ${en})*100`, en, `kp${i + 1}`);
+  });
+}
+
+async function init() {
+  newDS('music');
+  setUpListboxScroll();
 }
 
 window.onresize = (resize);

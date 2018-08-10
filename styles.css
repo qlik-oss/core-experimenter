@@ -54,12 +54,23 @@ body{
   height: 100%;
   position: absolute;
   top: 0;
+  z-index: 0;
 
   /*left: calc(calc(100% - 250px * 2.5) - calc(250px * 2));*/
-  /*left: calc(calc(calc(100% - 250px) / 4) - calc(250px * 0));*/
+  left: 0;
   left:0;
   transition-duration: 0.3s;
   transition-timing-function: ease-in-out;
+}
+
+.scrollArea {
+  background:linear-gradient(90deg ,#22222222, transparent);
+  width:40px;
+  margin-left:-20px;
+  opacity:0.5;
+  position:absolute;
+  height:100%;
+  z-index: 1;
 }
 
 list-box{

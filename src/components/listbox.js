@@ -11,7 +11,12 @@ class ListBox extends HTMLElement {
     this.dataValue = {};
     this.clickCallback = null;
     this.filterQuery = '';
+    this.onmouseleave = e => this._mouseLeftListbox(e);
+    this.onmouseenter = e => this._mouseEnteredListbox(e);
+    this.mouseOverList = null;
+    this.mouseOutList = null;
     this.colorBy = null;
+    this.myTimeout = null;
     this.root = this.attachShadow({ mode: 'open' });
   }
 
@@ -25,8 +30,51 @@ class ListBox extends HTMLElement {
     this.dataValue = val.items;
     this.clickCallback = this.clickCallback || val.clickCallback;
     this.clearCallback = this.clearCallback || val.clearCallback;
+    this.mouseOverList = this.mouseOverList || val.mouseOver;
+    this.mouseOutList = this.mouseOutList || val.mouseOut;
     this.colorBy = val.colorBy;
     this.invalidate();
+  }
+
+  _mouseEnteredListbox() {
+    this.awaitSetInFocus(250);
+  }
+
+  _mouseLeftListbox() {
+    this.cancelSetInFocus();
+  }
+
+  cancelSetInFocus() {
+    if (this.myTimeout) {
+      clearTimeout(this.myTimeout);
+    }
+  }
+
+  awaitSetInFocus(delay) {
+    this.myTimeout = setTimeout(() => {
+      const lbs = document.getElementsByTagName('list-box');
+      let curIndex;
+      for (let i = 0; i < lbs.length; i++) {
+        if (lbs[i].titleValue === this.titleValue) {
+          curIndex = i;
+          this.style.opacity = 1;
+        } else {
+          lbs[i].style.opacity = 0.4;
+        }
+      }
+
+      const listboxWidth = document.getElementsByTagName('list-box')[0].offsetWidth + 20;
+      const newLeft = listboxWidth * -1 * curIndex;
+      document.getElementsByClassName('listbox_cnt')[0].style.left = `${newLeft}px`;
+    }, delay);
+  }
+
+  _mouseOverList(param) {
+    this.mouseOverList(param);
+  }
+
+  _mouseOutList(param) {
+    this.mouseOutList(param);
   }
 
   _searchFilter(inputEl) {
@@ -74,27 +122,43 @@ class ListBox extends HTMLElement {
     return html`
       <style>
         ${css}
-        .list-box {background-color:${this.colorBy(this.titleValue) + '22'}}
+        .list-box {background-color:${this.colorBy(this.titleValue) + '22'}; height: calc(100% - 70px)}
       </style>
       <div class="list-box">
         <div class="header" style="background-color:${this.colorBy(this.titleValue)}; opacity:0.8" >
           <div class="title" style="color:white">
-            ${this.titleValue}<div class="icon clear_selections" on-click="${() => { this._clearCallback(); }}">&#x232B;</div>
+            ${this.titleValue}<div class="icon clear_selections" on-click="${() => {
+      this._clearCallback();
+    }}">&#x232B;</div>
           </div>
           <div class="filter"  style="background-color:white">
             <div class="icon search">&#x26B2;</div>
-            <input class="search_input" maxlength="255" placeholder="Filter" spellcheck="false" type="text" on-keyup="${(e) => { this._searchFilter(e.target); }}"/>
-            <div class="icon cancel" on-click="${() => { this._cancelFilter(); }}">x</div>
+            <input class="search_input" maxlength="255" placeholder="Filter" spellcheck="false" type="text" on-keyup="${(e) => {
+      this._searchFilter(e.target);
+    }}"/>
+            <div class="icon cancel" on-click="${() => {
+      this._cancelFilter();
+    }}">x</div>
           </div>
         </div>
         <ul>
           ${repeat(Object.keys(this.data).filter(key => this.data[key][0].qText.indexOf(this.filterQuery) !== -1), key => this.data[key][0].qText, (key) => {
-            return html`<li on-click="${() => { this._clickCallback(this.data[key]);}}" class$="${this.data[key][0].qState}">${this.data[key][0].qText} <span class="state" title="${utils.states[this.data[key][0].qState]}">${this.data[key][0].qState}</span></li>`;
-          })}
+      return html`<li title="${this.data[key][0].qText}" onmouseover="${(e) => {
+        this._mouseOverList({field: this.titleValue, id: this.data[key][0].qElemNumber, source: 'listBox'});
+      }}"  onmouseout="${(e) => {
+        this._mouseOutList({field: this.titleValue, id: this.data[key][0].qElemNumber, source: 'listBox'});
+      }}" on-click="${() => {
+        this._clickCallback(this.data[key]);
+      }}" 
+class$="${this.data[key][0].qState}"><span class="state" title="${utils.states[this.data[key][0].qState]}">${this.data[key][0].qState}</span><div 
+class="titleText"c>${this.data[key][0].qText} </div>
+</li>`;
+    })}
         </ul>
       </div>
     `;
     /* eslint-enable */
   }
 }
+
 customElements.define('list-box', ListBox);

@@ -20,8 +20,6 @@
 ul{
   list-style-type: none;
   height: 100%;
-  max-height:630px;
-  /*height:330px;*/
   margin: 70px 0;
   padding: 0;
   overflow-y: auto;
@@ -44,16 +42,28 @@ li{
   text-align:left;
 }
 li:hover{
-  opacity: 1;
+  opacity: 1 !important;
 }
 li.S{
-  background-color: #595959;
-  color: #fff;
+  font-weight:900;
+  border-left: 3px solid rgb(127, 227, 117);
+}
+li.X {
+  border-left: 3px solid rgb(127,127,127);
+  color: rgba(0,0,0,0.5);
+}
+li > div{
+  word-wrap: break-word;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 li span.state{
   float:right;
+  font-weight:900;
+  color: rgb(0,0,0);
+  opacity: 1 !important;
   font-size: 10px;
-  font-style: italic;
+  /*font-style: italic;*/
 }
 div.title{
   position: relative;

@@ -54,11 +54,11 @@ class KPI extends HTMLElement {
   }
 
   _frm(el) {
-    this.inputChangeDelegate(el.innerText);
+    this.inputChangeDelegate(el.innerText, this.id);
   }
 
   get data() {
-    return (this.dt != null && this.dt[0] && this.dt[0][0].qText) ? this.dt[0][0].qText : 0;
+    return (this.dt != null && this.dt[0] && this.dt[0][0].qNum) ? this.dt[0][0].qNum : 0;
   }
 
   set data(val) {
@@ -147,7 +147,7 @@ class KPI extends HTMLElement {
         font-size: 22px;
         display: inline-block;
         max-width: 100%;
-        height: 22px;
+        /* height: 22px; */
         /* text-overflow: ellipsis; */
         overflow: hidden;
         white-space: nowrap;
@@ -160,7 +160,7 @@ class KPI extends HTMLElement {
     <div>
       <h2>${this.title}</h2>
       <div class$="c100 p${parseInt(this.data)} ${this.size} ${this.theme} ${this.color} center">
-          <span>${parseInt(this.data)}%</span>
+          <span>${parseFloat(this.data.toFixed(2))}%</span>
           <div class="slice">
               <div class="bar"></div>
               <div class="fill"></div>

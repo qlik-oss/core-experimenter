@@ -1,4 +1,3 @@
-
 import * as d3 from 'd3';
 import { render, html } from '../../node_modules/lit-html/lib/lit-extended';
 
@@ -12,7 +11,8 @@ class Bubble extends HTMLElement {
     _this = this;
     this.simTime = null;
     this.hovTime = null;
-    this.selectDelegate = function () {};
+    this.selectDelegate = function () {
+    };
     this.first = true;
     this.bubbles = null;
     this.svg = null;
@@ -32,7 +32,7 @@ class Bubble extends HTMLElement {
       .force('collision', d3.forceCollide().radius(d => d.radius))
       .on('tick', this.ticked);
     this.simulation.stop();
-    this.fillColor = d3.scaleOrdinal(d3.schemeCategory10).domain(this.fields);
+    this.fillColor = d3.scaleOrdinal(d3.schemeCategory10);
     this.tooltip = this.floatingTooltip('idf', 240);
     d3.selection.prototype.moveToFront = function () {
       return this.each(function () {
@@ -41,7 +41,7 @@ class Bubble extends HTMLElement {
     };
   }
 
-  update(layout, field) {
+  update(layout, field, fields) {
     const mx = Math.max(this.nodes.length, layout.qListObject.qDataPages[0].qMatrix.length);
     const stateCArea = this.stateCircleR * this.stateCircleR * Math.PI;
     const areaPerPoint = (stateCArea / mx) * 0.9;
@@ -70,7 +70,13 @@ class Bubble extends HTMLElement {
       }
       return found;
     });
-    this.data = this.nodes;
+    this.fields.push(field);
+    if (this.fields.length === fields.length) {
+      setTimeout(() => {
+        this.data = this.nodes;
+        this.resize();
+      }, 100);
+    }
     this.radiusPoint = radiusPoint;
   }
 
@@ -109,7 +115,7 @@ class Bubble extends HTMLElement {
 
   highlight(d) {
     this.svg.selectAll('.bubble')
-      .attr('opacity', 0.3);
+      .attr('opacity', 0.25);
     this.svg.selectAll(`[fld='${d.field}']`)
       .attr('opacity', 1);
     this.svg.select(`[mid='${d.field}.${d.id}']`).moveToFront()
@@ -149,11 +155,12 @@ class Bubble extends HTMLElement {
     d3.select(this).attr('stroke', 'black');
 
     const content = `<div class="title">${d.value}</div>`
-        + `<span class="name">Field: </span><span class="value">${d.field}</span><br/>`
-        + `<span class="name">State: </span><span class="value">${d.state}</span>`;
+      + `<span class="name">Field: </span><span class="value">${d.field}</span><br/>`
+      + `<span class="name">State: </span><span class="value">${d.state}</span>`;
     // `<button onclick="sel('${d.field}',${d.id})">Select </button>`;
 
     _this.tooltip.showTooltip(content, d3.event);
+    _this.highlightListBox(d);
     // setTimeout(()=>{
     //    tooltip.hideTooltip();
     // },3000)
@@ -163,6 +170,7 @@ class Bubble extends HTMLElement {
     d3.select(this)
       .attr('stroke', d3.rgb(_this.fillColor(d.field)).darker());
     _this.tooltip.hideTooltip();
+    _this.lowLightListBox(d);
   }
 
   async select(d) {
@@ -177,7 +185,9 @@ class Bubble extends HTMLElement {
   }
 
   nodeStatePos(d) {
-    if (d.state === 'selected_excluded') { return _this.stateCenters[d.state].x - _this.stateCircleR; }
+    if (d.state === 'selected_excluded') {
+      return _this.stateCenters[d.state].x - _this.stateCircleR;
+    }
     return _this.stateCenters[d.state].x;
   }
 
@@ -189,36 +199,61 @@ class Bubble extends HTMLElement {
     states.enter().append('text')
       .attr('class', 'state')
       .attr('x', d => _this.stateTitleX[d])
-      .attr('y', this.center.y - this.stateCircleR - 20)
+      .attr('y', this.center.y - this.stateCircleR - 50)
       .attr('text-anchor', 'middle')
-      .text((d) => { if (d !== 'selected_excluded') return d.replace('_', '/'); return ''; });
+      .text((d) => {
+        if (d !== 'selected_excluded') return d.replace('_', '/');
+        return '';
+      });
   }
 
   move() {
     this.showStatusText();
     this.simulation.force('x', d3.forceX().strength(this.forceStrength).x(this.nodeStatePos));
     this.simulation.alphaTarget(0.25).restart();
-    if (this.simTime != null) { clearTimeout(this.simTime); }
+    if (this.simTime != null) {
+      clearTimeout(this.simTime);
+    }
     this.simTime = setTimeout(() => {
       this.simulation.stop();
     }, 6000);
   }
 
-  updateListboxes(d) {
-    const listBoxes = document.getElementsByTagName('list-box');
-    let currListbox;
-    for (let i = 0; i < listBoxes.length; i++) {
-      if (listBoxes[i].titleValue === d.field) {
-        currListbox = listBoxes[i];
-      } else {
-        listBoxes[i].style.opacity = 0.4;
+  _getListboxObjects(d) {
+    const lbs = document.getElementsByTagName('list-box');
+    let currListBox;
+    for (let i = 0; i < lbs.length; i++) {
+      if (lbs[i].titleValue === d.field) {
+        currListBox = lbs[i];
       }
     }
-    if (currListbox) {
-      currListbox.style.opacity = 1;
+    const lis = currListBox.shadowRoot.childNodes[3].getElementsByTagName('ul')[0].getElementsByTagName('li');
+    let i = 0;
+    let found = false;
+    let res;
+    while (i < lis.length && !found) {
+      if (lis[i].title === d.value) {
+        found = true;
+        res = lis[i];
+      }
+      i += 1;
     }
-    const listboxWidth = document.getElementsByTagName('list-box')[0].offsetWidth + 20;
-    document.getElementsByClassName('listbox_cnt')[0].style.left = `calc(${listboxWidth}px* -${_this.fields.indexOf(d.field)})`;
+    return { listObject: res, listBox: currListBox };
+  }
+
+  lowLightListBox(d) {
+    const res = _this._getListboxObjects(d).listObject;
+    res.style.background = 'transparent';
+    res.style.color = '#595959';
+  }
+
+  highlightListBox(d) {
+    const res = _this._getListboxObjects(d);
+    res.listBox.awaitSetInFocus(0);
+    res.listObject.parentNode.scrollTop = res.listObject.offsetTop
+      - res.listObject.parentNode.offsetTop;
+    res.listObject.style.background = d3.rgb(this.fillColor(d.field)).darker();
+    res.listObject.style.color = '#fff';
   }
 
 
@@ -256,35 +291,46 @@ class Bubble extends HTMLElement {
       .attr('stroke', d => d3.rgb(this.fillColor(d.field)).darker())
       .attr('stroke-width', 2)
       .on('mouseover', this.showDetail)
-      .on('mouseover', this.updateListboxes)
+      // .on('mouseover', this.highlightListBox)
       .on('mouseout', this.hideDetail)
+      // .on('mouseout', this.lowLightListBox)
       .on('click', this.select)
       .merge(this.bubbles);
     this.simulation.nodes(this.nodes);
     this.bubbles.transition()
       .duration(1500)
       .attr('stroke-width', (d) => {
-        if (d.state === this.stateMapping.XS) { return 5; }
+        if (d.state === this.stateMapping.XS) {
+          return 5;
+        }
         return 2;
       })
       .attr('r', (d) => {
-        if (d.state === this.stateMapping.XS) { return radiusPoint * 2; }
+        if (d.state === this.stateMapping.XS) {
+          return radiusPoint * 2;
+        }
         return radiusPoint;
       })
       .attr('fill', (d) => {
-        if (d.state === this.stateMapping.XS) { return 'white'; }
+        if (d.state === this.stateMapping.XS) {
+          return 'white';
+        }
         return this.fillColor(d.field);
       })
       .transition()
       .duration(1500)
       .attr('r', (d) => {
-        if (d.state === this.stateMapping.XS) { return radiusPoint * 0.1; }
+        if (d.state === this.stateMapping.XS) {
+          return radiusPoint * 0.1;
+        }
         return radiusPoint;
       })
       .transition()
       .duration(1500)
       .attr('r', (d) => {
-        if (d.state === this.stateMapping.XS) { return radiusPoint * 1; }
+        if (d.state === this.stateMapping.XS) {
+          return radiusPoint * 1;
+        }
         return radiusPoint;
       });
     this.move();
@@ -385,7 +431,7 @@ class Bubble extends HTMLElement {
         .attr('r', this.stateCircleR);
     });
     this.svg.selectAll('.state')
-      .attr('y', this.center.y - this.stateCircleR - 20)
+      .attr('y', 15)
       .attr('x', d => _this.stateTitleX[d]);
     this.data = this.nodes;
     this.simulation.force('y', d3.forceY().strength(this.forceStrength).y(_this.center.y));
@@ -397,4 +443,5 @@ class Bubble extends HTMLElement {
     `;
   }
 }
+
 customElements.define('bubble-chart', Bubble);
