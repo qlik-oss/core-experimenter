@@ -19,7 +19,6 @@
 }
 .buttons {
     grid-area:c;
-    margin-right: 50px;
     height: 100%;
     float:right;
 }
