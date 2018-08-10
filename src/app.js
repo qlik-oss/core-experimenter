@@ -19,6 +19,7 @@ const _this = this;
 
 const rangeColor = ['#64bbe3', '#ffcc00', '#ff7300', '#20cfbd'];
 let tableOrder = [];
+let currentListBoxes = [];
 let curApp;
 
 
@@ -247,6 +248,7 @@ function createMyList(app, field, fields) {
     },
   };
   tableOrder.push(properties.qListObjectDef.qDef.qFieldDefs[0]);
+  currentListBoxes = [];
   app.createSessionObject(properties).then((model) => {
     const object = model;
     const updateBubbles = layout => new Promise((resolve/* , reject */) => {
@@ -254,27 +256,20 @@ function createMyList(app, field, fields) {
       d.update(layout, field, fields);
       resolve();
     });
-
     const updateListBoxes = (layout) => {
-      function _createAndAppendListbox(fieldName) {
+      function _createAndAppendListbox(_fieldName) {
         const listbox = {
           id: layout.qInfo.qId,
+          fieldName: _fieldName,
           element: document.createElement('list-box'),
         };
-        const container = document.getElementsByClassName('listbox_cnt')[0];
-        const index = tableOrder.indexOf(fieldName);
-        if ((index + 1) > container.childNodes.length) {
-          container.append(listbox.element);
-        } else {
-          container.insertBefore(listbox.element, container.childNodes[index]);
-        }
         return listbox;
       }
-
-
-      listBoxes[layout.qInfo.qId] = listBoxes[layout.qInfo.qId] || _createAndAppendListbox(layout.qListObject.qDimensionInfo.qFallbackTitle);
+      const _fieldName = layout.qListObject.qDimensionInfo.qFallbackTitle;
+      listBoxes[layout.qInfo.qId] = listBoxes[layout.qInfo.qId]
+        || _createAndAppendListbox(_fieldName);
       listBoxes[layout.qInfo.qId].element.data = {
-        fieldName: layout.qListObject.qDimensionInfo.qFallbackTitle,
+        fieldName: _fieldName,
         items: layout.qListObject.qDataPages[0].qMatrix,
         clickCallback: select,
         clearCallback: clearFieldSelections,
@@ -282,6 +277,18 @@ function createMyList(app, field, fields) {
         mouseOut: hoverOut,
         colorBy: colors.domain(fields).range(rangeColor),
       };
+      currentListBoxes.push(listBoxes[layout.qInfo.qId]);
+
+      if (currentListBoxes.length === tableOrder.length) {
+        const container = document.getElementsByClassName('listbox_cnt')[0];
+        for (let i = 0; i < tableOrder.length; i++) {
+          for (let j = 0; j < currentListBoxes.length; j++) {
+            if (tableOrder[i] === currentListBoxes[j].fieldName) {
+              container.append(currentListBoxes[j].element);
+            }
+          }
+        }
+      }
     };
 
     const update = () => object.getLayout().then((layout) => {
@@ -371,6 +378,7 @@ function createKpi(app, exp, label = 'kpi', elId) {
 
 async function newDS(e) {
   let titleFields = [];
+  tableOrder = [];
   document.getElementsByClassName('listbox_cnt')[0].innerHTML = '';
   document.getElementById('one').data = [];
   const properties = {
