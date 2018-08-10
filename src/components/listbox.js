@@ -142,15 +142,15 @@ class ListBox extends HTMLElement {
           </div>
         </div>
         <ul>
-          ${repeat(Object.keys(this.data).filter(key => this.data[key][0].qText.indexOf(this.filterQuery) !== -1), key => this.data[key][0].qText, (key) => {
+          ${repeat(Object.keys(this.data).filter(key => this.data[key][0].qText.toLowerCase().indexOf(this.filterQuery.toLowerCase()) !== -1), key => this.data[key][0].qText, (key) => {
       return html`<li title="${this.data[key][0].qText}" onmouseover="${(e) => {
         this._mouseOverList({field: this.titleValue, id: this.data[key][0].qElemNumber, source: 'listBox'});
       }}"  onmouseout="${(e) => {
         this._mouseOutList({field: this.titleValue, id: this.data[key][0].qElemNumber, source: 'listBox'});
       }}" on-click="${() => {
         this._clickCallback(this.data[key]);
-      }}" 
-class$="${this.data[key][0].qState}"><span class="state" title="${utils.states[this.data[key][0].qState]}">${this.data[key][0].qState}</span><div 
+      }}"
+class$="${this.data[key][0].qState}"><span class="state" title="${utils.states[this.data[key][0].qState]}">${this.data[key][0].qState}</span><div
 class="titleText"c>${this.data[key][0].qText} </div>
 </li>`;
     })}
