@@ -33,33 +33,6 @@ async function clearFieldSelections(fieldName) {
   return field.clear();
 }
 
-function setUpListboxScroll() {
-  const scrollArea = document.getElementsByClassName('scrollArea')[0];
-  scrollArea.addEventListener('mouseenter', () => {
-    scrollArea.style.opacity = 1;
-    _this.scrollTimeout = setInterval(() => {
-      const container = document.getElementsByClassName('listbox_cnt')[0];
-      const distance = 270;
-      const leftDist = container.style.left;
-      const newLeft = parseInt(leftDist.substring(0, leftDist.length - 2), 10) + distance;
-      if (newLeft < 0) {
-        document.getElementsByClassName('listbox_cnt')[0].style.left = `${newLeft}px`;
-      } else {
-        document.getElementsByClassName('listbox_cnt')[0].style.left = '20px';
-        setTimeout(() => {
-          document.getElementsByClassName('listbox_cnt')[0].style.left = '00px';
-        }, 100);
-      }
-    }, 500);
-  }, true);
-  scrollArea.addEventListener('mouseleave', () => {
-    scrollArea.style.opacity = 0.5;
-    if (_this.scrollTimeout) {
-      clearInterval(_this.scrollTimeout);
-    }
-  }, true);
-}
-
 function _getListboxObjects(d) {
   const lbs = document.getElementsByTagName('list-box');
   let currListBox;
@@ -400,7 +373,6 @@ async function newDS(e) {
 
 async function init() {
   newDS('music');
-  setUpListboxScroll();
 }
 
 window.onresize = (resize);
