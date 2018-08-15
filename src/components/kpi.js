@@ -1,18 +1,25 @@
-
-import { render, html } from '../../node_modules/lit-html/lib/lit-extended';
-import css from '../assets/circle.css';
+import {render, html} from '../../node_modules/lit-html/lib/lit-extended';
+import cssCircle from '../assets/circle.css';
+import cssKPI from './kpi.css';
 
 class KPI extends HTMLElement {
   constructor() {
     super();
-    this.root = this.attachShadow({ mode: 'open' });
+    this.root = this.attachShadow({mode: 'open'});
     this.dt = null;
     this._error = null;
     this.data = 0;
-    this.inputChangeDelegate = () => { };
+    this.inputChangeDelegate = () => {
+    };
+    this.unformatedText = null;
+    this.formatedText = null;
+    this.allFields = [];
+    this.colorBy = null;
+    this.firstRender = false;
   }
 
   connectedCallback() {
+    this.invalidate();
   }
 
   get title() {
@@ -25,7 +32,7 @@ class KPI extends HTMLElement {
   }
 
   static get observedAttributes() {
-    return ['title', 'formula', 'size', 'field'];
+    return ['title', 'formula', 'size', 'field', 'color'];
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
@@ -54,7 +61,7 @@ class KPI extends HTMLElement {
   }
 
   _frm(el) {
-    this.inputChangeDelegate(el.innerText, this.id);
+    this.inputChangeDelegate(this.unformatedText ? this.unformatedText : el.innerHTML, this.id);
   }
 
   get data() {
@@ -68,6 +75,10 @@ class KPI extends HTMLElement {
 
   get formula() {
     return this.getAttribute('formula') ? this.getAttribute('formula') : '';
+  }
+
+  getHighlightedFormula() {
+    return this._highlight();
   }
 
   set formula(newValue) {
@@ -126,7 +137,27 @@ class KPI extends HTMLElement {
       Promise.resolve().then(() => {
         this.needsRender = false;
         render(this.template(), this.root);
+        const expressionElement = this.root.querySelectorAll('div[contenteditable]')[0];
+        this._highlight(expressionElement);
       });
+    }
+  }
+
+  _getFieldColor(field) {
+    return this.colorBy(field);
+  }
+
+  _highlight(e) {
+    this.unformatedText = e.innerHTML;
+    this.allFields.forEach((field) => {
+      e.innerHTML = e.innerHTML.split(field).join(`<span class="field${this.allFields.indexOf(field)}" style="color:${this._getFieldColor(field)}; opacity: 0.8;
+font-weight:900">${field}</span>`);
+    });
+  }
+
+  _lowlight(e) {
+    if (this.unformatedText) {
+      e.innerHTML = this.unformatedText;
     }
   }
 
@@ -144,18 +175,19 @@ class KPI extends HTMLElement {
       div[contenteditable="true"]{
         border: 0;
         border-bottom: 1px solid #e6e6e6;
-        font-size: 22px;
+        font-size: 16px;
         display: inline-block;
-        max-width: 100%;
+        max-width: 180px;
         /* height: 22px; */
         /* text-overflow: ellipsis; */
         overflow: hidden;
-        white-space: nowrap;
+        /*white-space: nowrap;*/
       }
       h2{
         margin: 10px 0px;
       }
-      ${css}
+      ${cssCircle}
+      ${cssKPI}
     </style>
     <div>
       <h2>${this.title}</h2>
@@ -166,10 +198,20 @@ class KPI extends HTMLElement {
               <div class="fill"></div>
           </div>
       </div>
-      <div contenteditable="true" on-input="${(e) => { this._frm(e.target); }}">${this.formula}</div>
-    </div>
+      <div id="hej" class="textArea" contenteditable="true" 
+      on-blur="${(e) => {
+      this._highlight(e.target)
+    }}" 
+      on-focus="${(e) => {
+      this._lowlight(e.target)
+    }}"
+      on-input="${(e) => {
+      this._frm(e.target);
+    }}">${this.formula}</div>
+      </div>
     `;
     /* eslint-enable */
   }
 }
+
 customElements.define('kpi-comp', KPI);

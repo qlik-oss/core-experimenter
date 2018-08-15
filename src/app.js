@@ -52,7 +52,7 @@ function _getListboxObjects(d) {
     }
     i += 1;
   }
-  return { listObject: res, listBox: currListBox };
+  return {listObject: res, listBox: currListBox};
 }
 
 function lowLightListBox(d) {
@@ -77,6 +77,22 @@ function hoverIn(d) {
   const b = document.getElementById('one');
   b.highlight(d);
   highlightListBox(d);
+  const fields = document.getElementsByTagName('kpi-comp');
+  for (let i = 0; i < fields.length; i++) {
+    const children = fields[i].shadowRoot.childNodes;
+    for (let j = 0; j < children.length; j++) {
+      if (children[j].nodeName === 'DIV') {
+        const currentFields = children[j].getElementsByTagName('span');
+        for (let l = 0; l < currentFields.length; l++) {
+          if (currentFields[l].className.indexOf(`field${tableOrder.indexOf(d.field)}`) !== -1) {
+            currentFields[l].classList.add('highlightText');
+          } else {
+            currentFields[l].classList.remove('highlightText');
+          }
+        }
+      }
+    }
+  }
 
   let currListBox = null;
   const lbs = document.getElementsByTagName('list-box');
@@ -208,7 +224,7 @@ function createMyList(app, field, fields) {
     qListObjectDef: {
       qDef: {
         qFieldDefs: [field],
-        qSortCriterias: [{ qSortByState: 1, qSortByAscii: 1 }],
+        qSortCriterias: [{qSortByState: 1, qSortByAscii: 1}],
       },
       qShowAlternatives: true,
       qInitialDataFetch: [{
@@ -237,6 +253,7 @@ function createMyList(app, field, fields) {
         };
         return listbox;
       }
+
       const _fieldName = layout.qListObject.qDimensionInfo.qFallbackTitle;
       listBoxes[layout.qInfo.qId] = listBoxes[layout.qInfo.qId]
         || _createAndAppendListbox(_fieldName);
@@ -302,7 +319,7 @@ async function patchIt(val, id) {
   }
 }
 
-function createKpi(app, exp, label = 'kpi', elId) {
+function createKpi(app, exp, label = 'kpi', elId, fields) {
   const props = {
     qInfo: {
       qType: 'kpi',
@@ -334,9 +351,10 @@ function createKpi(app, exp, label = 'kpi', elId) {
     const object = model;
     const update = () => object.getLayout().then((layout) => {
       const d = document.getElementById(elId);
-      if (d) { d.data = layout.qHyperCube.qDataPages[0].qMatrix; }
+      if (d) {
+        d.data = layout.qHyperCube.qDataPages[0].qMatrix;
+      }
     });
-
     object.on('changed', update);
     const d = document.getElementById(elId);
     if (d) {
@@ -344,6 +362,8 @@ function createKpi(app, exp, label = 'kpi', elId) {
       d.title = label;
       d.formula = exp;
       d.inputChangeDelegate = patchIt;
+      d.allFields = fields.slice(0, 4);
+      d.colorBy = colors.domain(fields).range(rangeColor);
     }
     update();
   });
@@ -368,7 +388,7 @@ async function newDS(e) {
   await createMyLists(app, titleFields);
   await createHyperCube(app, titleFields);
   titleFields.forEach((en, i) => {
-    createKpi(app, `count(distinct ${en})/count(distinct {1} ${en})*100`, en, `kp${i + 1}`);
+    createKpi(app, `count(distinct ${en})/count(distinct {1} ${en})*100`, en, `kp${i + 1}`, titleFields);
   });
 }
 

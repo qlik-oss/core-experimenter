@@ -106,6 +106,6 @@ list-box{
 }
 
 kpi-comp{
-  display:inline-block;
+  display:inline-grid;
   padding: 0 10px;
 }
