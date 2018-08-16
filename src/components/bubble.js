@@ -246,7 +246,7 @@ class Bubble extends HTMLElement {
 
   lowLightListBox(d) {
     const res = _this._getListboxObjects(d).listObject;
-    res.style.background = 'transparent';
+    res.style.background = d3.rgb(this.fillColor(d.field));
     res.style.color = '#595959';
   }
 
