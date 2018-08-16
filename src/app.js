@@ -15,7 +15,6 @@ const engineHost = 'alteirac.hd.free.fr';
 const enginePort = '9076';
 const colors = d3.scaleOrdinal();
 const dataSources = ['music', 'fruit', 'car'];
-const _this = this;
 
 const rangeColor = ['#64bbe3', '#ffcc00', '#ff7300', '#20cfbd'];
 const cssColors = ['myBlue', 'myYellow', 'myOrange', 'myCoralGreen'];
