@@ -19,6 +19,7 @@ class KPI extends HTMLElement {
     this.mouseover = null;
     this.mouseout = null;
     this.renderCounter = 0;
+    this.beingEdited = false;
   }
 
   connectedCallback() {
@@ -141,7 +142,7 @@ class KPI extends HTMLElement {
         this.needsRender = false;
         render(this.template(), this.root);
         const expressionElement = this.root.querySelectorAll('div[contenteditable]')[0];
-        if (this.allFields.length > 0) {
+        if (this.allFields.length > 0 && !this.beingEdited) {
           this._highlight(expressionElement);
         }
       });
@@ -153,8 +154,9 @@ class KPI extends HTMLElement {
   }
 
   _highlight(e) {
-    this.unformatedText = this.formula;
-    let res = this.formula;
+    this.beingEdited = false;
+    // this.unformatedText = this.formula;
+    let res = e.innerHTML;
     this.allFields.forEach((field) => {
       res = res.split(field).join(`<span title="" class="field${this.allFields.indexOf(field)}" style="color:${this._getFieldColor(field)}; opacity: 0.8; 
 font-weight:900">
@@ -174,12 +176,8 @@ ${field}</span>`);
   }
 
   _lowlight(e) {
-    this.hasBeenRendered = true;
-    if (this.unformatedText) {
-      e.innerHTML = this.unformatedText;
-      // this.formula = this.unformatedText;
-    }
-    // this.invalidate();
+    this.beingEdited = true;
+    e.innerHTML = this.unformatedText ? this.unformatedText : this.formula;
   }
 
   template() {
