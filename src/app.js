@@ -18,6 +18,7 @@ const dataSources = ['music', 'fruit', 'car'];
 const _this = this;
 
 const rangeColor = ['#64bbe3', '#ffcc00', '#ff7300', '#20cfbd'];
+const cssColors = ['myBlue', 'myYellow', 'myOrange', 'myCoralGreen']
 let tableOrder = [];
 let currentListBoxes = [];
 let curApp;
@@ -41,23 +42,26 @@ function _getListboxObjects(d) {
       currListBox = lbs[i];
     }
   }
-  const lis = currListBox.shadowRoot.childNodes[3].getElementsByTagName('ul')[0].getElementsByTagName('li');
-  let i = 0;
-  let found = false;
-  let res;
-  while (i < lis.length && !found) {
-    if (lis[i].title === d.value) {
-      found = true;
-      res = lis[i];
+  if (currListBox) {
+    const lis = currListBox.shadowRoot.childNodes[3].getElementsByTagName('ul')[0].getElementsByTagName('li');
+    let i = 0;
+    let found = false;
+    let res;
+    while (i < lis.length && !found) {
+      if (lis[i].title === d.value) {
+        found = true;
+        res = lis[i];
+      }
+      i += 1;
     }
-    i += 1;
+    return {listObject: res, listBox: currListBox};
   }
-  return {listObject: res, listBox: currListBox};
+  return null;
 }
 
 function lowLightListBox(d) {
   const res = _getListboxObjects(d);
-  if (res.listObject) {
+  if (res && res.listObject) {
     res.listObject.style.background = 'transparent';
     res.listObject.style.color = '#595959';
   }
@@ -65,7 +69,7 @@ function lowLightListBox(d) {
 
 function highlightListBox(d) {
   const res = _getListboxObjects(d);
-  if (res.listObject) {
+  if (res && res.listObject) {
     res.listObject.parentNode.scrollTop = res.listObject.offsetTop
       - res.listObject.parentNode.offsetTop;
     res.listObject.style.background = d3.rgb(colors(d.field)).darker();
@@ -73,26 +77,34 @@ function highlightListBox(d) {
   }
 }
 
-function hoverIn(d) {
-  const b = document.getElementById('one');
-  b.highlight(d);
-  highlightListBox(d);
-  const fields = document.getElementsByTagName('kpi-comp');
-  for (let i = 0; i < fields.length; i++) {
-    const children = fields[i].shadowRoot.childNodes;
+function lightChangeKPIs(d, lightOption) {
+  const kpiElements = document.getElementsByTagName('kpi-comp');
+  for (let i = 0; i < kpiElements.length; i++) {
+    const children = kpiElements[i].shadowRoot.childNodes;
     for (let j = 0; j < children.length; j++) {
       if (children[j].nodeName === 'DIV') {
         const currentFields = children[j].getElementsByTagName('span');
-        for (let l = 0; l < currentFields.length; l++) {
-          if (currentFields[l].className.indexOf(`field${tableOrder.indexOf(d.field)}`) !== -1) {
-            currentFields[l].classList.add('highlightText');
-          } else {
-            currentFields[l].classList.remove('highlightText');
+        for (let k = 0; k < currentFields.length; k++) {
+          if (currentFields[k].className.indexOf(`field${tableOrder.indexOf(d.field)}`) !== -1) {
+            if (lightOption === 'highlight') {
+              currentFields[k].classList.add('highlightText');
+              currentFields[k].style.color = d3.rgb(colors(d.field)).darker();
+            } else if (lightOption === 'lowlight') {
+              currentFields[k].classList.remove('highlightText');
+              currentFields[k].style.color = colors.domain(tableOrder).range(rangeColor)(d.field);
+            }
           }
         }
       }
     }
   }
+}
+
+function hoverIn(d) {
+  const b = document.getElementById('one');
+  b.highlight(d);
+  highlightListBox(d);
+  lightChangeKPIs(d, 'highlight');
 
   let currListBox = null;
   const lbs = document.getElementsByTagName('list-box');
@@ -101,7 +113,7 @@ function hoverIn(d) {
       currListBox = lbs[i];
     }
   }
-  if (d.source !== 'listBox') {
+  if (currListBox && d.source !== 'listBox') {
     currListBox.awaitSetInFocus(0);
   }
 }
@@ -110,6 +122,7 @@ function hoverOut(d) {
   const b = document.getElementById('one');
   b.lowlight(d);
   lowLightListBox(d);
+  lightChangeKPIs(d, 'lowlight');
 }
 
 async function connectEngine(appName) {
@@ -241,7 +254,7 @@ function createMyList(app, field, fields) {
     const object = model;
     const updateBubbles = layout => new Promise((resolve/* , reject */) => {
       const d = document.getElementById('one');
-      d.update(layout, field, fields);
+      d.update(layout, field, fields, _this.hoverIn, _this.hoverOut);
       resolve();
     });
     const updateListBoxes = (layout) => {
@@ -347,6 +360,11 @@ function createKpi(app, exp, label = 'kpi', elId, fields) {
       qSuppressMissing: true,
     },
   };
+  const container = document.querySelectorAll('.kpi')[0];
+  const elem = document.createElement('kpi-comp');
+  elem.id = elId;
+  elem.color = cssColors[tableOrder.indexOf(label)]
+  container.append(elem);
   app.createSessionObject(props).then((model) => {
     const object = model;
     const update = () => object.getLayout().then((layout) => {
@@ -364,6 +382,8 @@ function createKpi(app, exp, label = 'kpi', elId, fields) {
       d.inputChangeDelegate = patchIt;
       d.allFields = fields.slice(0, 4);
       d.colorBy = colors.domain(fields).range(rangeColor);
+      d.mouseover = hoverIn;
+      d.mouseout = hoverOut;
     }
     update();
   });
@@ -387,6 +407,10 @@ async function newDS(e) {
   curApp = app;
   await createMyLists(app, titleFields);
   await createHyperCube(app, titleFields);
+
+
+  const container = document.querySelectorAll('.kpi')[0];
+  container.innerHTML = '';
   titleFields.forEach((en, i) => {
     createKpi(app, `count(distinct ${en})/count(distinct {1} ${en})*100`, en, `kp${i + 1}`, titleFields);
   });

@@ -18,6 +18,7 @@ class Bubble extends HTMLElement {
     this.svg = null;
     this.dataValue = {};
     this.stateCount = 4;
+    this.colorBy = null;
     this.newSize(this.parentElement.offsetWidth, this.parentElement.offsetHeight + 20);
     this.stateMapping = utils.states;
     this.forceStrength = 0.05;
@@ -161,6 +162,7 @@ class Bubble extends HTMLElement {
 
     _this.tooltip.showTooltip(content, d3.event);
     _this.highlightListBox(d);
+    _this.lightChangeKPIs(d, 'highlight');
     // setTimeout(()=>{
     //    tooltip.hideTooltip();
     // },3000)
@@ -171,6 +173,7 @@ class Bubble extends HTMLElement {
       .attr('stroke', d3.rgb(_this.fillColor(d.field)).darker());
     _this.tooltip.hideTooltip();
     _this.lowLightListBox(d);
+    _this.lightChangeKPIs(d, 'lowlight');
   }
 
   async select(d) {
@@ -255,6 +258,31 @@ class Bubble extends HTMLElement {
     res.listObject.style.background = d3.rgb(this.fillColor(d.field)).darker();
     res.listObject.style.color = '#fff';
   }
+
+
+  lightChangeKPIs(d, lightOption) {
+    const kpiElements = document.getElementsByTagName('kpi-comp');
+    for (let i = 0; i < kpiElements.length; i++) {
+      const children = kpiElements[i].shadowRoot.childNodes;
+      for (let j = 0; j < children.length; j++) {
+        if (children[j].nodeName === 'DIV') {
+          const currentFields = children[j].getElementsByTagName('span');
+          for (let k = 0; k < currentFields.length; k++) {
+            if(currentFields[k].className.indexOf(`field${this.fields.indexOf(d.field)}`) !== -1) {
+              if (lightOption === 'highlight') {
+                currentFields[k].classList.add('highlightText');
+                currentFields[k].style.color = d3.rgb(this.fillColor(d.field)).darker();
+              } else if (lightOption === 'lowlight') {
+                currentFields[k].classList.remove('highlightText');
+                currentFields[k].style.color =  d3.rgb(this.fillColor(d.field));
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
 
 
   chart(selector, radiusPoint) {

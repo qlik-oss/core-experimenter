@@ -15,7 +15,10 @@ class KPI extends HTMLElement {
     this.formatedText = null;
     this.allFields = [];
     this.colorBy = null;
-    this.firstRender = false;
+    this.hasBeenRendered = false;
+    this.mouseover = null;
+    this.mouseout = null;
+    this.renderCounter = 0;
   }
 
   connectedCallback() {
@@ -138,7 +141,9 @@ class KPI extends HTMLElement {
         this.needsRender = false;
         render(this.template(), this.root);
         const expressionElement = this.root.querySelectorAll('div[contenteditable]')[0];
-        this._highlight(expressionElement);
+        if (this.allFields.length > 0) {
+          this._highlight(expressionElement);
+        }
       });
     }
   }
@@ -147,18 +152,54 @@ class KPI extends HTMLElement {
     return this.colorBy(field);
   }
 
+//   _firstHighlight(e) {
+//     this.unformatedText = this.formula;
+//     this.allFields.forEach((field) => {
+//       e.innerHTML = e.innerHTML.split(field).join(`<span title="" class="field${this.allFields.indexOf(field)}"
+// style="color:${this._getFieldColor(field)}; opacity: 0.8; font-weight:900">${field}</span>`);
+//     });
+//     e.addEventListener('mouseover', (ev) => {
+//       if (ev.target.nodeName === 'SPAN') {
+//         this.mouseover({ field: this.title });
+//       }
+//     });
+//     e.addEventListener('mouseout', (ev) => {
+//       if (ev.target.nodeName === 'SPAN') {
+//         this.mouseout({ field: this.title });
+//       }
+//     });
+//   }
+
+
   _highlight(e) {
-    this.unformatedText = e.innerHTML;
+    this.unformatedText = this.formula;
+    let res = this.formula;
     this.allFields.forEach((field) => {
-      e.innerHTML = e.innerHTML.split(field).join(`<span class="field${this.allFields.indexOf(field)}" style="color:${this._getFieldColor(field)}; opacity: 0.8;
-font-weight:900">${field}</span>`);
+      res = res.split(field).join(`<span title="" class="field${this.allFields.indexOf(field)}" style="color:${this._getFieldColor(field)}; opacity: 0.8; 
+font-weight:900">
+${field}</span>`);
     });
+    e.innerHTML = res;
+    e.addEventListener('mouseover', (ev) => {
+      if (ev.target.nodeName === 'SPAN') {
+        this.mouseover({field: this.title});
+      }
+    });
+    e.addEventListener('mouseout', (ev) => {
+      if (ev.target.nodeName === 'SPAN') {
+        this.mouseout({ field: this.title });
+      }
+    });
+    // this.invalidate();
   }
 
   _lowlight(e) {
+    this.hasBeenRendered = true;
     if (this.unformatedText) {
       e.innerHTML = this.unformatedText;
+      // this.formula = this.unformatedText;
     }
+    // this.invalidate();
   }
 
   template() {
@@ -198,10 +239,10 @@ font-weight:900">${field}</span>`);
               <div class="fill"></div>
           </div>
       </div>
-      <div id="hej" class="textArea" contenteditable="true" 
+      <div id="hej" class="textArea" contenteditable="true"
       on-blur="${(e) => {
       this._highlight(e.target)
-    }}" 
+    }}"
       on-focus="${(e) => {
       this._lowlight(e.target)
     }}"

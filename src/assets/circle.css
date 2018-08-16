@@ -877,3 +877,58 @@
 .c100.orange.dark:hover > span {
   color: #e08833;
 }
+
+.c100.myOrange .bar, .c100.myOrange .fill {
+  border-color: rgba(255, 115, 0, 0.8) !important;
+}
+.c100.myOrange:hover > span {
+  color: rgba(255, 115, 0, 0.8);
+}
+.c100.myOrange.dark .bar, .c100.myOrange.dark .fill {
+  border-color:  rgb(255, 115, 0) !important;
+}
+.c100.myOrange.dark:hover > span {
+  color:  rgb(255, 115, 0);
+}
+
+.c100.myCoralGreen .bar, .c100.myCoralGreen .fill {
+  border-color: rgba(32, 207, 189, 0.8) !important;
+}
+.c100.myCoralGreen:hover > span {
+  color: rgba(32, 207, 189, 0.8);
+}
+.c100.myCoralGreen.dark .bar, .c100.myCoralGreen.dark .fill {
+  border-color:  rgba(32, 207, 189, 1) !important;
+}
+.c100.myCoralGreen.dark:hover > span {
+  color:  rgba(32, 207, 189, 1);
+}
+
+
+.c100.myBlue .bar, .c100.myBlue .fill {
+  border-color: rgba(100, 187, 227, 0.8) !important;
+}
+.c100.myBlue:hover > span {
+  color: rgba(100, 187, 227, 0.8);
+}
+.c100.myBlue.dark .bar, .c100.myBlue.dark .fill {
+  border-color: rgba(100, 187, 227, 1) !important;
+}
+.c100.myBlue.dark:hover > span {
+  color:  rgba(100, 187, 227, 1);
+}
+
+
+.c100.myYellow .bar, .c100.myYellow .fill {
+  border-color: rgba(255, 204, 0, 0.8) !important;
+}
+.c100.myYellow:hover > span {
+  color: rgba(255, 204, 0, 0.8) ;
+}
+.c100.myYellow.dark .bar, .c100.myYellow.dark .fill {
+  border-color: rgba(255, 204, 0, 1) !important;
+}
+.c100.myYellow.dark:hover > span {
+  color:  rgba(255, 204, 0, 1) ;
+}
+

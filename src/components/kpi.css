@@ -1,11 +1,11 @@
 .highlightText {
   opacity: 1 !important;
-  /*animation: highlight 1s normal;*/
-  color:red !important;
+  /*animation: highlight 0.3s normal;*/
+  /*color:red !important;*/
 }
 
 @keyframes highlight {
-  0% {font-size: 14px}
-  50% {font-size: 20px}
-  100% {font-size: 14px}
+  0% {font-size: 16px}
+  50% {font-size: 17px}
+  100% {font-size: 16px}
 }
