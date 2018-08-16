@@ -332,7 +332,7 @@ async function patchIt(val, id) {
   }
 }
 
-function createKpi(app, exp, label = 'kpi', elId, fields) {
+function createKpi(app, exp, label = 'kpi', elId) {
   const props = {
     qInfo: {
       qType: 'kpi',
@@ -369,9 +369,7 @@ function createKpi(app, exp, label = 'kpi', elId, fields) {
     const object = model;
     const update = () => object.getLayout().then((layout) => {
       const d = document.getElementById(elId);
-      if (d) {
-        d.data = layout.qHyperCube.qDataPages[0].qMatrix;
-      }
+      if (d) { d.data = layout.qHyperCube.qDataPages[0].qMatrix; }
     });
     object.on('changed', update);
     const d = document.getElementById(elId);
@@ -380,8 +378,8 @@ function createKpi(app, exp, label = 'kpi', elId, fields) {
       d.title = label;
       d.formula = exp;
       d.inputChangeDelegate = patchIt;
-      d.allFields = fields.slice(0, 4);
-      d.colorBy = colors.domain(fields).range(rangeColor);
+      d.allFields = tableOrder;
+      d.colorBy = colors.domain(tableOrder).range(rangeColor);
       d.mouseover = hoverIn;
       d.mouseout = hoverOut;
     }
@@ -407,12 +405,10 @@ async function newDS(e) {
   curApp = app;
   await createMyLists(app, titleFields);
   await createHyperCube(app, titleFields);
-
-
   const container = document.querySelectorAll('.kpi')[0];
   container.innerHTML = '';
   titleFields.forEach((en, i) => {
-    createKpi(app, `count(distinct ${en})/count(distinct {1} ${en})*100`, en, `kp${i + 1}`, titleFields);
+    createKpi(app, `count(distinct ${en})/count(distinct {1} ${en})*100`, en, `kp${i + 1}`);
   });
 }
 
