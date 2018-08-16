@@ -125,7 +125,7 @@ class ListBox extends HTMLElement {
   connectedCallback() {
     this.invalidate().then(() => {
       const ulElement = this.root.querySelectorAll('ul')[0];
-      ulElement.addEventListener('click', (e) => { console.log('clicked', e)
+      ulElement.addEventListener('click', (e) => {
         e.stopPropagation();
         if (e.target) {
           const elNumber = e.target.hasAttribute('data-elem') ? e.target.getAttribute('data-elem') : e.target.parentElement.getAttribute('data-elem');

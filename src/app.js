@@ -265,8 +265,7 @@ function createMyList(app, field, fields) {
         return listbox;
       }
       const _fieldName = layout.qListObject.qDimensionInfo.qFallbackTitle;
-      listBoxes[layout.qInfo.qId] = listBoxes[layout.qInfo.qId]
-        || _createAndAppendListbox(_fieldName);
+      listBoxes[layout.qInfo.qId] = listBoxes[layout.qInfo.qId] || _createAndAppendListbox(_fieldName);
       listBoxes[layout.qInfo.qId].element.data = {
         fieldName: _fieldName,
         items: layout.qListObject.qDataPages[0].qMatrix,
