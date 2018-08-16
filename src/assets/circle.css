@@ -918,7 +918,6 @@
   color:  rgba(100, 187, 227, 1);
 }
 
-
 .c100.myYellow .bar, .c100.myYellow .fill {
   border-color: rgba(255, 204, 0, 0.8) !important;
 }
@@ -932,3 +931,16 @@
   color:  rgba(255, 204, 0, 1) ;
 }
 
+
+.c100.myPurple .bar, .c100.myPurple .fill {
+  border-color: rgba(151, 146, 227, 0.8) !important;
+}
+.c100.myPurple:hover > span {
+  color: rgba(151, 146, 227, 0.8);
+}
+.c100.myPurple.dark .bar, .c100.myPurple.dark .fill {
+  border-color:rgba(151, 146, 227, 1)  !important;
+}
+.c100.myPurple.dark:hover > span {
+  color: rgba(151, 146, 227, 1)  ;
+}

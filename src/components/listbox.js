@@ -123,6 +123,7 @@ class ListBox extends HTMLElement {
     return html`
       <style>
         ${css}
+        .list-box {height: calc(100% - 70px)}
         li {background-color:${this.colorBy(this.titleValue)};}
       </style>
       <div class="list-box">

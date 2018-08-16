@@ -246,8 +246,9 @@ class Bubble extends HTMLElement {
 
   lowLightListBox(d) {
     const res = _this._getListboxObjects(d).listObject;
-    res.style.background = d3.rgb(this.fillColor(d.field));
-    res.style.color = '#595959';
+    // res.style.background = d3.rgb(this.fillColor(d.field));
+    // res.style.color = '#595959';
+    res.style.opacity = 0.8;
   }
 
   highlightListBox(d) {
@@ -255,8 +256,9 @@ class Bubble extends HTMLElement {
     res.listBox.awaitSetInFocus(0);
     res.listObject.parentNode.scrollTop = res.listObject.offsetTop
       - res.listObject.parentNode.offsetTop;
-    res.listObject.style.background = d3.rgb(this.fillColor(d.field)).darker();
-    res.listObject.style.color = '#fff';
+    // res.listObject.style.background = d3.rgb(this.fillColor(d.field)).darker();
+    // res.listObject.style.color = '#fff';
+    res.listObject.style.opacity = 1;
   }
 
 
