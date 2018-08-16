@@ -25,17 +25,17 @@ ul{
   overflow-y: auto;
 }
 
-ul::-webkit-scrollbar { 
-  width: 5px !important 
+ul::-webkit-scrollbar {
+  width: 5px !important
 }
 ul::-webkit-scrollbar-track {
-  background: white; 
+  background: white;
 }
 ul::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.527); 
+  background: rgba(0, 0, 0, 0.527);
 }
 ul::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 0, 0, 0.527); 
+  background: rgba(0, 0, 0, 0.527);
 }
 
 li{
@@ -44,7 +44,6 @@ li{
   color: #595959;
   line-height: 20px;
   padding: 5px 10px;
-  border-bottom: 1px solid #E6E6E6;
   font-size: 12px;
   cursor: pointer;
   white-space: nowrap;

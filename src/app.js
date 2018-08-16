@@ -21,6 +21,7 @@ const cssColors = ['myBlue', 'myYellow', 'myOrange', 'myCoralGreen'];
 let tableOrder = [];
 let currentListBoxes = [];
 let curApp;
+const _this = this;
 
 
 async function select(d) {
@@ -61,7 +62,7 @@ function _getListboxObjects(d) {
 function lowLightListBox(d) {
   const res = _getListboxObjects(d);
   if (res && res.listObject) {
-    res.listObject.style.background = 'transparent';
+    res.listObject.style.background = d3.rgb(colors(d.field));
     res.listObject.style.color = '#595959';
   }
 }
