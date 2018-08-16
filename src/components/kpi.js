@@ -1,11 +1,11 @@
-import {render, html} from '../../node_modules/lit-html/lib/lit-extended';
+import { render, html } from '../../node_modules/lit-html/lib/lit-extended';
 import cssCircle from '../assets/circle.css';
 import cssKPI from './kpi.css';
 
 class KPI extends HTMLElement {
   constructor() {
     super();
-    this.root = this.attachShadow({mode: 'open'});
+    this.root = this.attachShadow({ mode: 'open' });
     this.dt = null;
     this._error = null;
     this.data = 0;
@@ -152,25 +152,6 @@ class KPI extends HTMLElement {
     return this.colorBy(field);
   }
 
-//   _firstHighlight(e) {
-//     this.unformatedText = this.formula;
-//     this.allFields.forEach((field) => {
-//       e.innerHTML = e.innerHTML.split(field).join(`<span title="" class="field${this.allFields.indexOf(field)}"
-// style="color:${this._getFieldColor(field)}; opacity: 0.8; font-weight:900">${field}</span>`);
-//     });
-//     e.addEventListener('mouseover', (ev) => {
-//       if (ev.target.nodeName === 'SPAN') {
-//         this.mouseover({ field: this.title });
-//       }
-//     });
-//     e.addEventListener('mouseout', (ev) => {
-//       if (ev.target.nodeName === 'SPAN') {
-//         this.mouseout({ field: this.title });
-//       }
-//     });
-//   }
-
-
   _highlight(e) {
     this.unformatedText = this.formula;
     let res = this.formula;
@@ -182,7 +163,7 @@ ${field}</span>`);
     e.innerHTML = res;
     e.addEventListener('mouseover', (ev) => {
       if (ev.target.nodeName === 'SPAN') {
-        this.mouseover({field: this.title});
+        this.mouseover({ field: this.title });
       }
     });
     e.addEventListener('mouseout', (ev) => {
@@ -190,7 +171,6 @@ ${field}</span>`);
         this.mouseout({ field: this.title });
       }
     });
-    // this.invalidate();
   }
 
   _lowlight(e) {

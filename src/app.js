@@ -18,7 +18,7 @@ const dataSources = ['music', 'fruit', 'car'];
 const _this = this;
 
 const rangeColor = ['#64bbe3', '#ffcc00', '#ff7300', '#20cfbd'];
-const cssColors = ['myBlue', 'myYellow', 'myOrange', 'myCoralGreen']
+const cssColors = ['myBlue', 'myYellow', 'myOrange', 'myCoralGreen'];
 let tableOrder = [];
 let currentListBoxes = [];
 let curApp;
@@ -54,7 +54,7 @@ function _getListboxObjects(d) {
       }
       i += 1;
     }
-    return {listObject: res, listBox: currListBox};
+    return { listObject: res, listBox: currListBox };
   }
   return null;
 }
@@ -237,7 +237,7 @@ function createMyList(app, field, fields) {
     qListObjectDef: {
       qDef: {
         qFieldDefs: [field],
-        qSortCriterias: [{qSortByState: 1, qSortByAscii: 1}],
+        qSortCriterias: [{ qSortByState: 1, qSortByAscii: 1 }],
       },
       qShowAlternatives: true,
       qInitialDataFetch: [{
@@ -363,7 +363,7 @@ function createKpi(app, exp, label = 'kpi', elId, fields) {
   const container = document.querySelectorAll('.kpi')[0];
   const elem = document.createElement('kpi-comp');
   elem.id = elId;
-  elem.color = cssColors[tableOrder.indexOf(label)]
+  elem.color = cssColors[tableOrder.indexOf(label)];
   container.append(elem);
   app.createSessionObject(props).then((model) => {
     const object = model;

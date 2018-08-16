@@ -268,13 +268,13 @@ class Bubble extends HTMLElement {
         if (children[j].nodeName === 'DIV') {
           const currentFields = children[j].getElementsByTagName('span');
           for (let k = 0; k < currentFields.length; k++) {
-            if(currentFields[k].className.indexOf(`field${this.fields.indexOf(d.field)}`) !== -1) {
+            if (currentFields[k].className.indexOf(`field${this.fields.indexOf(d.field)}`) !== -1) {
               if (lightOption === 'highlight') {
                 currentFields[k].classList.add('highlightText');
                 currentFields[k].style.color = d3.rgb(this.fillColor(d.field)).darker();
               } else if (lightOption === 'lowlight') {
                 currentFields[k].classList.remove('highlightText');
-                currentFields[k].style.color =  d3.rgb(this.fillColor(d.field));
+                currentFields[k].style.color = d3.rgb(this.fillColor(d.field));
               }
             }
           }
@@ -282,8 +282,6 @@ class Bubble extends HTMLElement {
       }
     }
   }
-
-
 
   chart(selector, radiusPoint) {
     if (this.bubbles == null) {
