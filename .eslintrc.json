@@ -15,6 +15,7 @@
     "no-plusplus": [2, {
       "allowForLoopAfterthoughts": true
     }],
-    "arrow-body-style": 1
+    "arrow-body-style": 1,
+    "max-len": ["error", {"code": 200}]
   }
 }

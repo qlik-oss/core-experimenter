@@ -9,12 +9,12 @@ class ListBox extends HTMLElement {
     super();
     this.titleValue = '';
     this.dataValue = {};
-    this.clickCallback = null;
     this.filterQuery = '';
-    this.onmouseleave = e => this._mouseLeftListbox(e);
-    this.onmouseenter = e => this._mouseEnteredListbox(e);
-    this.mouseOverList = null;
-    this.mouseOutList = null;
+    this.events = {
+      clickCallback: null,
+      mouseOverCallback: null,
+      mouseOutCallback: null,
+    };
     this.colorBy = null;
     this.myTimeout = null;
     this.root = this.attachShadow({ mode: 'open' });
@@ -28,10 +28,11 @@ class ListBox extends HTMLElement {
     // ToDo: implement validation
     this.titleValue = val.fieldName;
     this.dataValue = val.items;
-    this.clickCallback = this.clickCallback || val.clickCallback;
-    this.clearCallback = this.clearCallback || val.clearCallback;
-    this.mouseOverList = this.mouseOverList || val.mouseOver;
-    this.mouseOutList = this.mouseOutList || val.mouseOut;
+    this.events = {
+      clickCallback: this.events.clickCallback || val.clickCallback,
+      mouseOverCallback: this.events.mouseOverCallback || val.mouseOver,
+      mouseOutCallback: this.events.mouseOutCallback || val.mouseOut,
+    };
     this.colorBy = val.colorBy;
     this.invalidate();
   }
@@ -69,12 +70,22 @@ class ListBox extends HTMLElement {
     }, delay);
   }
 
-  _mouseOverList(param) {
-    this.mouseOverList(param);
+  _mouseOverList(elNumber) {
+    const param = {
+      field: this.titleValue,
+      id: parseInt(elNumber, 10),
+      source: 'listBox',
+    };
+    this.events.mouseOverCallback(param);
   }
 
-  _mouseOutList(param) {
-    this.mouseOutList(param);
+  _mouseOutList(elNumber) {
+    const param = {
+      field: this.titleValue,
+      id: parseInt(elNumber, 10),
+      source: 'listBox',
+    };
+    this.events.mouseOutCallback(param);
   }
 
   _searchFilter(inputEl) {
@@ -88,14 +99,10 @@ class ListBox extends HTMLElement {
     this.invalidate();
   }
 
-  _reset() {
-    console.log('probably clear selections');
-  }
-
-  _clickCallback(item) {
-    this.clickCallback({
+  _clickCallback(qElemNumber) {
+    this.events.clickCallback({
       field: this.titleValue,
-      id: item[0].qElemNumber,
+      id: parseInt(qElemNumber, 10),
     });
   }
 
@@ -106,15 +113,42 @@ class ListBox extends HTMLElement {
   invalidate() {
     if (!this.needsRender) {
       this.needsRender = true;
-      Promise.resolve().then(() => {
+      return Promise.resolve().then(() => {
         this.needsRender = false;
         render(this.template(), this.root);
+        return true;
       });
     }
+    return Promise.reject();
   }
 
   connectedCallback() {
-    this.invalidate();
+    this.invalidate().then(() => {
+      const ulElement = this.root.querySelectorAll('ul')[0];
+      ulElement.addEventListener('click', (e) => { console.log('clicked', e)
+        e.stopPropagation();
+        if (e.target) {
+          const elNumber = e.target.hasAttribute('data-elem') ? e.target.getAttribute('data-elem') : e.target.parentElement.getAttribute('data-elem');
+          this._clickCallback(elNumber);
+        }
+      });
+
+      ulElement.addEventListener('mouseover', (e) => {
+        e.stopPropagation();
+        if (e.target) {
+          const elNumber = e.target.hasAttribute('data-elem') ? e.target.getAttribute('data-elem') : e.target.parentElement.getAttribute('data-elem');
+          this._mouseOverList(elNumber);
+        }
+      });
+
+      ulElement.addEventListener('mouseout', (e) => {
+        e.stopPropagation();
+        if (e.target) {
+          const elNumber = e.target.hasAttribute('data-elem') ? e.target.getAttribute('data-elem') : e.target.parentElement.getAttribute('data-elem');
+          this._mouseOutList(elNumber);
+        }
+      });
+    });
   }
 
   template() {
@@ -122,38 +156,29 @@ class ListBox extends HTMLElement {
     return html`
       <style>
         ${css}
-        .list-box {background-color:${this.colorBy(this.titleValue) + '22'}; height: calc(100% - 70px)}
+        .list-box {background-color:${this.colorBy(this.titleValue)}22; height: calc(100% - 70px)}
       </style>
       <div class="list-box">
         <div class="header" style="background-color:${this.colorBy(this.titleValue)}; opacity:0.8" >
           <div class="title" style="color:white">
-            ${this.titleValue}<div class="icon clear_selections" on-click="${() => {
-      this._clearCallback();
-    }}">clear</div>
+            ${this.titleValue}<div class="icon clear_selections" on-click="${() => { this._clearCallback(); }}">clear</div>
           </div>
           <div class="filter"  style="background-color:white">
             <div class="icon search">&#x26B2;</div>
-            <input class="search_input" maxlength="255" placeholder="Filter" spellcheck="false" type="text" on-keyup="${(e) => {
-      this._searchFilter(e.target);
-    }}"/>
-            <div class="icon cancel" on-click="${() => {
-      this._cancelFilter();
-    }}">x</div>
+            <input class="search_input" maxlength="255" placeholder="Filter" spellcheck="false" type="text" on-keyup="${(e) => { this._searchFilter(e.target); }}"/>
+            <div class="icon cancel" on-click="${() => { this._cancelFilter(); }}">x</div>
           </div>
         </div>
         <ul>
           ${repeat(Object.keys(this.data).filter(key => this.data[key][0].qText.toLowerCase().indexOf(this.filterQuery.toLowerCase()) !== -1), key => this.data[key][0].qText, (key) => {
-      return html`<li title="${this.data[key][0].qText}" onmouseover="${(e) => {
-        this._mouseOverList({field: this.titleValue, id: this.data[key][0].qElemNumber, source: 'listBox'});
-      }}"  onmouseout="${(e) => {
-        this._mouseOutList({field: this.titleValue, id: this.data[key][0].qElemNumber, source: 'listBox'});
-      }}" on-click="${() => {
-        this._clickCallback(this.data[key]);
-      }}"
-class$="${this.data[key][0].qState}"><span class="state" title="${utils.states[this.data[key][0].qState]}">${this.data[key][0].qState}</span><div
-class="titleText"c>${this.data[key][0].qText} </div>
-</li>`;
-    })}
+            return html`<li 
+                  title="${this.data[key][0].qText}" 
+                  data-elem$="${this.data[key][0].qElemNumber}"
+                  class$="${this.data[key][0].qState}">
+                    <span class="state" title="${utils.states[this.data[key][0].qState]}">${this.data[key][0].qState}</span>
+                    <div class="titleText">${this.data[key][0].qText} </div>
+                  </li>`;
+            })}
         </ul>
       </div>
     `;
