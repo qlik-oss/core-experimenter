@@ -108,7 +108,7 @@ class ListBox extends HTMLElement {
   }
 
   _clearCallback() {
-    this.clearCallback(this.titleValue);
+    this.events.clearCallback(this.titleValue);
   }
 
   invalidate() {
@@ -120,7 +120,7 @@ class ListBox extends HTMLElement {
         return true;
       });
     }
-    return Promise.reject();
+    return Promise.resolve(true);
   }
 
   connectedCallback() {
