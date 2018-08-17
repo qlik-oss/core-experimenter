@@ -66,7 +66,8 @@ class ListBox extends HTMLElement {
 
       const listboxWidth = document.getElementsByTagName('list-box')[0].offsetWidth + 20;
       const newLeft = listboxWidth * -1 * curIndex;
-      document.getElementsByClassName('listbox_cnt')[0].style.left = `${newLeft}px`;
+      const extraPadding = curIndex === 0 ? 0 : 40;
+      document.getElementsByClassName('listbox_cnt')[0].style.left = `${newLeft + extraPadding}px`;
     }, delay);
   }
 
@@ -156,7 +157,8 @@ class ListBox extends HTMLElement {
     return html`
       <style>
         ${css}
-        .list-box {background-color:${this.colorBy(this.titleValue)}22; height: calc(100% - 70px)}
+        .list-box {height: calc(100% - 70px)}
+        li {background-color:${this.colorBy(this.titleValue)};}
       </style>
       <div class="list-box">
         <div class="header" style="background-color:${this.colorBy(this.titleValue)}; opacity:0.8" >

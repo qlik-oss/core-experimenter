@@ -1,0 +1,35 @@
+:host{
+  border: 0;
+  font-size: 16px;
+  color: grey;
+  max-width: 180px;
+  text-align: center;
+}
+div[contenteditable="true"]{
+  border: 0;
+  border-bottom: 1px solid #e6e6e6;
+  font-size: 16px;
+  display: inline-block;
+  max-width: 180px;
+  overflow: hidden;
+}
+h2{
+  margin: 10px 0px;
+}
+.highlightText {
+  opacity: 1 !important;
+  /*animation: highlight 0.3s normal;*/
+  /*color:red !important;*/
+}
+
+@keyframes highlight {
+  0% {font-size: 16px}
+  50% {font-size: 17px}
+  100% {font-size: 16px}
+}
+
+.textArea {
+  margin-top:10px;
+  width:180px;
+  padding:5px;
+}

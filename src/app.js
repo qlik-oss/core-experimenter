@@ -15,12 +15,13 @@ const engineHost = 'alteirac.hd.free.fr';
 const enginePort = '9076';
 const colors = d3.scaleOrdinal();
 const dataSources = ['music', 'fruit', 'car'];
-const _this = this;
 
-const rangeColor = ['#64bbe3', '#ffcc00', '#ff7300', '#20cfbd'];
+const rangeColor = ['#9792e3', '#ffcc00', '#ff7300', '#20cfbd'];
+const cssColors = ['myPurple', 'myYellow', 'myOrange', 'myCoralGreen'];
 let tableOrder = [];
 let currentListBoxes = [];
 let curApp;
+const _this = this;
 
 
 async function select(d) {
@@ -33,70 +34,75 @@ async function clearFieldSelections(fieldName) {
   return field.clear();
 }
 
-function setUpListboxScroll() {
-  const scrollArea = document.getElementsByClassName('scrollArea')[0];
-  scrollArea.addEventListener('mouseenter', () => {
-    scrollArea.style.opacity = 1;
-    _this.scrollTimeout = setInterval(() => {
-      const container = document.getElementsByClassName('listbox_cnt')[0];
-      const distance = 270;
-      const leftDist = container.style.left;
-      const newLeft = parseInt(leftDist.substring(0, leftDist.length - 2), 10) + distance;
-      if (newLeft < 0) {
-        document.getElementsByClassName('listbox_cnt')[0].style.left = `${newLeft}px`;
-      } else {
-        document.getElementsByClassName('listbox_cnt')[0].style.left = '20px';
-        setTimeout(() => {
-          document.getElementsByClassName('listbox_cnt')[0].style.left = '00px';
-        }, 100);
-      }
-    }, 500);
-  }, true);
-  scrollArea.addEventListener('mouseleave', () => {
-    scrollArea.style.opacity = 0.5;
-    if (_this.scrollTimeout) {
-      clearInterval(_this.scrollTimeout);
-    }
-  }, true);
-}
-
 function _getListboxObjects(d) {
-  const lbs = document.getElementsByTagName('list-box');
-  let currListBox;
-  for (let i = 0; i < lbs.length; i++) {
-    if (lbs[i].titleValue === d.field) {
-      currListBox = lbs[i];
+  const currListBox = Array.from(document.getElementsByTagName('list-box')).filter(lbx => lbx.titleValue === d.field)[0];
+  // const lbx = document.getElementsByTagName('list-box');
+  // let currListBox;
+  // for (let i = 0; i < lbx.length; i++) {
+  //   if (lbx[i].titleValue === d.field) {
+  //     currListBox = lbx[i];
+  //     break;
+  //   }
+  // }
+  if (currListBox) {
+    const lis = currListBox.shadowRoot.childNodes[3].getElementsByTagName('ul')[0].getElementsByTagName('li');
+    let i = 0;
+    let found = false;
+    let res;
+    while (i < lis.length && !found) {
+      if (lis[i].title === d.value) {
+        found = true;
+        res = lis[i];
+      }
+      i += 1;
     }
+    return { listObject: res, listBox: currListBox };
   }
-  const lis = currListBox.shadowRoot.childNodes[3].getElementsByTagName('ul')[0].getElementsByTagName('li');
-  let i = 0;
-  let found = false;
-  let res;
-  while (i < lis.length && !found) {
-    if (lis[i].title === d.value) {
-      found = true;
-      res = lis[i];
-    }
-    i += 1;
-  }
-  return { listObject: res, listBox: currListBox };
+  return null;
 }
 
 function lowLightListBox(d) {
   const res = _getListboxObjects(d);
-  if (res.listObject) {
-    res.listObject.style.background = 'transparent';
-    res.listObject.style.color = '#595959';
+  if (res && res.listObject) {
+    // res.listObject.style.background = d3.rgb(colors(d.field));
+    // res.listObject.style.color = '#595959';
+    res.listObject.style.opacity = 0.8;
   }
 }
 
 function highlightListBox(d) {
   const res = _getListboxObjects(d);
-  if (res.listObject) {
+  if (res && res.listObject) {
     res.listObject.parentNode.scrollTop = res.listObject.offsetTop
       - res.listObject.parentNode.offsetTop;
-    res.listObject.style.background = d3.rgb(colors(d.field)).darker();
-    res.listObject.style.color = '#fff';
+    // res.listObject.style.background = d3.rgb(colors(d.field)).darker();
+    // res.listObject.style.color = '#fff';
+    res.listObject.style.opacity = 1;
+  }
+}
+
+function lightChangeKPIs(d, lightOption) {
+  const kpiElements = document.getElementsByTagName('kpi-comp');
+  for (let i = 0; i < kpiElements.length; i++) {
+    const children = kpiElements[i].shadowRoot.childNodes;
+    for (let j = 0; j < children.length; j++) {
+      if (children[j].nodeName === 'DIV') {
+        const currentFields = children[j].getElementsByTagName('span');
+        for (let k = 0; k < currentFields.length; k++) {
+          if (currentFields[k].className.indexOf(`field${tableOrder.indexOf(d.field)}`) !== -1) {
+            if (lightOption === 'highlight') {
+              currentFields[k].classList.add('highlightText');
+              currentFields[k].style.opacity = 1;
+              currentFields[k].style.color = d3.rgb(colors(d.field)).darker();
+            } else if (lightOption === 'lowlight') {
+              currentFields[k].classList.remove('highlightText');
+              currentFields[k].style.opacity = 0.8;
+              currentFields[k].style.color = colors.domain(tableOrder).range(rangeColor)(d.field);
+            }
+          }
+        }
+      }
+    }
   }
 }
 
@@ -104,6 +110,7 @@ function hoverIn(d) {
   const b = document.getElementById('one');
   b.highlight(d);
   highlightListBox(d);
+  lightChangeKPIs(d, 'highlight');
 
   let currListBox = null;
   const lbs = document.getElementsByTagName('list-box');
@@ -112,7 +119,7 @@ function hoverIn(d) {
       currListBox = lbs[i];
     }
   }
-  if (d.source !== 'listBox') {
+  if (currListBox && d.source !== 'listBox') {
     currListBox.awaitSetInFocus(0);
   }
 }
@@ -121,6 +128,7 @@ function hoverOut(d) {
   const b = document.getElementById('one');
   b.lowlight(d);
   lowLightListBox(d);
+  lightChangeKPIs(d, 'lowlight');
 }
 
 async function connectEngine(appName) {
@@ -252,7 +260,7 @@ function createMyList(app, field, fields) {
     const object = model;
     const updateBubbles = layout => new Promise((resolve/* , reject */) => {
       const d = document.getElementById('one');
-      d.update(layout, field, fields);
+      d.update(layout, field, fields, _this.hoverIn, _this.hoverOut);
       resolve();
     });
     const updateListBoxes = (layout) => {
@@ -264,6 +272,7 @@ function createMyList(app, field, fields) {
         };
         return listbox;
       }
+
       const _fieldName = layout.qListObject.qDimensionInfo.qFallbackTitle;
       listBoxes[layout.qInfo.qId] = listBoxes[layout.qInfo.qId] || _createAndAppendListbox(_fieldName);
       listBoxes[layout.qInfo.qId].element.data = {
@@ -286,6 +295,7 @@ function createMyList(app, field, fields) {
             }
           }
         }
+        container.style.left = 0; // reset container position
       }
     };
 
@@ -355,13 +365,17 @@ function createKpi(app, exp, label = 'kpi', elId) {
       qSuppressMissing: true,
     },
   };
+  const container = document.querySelectorAll('.kpi')[0];
+  const elem = document.createElement('kpi-comp');
+  elem.id = elId;
+  elem.color = cssColors[tableOrder.indexOf(label)];
+  container.append(elem);
   app.createSessionObject(props).then((model) => {
     const object = model;
     const update = () => object.getLayout().then((layout) => {
       const d = document.getElementById(elId);
       if (d) { d.data = layout.qHyperCube.qDataPages[0].qMatrix; }
     });
-
     object.on('changed', update);
     const d = document.getElementById(elId);
     if (d) {
@@ -369,6 +383,10 @@ function createKpi(app, exp, label = 'kpi', elId) {
       d.title = label;
       d.formula = exp;
       d.inputChangeDelegate = patchIt;
+      d.allFields = tableOrder;
+      d.colorBy = colors.domain(tableOrder).range(rangeColor);
+      d.mouseover = hoverIn;
+      d.mouseout = hoverOut;
     }
     update();
   });
@@ -392,6 +410,8 @@ async function newDS(e) {
   curApp = app;
   await createMyLists(app, titleFields);
   await createHyperCube(app, titleFields);
+  const container = document.querySelectorAll('.kpi')[0];
+  container.innerHTML = '';
   titleFields.forEach((en, i) => {
     createKpi(app, `count(distinct ${en})/count(distinct {1} ${en})*100`, en, `kp${i + 1}`);
   });
@@ -399,7 +419,6 @@ async function newDS(e) {
 
 async function init() {
   newDS('music');
-  setUpListboxScroll();
 }
 
 window.onresize = (resize);
