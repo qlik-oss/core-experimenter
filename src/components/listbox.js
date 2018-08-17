@@ -65,7 +65,8 @@ class ListBox extends HTMLElement {
 
       const listboxWidth = document.getElementsByTagName('list-box')[0].offsetWidth + 20;
       const newLeft = listboxWidth * -1 * curIndex;
-      document.getElementsByClassName('listbox_cnt')[0].style.left = `${newLeft}px`;
+      const extraPadding = curIndex === 0 ? 0 : 40;
+      document.getElementsByClassName('listbox_cnt')[0].style.left = `${newLeft + extraPadding}px`;
     }, delay);
   }
 

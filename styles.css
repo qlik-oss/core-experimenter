@@ -32,7 +32,7 @@ body{
 }
 .bubbles {
   grid-area: bubbles;
-  
+
   box-sizing: border-box;
 }
 
@@ -46,7 +46,8 @@ body{
   grid-area: listbox;
   position: relative;
   overflow: hidden;
-  border-left: 1px solid rgba(0, 0, 0, 0.493);
+  border-left: 1px solid rgba(0, 0, 0, 0.1);
+  border-right: 1px solid rgba(0, 0, 0, 0.1);
   margin: 20px;
 }
 

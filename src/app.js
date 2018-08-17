@@ -15,7 +15,6 @@ const engineHost = 'alteirac.hd.free.fr';
 const enginePort = '9076';
 const colors = d3.scaleOrdinal();
 const dataSources = ['music', 'fruit', 'car'];
-const _this = this;
 
 const rangeColor = ['#64bbe3', '#ffcc00', '#ff7300', '#20cfbd'];
 let tableOrder = [];
@@ -31,33 +30,6 @@ async function select(d) {
 async function clearFieldSelections(fieldName) {
   const field = await curApp.getField(fieldName);
   return field.clear();
-}
-
-function setUpListboxScroll() {
-  const scrollArea = document.getElementsByClassName('scrollArea')[0];
-  scrollArea.addEventListener('mouseenter', () => {
-    scrollArea.style.opacity = 1;
-    _this.scrollTimeout = setInterval(() => {
-      const container = document.getElementsByClassName('listbox_cnt')[0];
-      const distance = 270;
-      const leftDist = container.style.left;
-      const newLeft = parseInt(leftDist.substring(0, leftDist.length - 2), 10) + distance;
-      if (newLeft < 0) {
-        document.getElementsByClassName('listbox_cnt')[0].style.left = `${newLeft}px`;
-      } else {
-        document.getElementsByClassName('listbox_cnt')[0].style.left = '20px';
-        setTimeout(() => {
-          document.getElementsByClassName('listbox_cnt')[0].style.left = '00px';
-        }, 100);
-      }
-    }, 500);
-  }, true);
-  scrollArea.addEventListener('mouseleave', () => {
-    scrollArea.style.opacity = 0.5;
-    if (_this.scrollTimeout) {
-      clearInterval(_this.scrollTimeout);
-    }
-  }, true);
 }
 
 function _getListboxObjects(d) {
@@ -287,6 +259,7 @@ function createMyList(app, field, fields) {
             }
           }
         }
+        container.style.left = 0; // reset container position
       }
     };
 
@@ -400,7 +373,6 @@ async function newDS(e) {
 
 async function init() {
   newDS('music');
-  setUpListboxScroll();
 }
 
 window.onresize = (resize);
