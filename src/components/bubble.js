@@ -458,7 +458,7 @@ class Bubble extends HTMLElement {
     this.nodes.map((el) => {
       el.radius = radiusPoint;
       return true;
-    });g
+    });
     Object.keys(this.stateCenters).forEach((e) => {
       this.svg.select(`[sta='${e}']`)
         .attr('cx', this.stateCenters[e].x)
