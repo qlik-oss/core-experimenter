@@ -66,7 +66,7 @@ function lowLightListBox(d) {
   if (res && res.listObject) {
     // res.listObject.style.background = d3.rgb(colors(d.field));
     // res.listObject.style.color = '#595959';
-    res.listObject.style.opacity = 0.8;
+    res.listObject.style.opacity = '';
   }
 }
 
@@ -91,13 +91,13 @@ function lightChangeKPIs(d, lightOption) {
         for (let k = 0; k < currentFields.length; k++) {
           if (currentFields[k].className.indexOf(`field${tableOrder.indexOf(d.field)}`) !== -1) {
             if (lightOption === 'highlight') {
-              currentFields[k].classList.add('highlightText');
-              currentFields[k].style.opacity = 1;
-              currentFields[k].style.color = d3.rgb(colors(d.field)).darker();
+              // currentFields[k].classList.add('highlightText');
+              // currentFields[k].style.opacity = 1;
+              // currentFields[k].style.color = d3.rgb(colors(d.field)).darker();
             } else if (lightOption === 'lowlight') {
-              currentFields[k].classList.remove('highlightText');
-              currentFields[k].style.opacity = 0.8;
-              currentFields[k].style.color = colors.domain(tableOrder).range(rangeColor)(d.field);
+              // currentFields[k].classList.remove('highlightText');
+              // currentFields[k].style.opacity = 0.8;
+              // currentFields[k].style.color = colors.domain(tableOrder).range(rangeColor)(d.field);
             }
           }
         }
