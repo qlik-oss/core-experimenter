@@ -11,6 +11,7 @@ class ListBox extends HTMLElement {
     this.dataValue = {};
     this.filterQuery = '';
     this.events = {
+      clearCallback: null,
       clickCallback: null,
       mouseOverCallback: null,
       mouseOutCallback: null,
@@ -29,6 +30,7 @@ class ListBox extends HTMLElement {
     this.titleValue = val.fieldName;
     this.dataValue = val.items;
     this.events = {
+      clearCallback: this.events.clearCallback || val.clearCallback,
       clickCallback: this.events.clickCallback || val.clickCallback,
       mouseOverCallback: this.events.mouseOverCallback || val.mouseOver,
       mouseOutCallback: this.events.mouseOutCallback || val.mouseOut,
@@ -173,14 +175,14 @@ class ListBox extends HTMLElement {
         </div>
         <ul>
           ${repeat(Object.keys(this.data).filter(key => this.data[key][0].qText.toLowerCase().indexOf(this.filterQuery.toLowerCase()) !== -1), key => this.data[key][0].qText, (key) => {
-            return html`<li 
+        return html`<li 
                   title="${this.data[key][0].qText}" 
                   data-elem$="${this.data[key][0].qElemNumber}"
                   class$="${this.data[key][0].qState}">
                     <span class="state" title="${utils.states[this.data[key][0].qState]}">${this.data[key][0].qState}</span>
                     <div class="titleText">${this.data[key][0].qText} </div>
                   </li>`;
-            })}
+      })}
         </ul>
       </div>
     `;
