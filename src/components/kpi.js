@@ -36,7 +36,7 @@ class KPI extends HTMLElement {
   }
 
   static get observedAttributes() {
-    return ['title', 'formula', 'size', 'field', 'color'];
+    return ['title', 'formula', 'size', 'field'];
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
@@ -158,9 +158,8 @@ class KPI extends HTMLElement {
     // this.unformatedText = this.formula;
     let res = e.innerHTML;
     this.allFields.forEach((field) => {
-      res = res.split(field).join(`<span title="" class="field${this.allFields.indexOf(field)}" style="color:${this._getFieldColor(field)}; opacity: 0.8; 
-font-weight:900">
-${field}</span>`);
+      res = res.split(field).join(`<span title="" class="field${this.allFields.indexOf(field)}" 
+      style="color:${this._getFieldColor(field)}; opacity: 0.8; font-weight:900">${field}</span>`);
     });
     e.innerHTML = res;
     e.addEventListener('mouseover', (ev) => {
@@ -197,10 +196,7 @@ ${field}</span>`);
         font-size: 16px;
         display: inline-block;
         max-width: 180px;
-        /* height: 22px; */
-        /* text-overflow: ellipsis; */
         overflow: hidden;
-        /*white-space: nowrap;*/
       }
       h2{
         margin: 10px 0px;

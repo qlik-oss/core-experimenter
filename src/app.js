@@ -17,9 +17,6 @@ const colors = d3.scaleOrdinal();
 const dataSources = ['music', 'fruit', 'car'];
 
 const rangeColor = ['#9792e3', '#ffcc00', '#ff7300', '#20cfbd'];
-// const rangeColor2 = ['rgba(239, 71, 111, 1)', 'rgba(255, 209, 102, 1)', 'rgba(6, 214, 160, 1)', 'rgba(17, 138, 178, 1)', 'rgba(7, 59, 76, 1)'];
-// const rangeColor = ['rgba(255, 87, 20, 1)', 'rgba(27, 231, 255, 1)','rgba(110, 235, 131, 1)','rgba(228, 255, 26, 1)','rgba(232, 170, 20, 1)'];
-// const rangeColor = ['rgba(39, 52, 71, 1)', 'rgba(147, 20, 29, 1)', 'rgba(103, 112, 22, 1)', 'rgba(117, 13, 55, 1)', 'rgba(214, 71, 36, 1)'];
 const cssColors = ['myPurple', 'myYellow', 'myOrange', 'myCoralGreen'];
 let tableOrder = [];
 let currentListBoxes = [];
