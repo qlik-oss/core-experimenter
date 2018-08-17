@@ -248,7 +248,7 @@ class Bubble extends HTMLElement {
     const res = _this._getListboxObjects(d).listObject;
     // res.style.background = d3.rgb(this.fillColor(d.field));
     // res.style.color = '#595959';
-    res.style.opacity = 0.8;
+    res.style.opacity = '';
   }
 
   highlightListBox(d) {
