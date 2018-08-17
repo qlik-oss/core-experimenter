@@ -154,6 +154,13 @@ class ListBox extends HTMLElement {
     });
   }
 
+  disconnectedCallback() {
+    // cleaning all eventListeners (https://stackoverflow.com/questions/19469881/remove-all-event-listeners-of-specific-type/29930689)
+    const ulElement = this.root.querySelectorAll('ul')[0];
+    const elClone = ulElement.cloneNode(true);
+    ulElement.parentNode.replaceChild(elClone, ulElement);
+  }
+
   template() {
     /* eslint-disable */
     return html`

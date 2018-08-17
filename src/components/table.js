@@ -105,6 +105,13 @@ class CpTable extends HTMLElement {
     });
   }
 
+  disconnectedCallback() {
+    // cleaning all eventListeners (https://stackoverflow.com/questions/19469881/remove-all-event-listeners-of-specific-type/29930689)
+    const tableElement = this.root.querySelectorAll('table')[0];
+    const elClone = tableElement.cloneNode(true);
+    tableElement.parentNode.replaceChild(elClone, tableElement);
+  }
+
   template() {
     /* eslint-disable */
     return html`
@@ -120,7 +127,7 @@ class CpTable extends HTMLElement {
           </thead>
           <tbody>
           ${repeat(this.dataValue, tr => html`<tr>
-            ${repeat(tr,(item, i) => html`<td 
+            ${repeat(tr, (item, i) => html`<td 
                         style="background-color:${this.colorBy(this.headerValues[i])};"
                         index$="${i}"
                         data-text$="${item.qText}"
@@ -129,9 +136,9 @@ class CpTable extends HTMLElement {
                           ${item.qText}
                           <span class="state" title="${utils.states[item.qState]}">(${item.qState})</span>
                         </td>`
-            )}
+        )}
             </tr>`
-          )}
+      )}
           </tbody>
         </table>
       </div>
