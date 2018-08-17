@@ -155,7 +155,7 @@ class KPI extends HTMLElement {
 
   _highlight(e) {
     this.beingEdited = false;
-    // this.unformatedText = this.formula;
+    this.unformatedText = e.innerHTML;
     let res = e.innerHTML;
     this.allFields.forEach((field) => {
       res = res.split(field).join(`<span title="" class="field${this.allFields.indexOf(field)}" 
