@@ -273,7 +273,7 @@ class Bubble extends HTMLElement {
             if (currentFields[k].className.indexOf(`field${this.fields.indexOf(d.field)}`) !== -1) {
               if (lightOption === 'highlight') {
                 currentFields[k].classList.add('highlightText');
-                currentFields[k].style.color = d3.rgb(this.fillColor(d.field)).darker();
+                currentFields[k].style.color = d3.rgb(this.fillColor(d.field)).darker(0.5);
               } else if (lightOption === 'lowlight') {
                 currentFields[k].classList.remove('highlightText');
                 currentFields[k].style.color = d3.rgb(this.fillColor(d.field));

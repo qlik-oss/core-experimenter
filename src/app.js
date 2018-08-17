@@ -91,13 +91,11 @@ function lightChangeKPIs(d, lightOption) {
         for (let k = 0; k < currentFields.length; k++) {
           if (currentFields[k].className.indexOf(`field${tableOrder.indexOf(d.field)}`) !== -1) {
             if (lightOption === 'highlight') {
-              // currentFields[k].classList.add('highlightText');
-              // currentFields[k].style.opacity = 1;
-              // currentFields[k].style.color = d3.rgb(colors(d.field)).darker();
+              currentFields[k].classList.add('highlightText');
+              currentFields[k].style.color = d3.rgb(colors(d.field)).darker(0.5);
             } else if (lightOption === 'lowlight') {
-              // currentFields[k].classList.remove('highlightText');
-              // currentFields[k].style.opacity = 0.8;
-              // currentFields[k].style.color = colors.domain(tableOrder).range(rangeColor)(d.field);
+              currentFields[k].classList.remove('highlightText');
+              currentFields[k].style.color = colors.domain(tableOrder).range(rangeColor)(d.field);
             }
           }
         }
