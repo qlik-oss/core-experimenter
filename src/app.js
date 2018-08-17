@@ -35,13 +35,15 @@ async function clearFieldSelections(fieldName) {
 }
 
 function _getListboxObjects(d) {
-  const lbs = document.getElementsByTagName('list-box');
-  let currListBox;
-  for (let i = 0; i < lbs.length; i++) {
-    if (lbs[i].titleValue === d.field) {
-      currListBox = lbs[i];
-    }
-  }
+  const currListBox = Array.from(document.getElementsByTagName('list-box')).filter(lbx => lbx.titleValue === d.field)[0];
+  // const lbx = document.getElementsByTagName('list-box');
+  // let currListBox;
+  // for (let i = 0; i < lbx.length; i++) {
+  //   if (lbx[i].titleValue === d.field) {
+  //     currListBox = lbx[i];
+  //     break;
+  //   }
+  // }
   if (currListBox) {
     const lis = currListBox.shadowRoot.childNodes[3].getElementsByTagName('ul')[0].getElementsByTagName('li');
     let i = 0;
