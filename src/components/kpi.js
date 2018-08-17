@@ -19,7 +19,7 @@ class KPI extends HTMLElement {
     this.mouseover = null;
     this.mouseout = null;
     this.renderCounter = 0;
-    this.beingEdited = false;
+    this.firstRenderDone = false;
   }
 
   connectedCallback() {
@@ -87,7 +87,7 @@ class KPI extends HTMLElement {
 
   set formula(newValue) {
     this.setAttribute('formula', newValue);
-    this.invalidate();
+    // this.invalidate();
   }
 
   get field() {
@@ -142,7 +142,7 @@ class KPI extends HTMLElement {
         this.needsRender = false;
         render(this.template(), this.root);
         const expressionElement = this.root.querySelectorAll('div[contenteditable]')[0];
-        if (this.allFields.length > 0 && !this.beingEdited) {
+        if (this.allFields.length > 0 && !this.firstRenderDone) {
           this._highlight(expressionElement);
         }
       });
@@ -154,28 +154,27 @@ class KPI extends HTMLElement {
   }
 
   _highlight(e) {
-    this.beingEdited = false;
-    this.unformatedText = e.innerHTML;
-    let res = e.innerHTML;
+    this.unformatedText = e.innerHTML.indexOf('span') !== -1 ? this.formula : e.innerHTML;
+    let res = this.unformatedText;
     this.allFields.forEach((field) => {
-      res = res.split(field).join(`<span title="" class="field${this.allFields.indexOf(field)}" 
+      res = res.split(field).join(`<span class="field${this.allFields.indexOf(field)}" 
       style="color:${this._getFieldColor(field)}; opacity: 0.8; font-weight:900">${field}</span>`);
     });
     e.innerHTML = res;
     e.addEventListener('mouseover', (ev) => {
       if (ev.target.nodeName === 'SPAN') {
-        this.mouseover({ field: this.title });
+        this.mouseover({ field: ev.target.innerHTML });
       }
     });
     e.addEventListener('mouseout', (ev) => {
       if (ev.target.nodeName === 'SPAN') {
-        this.mouseout({ field: this.title });
+        this.mouseout({ field: ev.target.innerHTML });
       }
     });
   }
 
   _lowlight(e) {
-    this.beingEdited = true;
+    this.firstRenderDone = true;
     e.innerHTML = this.unformatedText ? this.unformatedText : this.formula;
   }
 
