@@ -36,14 +36,6 @@ async function clearFieldSelections(fieldName) {
 
 function _getListboxObjects(d) {
   const currListBox = Array.from(document.getElementsByTagName('list-box')).filter(lbx => lbx.titleValue === d.field)[0];
-  // const lbx = document.getElementsByTagName('list-box');
-  // let currListBox;
-  // for (let i = 0; i < lbx.length; i++) {
-  //   if (lbx[i].titleValue === d.field) {
-  //     currListBox = lbx[i];
-  //     break;
-  //   }
-  // }
   if (currListBox) {
     const lis = currListBox.shadowRoot.childNodes[3].getElementsByTagName('ul')[0].getElementsByTagName('li');
     let i = 0;
@@ -73,8 +65,7 @@ function lowLightListBox(d) {
 function highlightListBox(d) {
   const res = _getListboxObjects(d);
   if (res && res.listObject) {
-    res.listObject.parentNode.scrollTop = res.listObject.offsetTop
-      - res.listObject.parentNode.offsetTop;
+    res.listObject.parentNode.scrollTop = res.listObject.offsetTop - res.listObject.parentNode.offsetTop;
     // res.listObject.style.background = d3.rgb(colors(d.field)).darker();
     // res.listObject.style.color = '#fff';
     res.listObject.style.opacity = 1;
@@ -274,7 +265,8 @@ function createMyList(app, field, fields) {
       }
 
       const _fieldName = layout.qListObject.qDimensionInfo.qFallbackTitle;
-      listBoxes[layout.qInfo.qId] = listBoxes[layout.qInfo.qId] || _createAndAppendListbox(_fieldName);
+      listBoxes[layout.qInfo.qId] = listBoxes[layout.qInfo.qId]
+        || _createAndAppendListbox(_fieldName);
       listBoxes[layout.qInfo.qId].element.data = {
         fieldName: _fieldName,
         items: layout.qListObject.qDataPages[0].qMatrix,
