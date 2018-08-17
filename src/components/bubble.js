@@ -123,8 +123,8 @@ class Bubble extends HTMLElement {
       .transition()
       .attr('opacity', 1)
       .duration(300)
-      .attr('stroke', c => d3.rgb(_this.fillColor(c.field)).brighter())
-      .attr('fill', c => d3.rgb(_this.fillColor(c.field)).darker().darker());
+      .attr('stroke', c => d3.rgb(_this.fillColor(c.field)).darker())
+      .attr('fill', c => d3.rgb(_this.fillColor(c.field)).brighter());
   }
 
   charge(d) {
