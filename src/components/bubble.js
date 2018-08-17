@@ -248,7 +248,7 @@ class Bubble extends HTMLElement {
     const res = _this._getListboxObjects(d).listObject;
     // res.style.background = d3.rgb(this.fillColor(d.field));
     // res.style.color = '#595959';
-    res.style.opacity = 0.8;
+    res.style.opacity = '';
   }
 
   highlightListBox(d) {
@@ -273,7 +273,7 @@ class Bubble extends HTMLElement {
             if (currentFields[k].className.indexOf(`field${this.fields.indexOf(d.field)}`) !== -1) {
               if (lightOption === 'highlight') {
                 currentFields[k].classList.add('highlightText');
-                currentFields[k].style.color = d3.rgb(this.fillColor(d.field)).darker();
+                currentFields[k].style.color = d3.rgb(this.fillColor(d.field)).darker(0.5);
               } else if (lightOption === 'lowlight') {
                 currentFields[k].classList.remove('highlightText');
                 currentFields[k].style.color = d3.rgb(this.fillColor(d.field));

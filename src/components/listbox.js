@@ -127,7 +127,7 @@ class ListBox extends HTMLElement {
         li {background-color:${this.colorBy(this.titleValue)};}
       </style>
       <div class="list-box">
-        <div class="header" style="background-color:${this.colorBy(this.titleValue)}; opacity:0.8" >
+        <div class="header" style="background-color:${this.colorBy(this.titleValue)};" >
           <div class="title" style="color:white">
             ${this.titleValue}<div class="icon clear_selections" on-click="${() => {
       this._clearCallback();

@@ -59,11 +59,17 @@ li:hover{
 li.S{
   font-weight:900;
   border-left: 3px solid rgb(127, 227, 117);
+  opacity:0.9;
 }
 li.X {
+  opacity:0.5;
   border-left: 3px solid rgb(127,127,127);
   color: rgba(0,0,0,0.5);
 }
+li.A {
+  opacity: 0.65;
+}
+
 li > div{
   word-wrap: break-word;
   overflow: hidden;
