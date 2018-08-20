@@ -106,12 +106,21 @@ class Bubble extends HTMLElement {
     };
   }
 
+  _calculateBubbleRadius() {
+    this.newSize(this.parentElement.offsetWidth, this.parentElement.offsetHeight + 20);
+    const { stateCircleR } = this;
+    const stateCArea = stateCircleR * stateCircleR * Math.PI;
+    const areaPerPoint = (stateCArea / this.nodes.length) * 0.9;
+    return Math.sqrt(areaPerPoint / Math.PI);
+  }
+
   lowlight(d) {
     this.svg.selectAll('.bubble')
       .attr('opacity', 1);
     this.svg.select(`[mid='${d.field}.${d.id}']`).moveToFront()
       .transition()
       .duration(300)
+      .attr('r', this._calculateBubbleRadius())
       .attr('stroke', c => d3.rgb(_this.fillColor(c.field)).darker())
       .attr('fill', c => d3.rgb(_this.fillColor(c.field)));
   }
@@ -125,8 +134,9 @@ class Bubble extends HTMLElement {
       .transition()
       .attr('opacity', 1)
       .duration(300)
-      .attr('stroke', c => d3.rgb(_this.fillColor(c.field)).brighter())
-      .attr('fill', c => d3.rgb(_this.fillColor(c.field)).darker().darker());
+      .attr('r', this._calculateBubbleRadius() * 1.5)
+      .attr('stroke', c => d3.rgb(_this.fillColor(c.field)).darker())
+      .attr('fill', c => d3.rgb(_this.fillColor(c.field)).brighter());
   }
 
   charge(d) {
@@ -311,6 +321,7 @@ class Bubble extends HTMLElement {
     }
     this.bubbles = this.bubbles.data(this.nodes, d => d.id);
     this.bubbles.exit().remove();
+    console.log(radiusPoint, this.stateCircleR);
     this.bubbles = this.bubbles.enter().append('circle')
       .classed('bubble', true)
       .attr('r', radiusPoint)
@@ -444,11 +455,7 @@ class Bubble extends HTMLElement {
   }
 
   resize() {
-    this.newSize(this.parentElement.offsetWidth, this.parentElement.offsetHeight + 20);
-    const { stateCircleR } = this;
-    const stateCArea = stateCircleR * stateCircleR * Math.PI;
-    const areaPerPoint = (stateCArea / this.nodes.length) * 0.9;
-    const radiusPoint = Math.sqrt(areaPerPoint / Math.PI);
+    const radiusPoint = this._calculateBubbleRadius();
     this.radiusPoint = radiusPoint;
     this.nodes.map((el) => {
       el.radius = radiusPoint;
