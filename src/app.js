@@ -16,8 +16,12 @@ const enginePort = '9076';
 const colors = d3.scaleOrdinal();
 const dataSources = ['music', 'fruit', 'car'];
 
-const rangeColor = ['#9792e3', '#ffcc00', '#ff7300', '#20cfbd'];
-const cssColors = ['myPurple', 'myYellow', 'myOrange', 'myCoralGreen'];
+
+// const rangeColor = ['#7aff6b','#ffe000', '#20cfbd', '#e32731'];
+// const rangeColor = ['#ffcc00', '#50ae00', '#e5637f','#20cfbd'];
+const rangeColor = ['#ffd23f', '#ee414b', '#3bceac', '#3a568f'];
+// const cssColors = ['myPurple', 'myYellow', 'myOrange', 'myCoralGreen'];
+const cssColors = ['myYellow2', 'myPink', 'myCoralGreen2', 'myPurple2', 'myBlue', ''];
 let tableOrder = [];
 let currentListBoxes = [];
 let curApp;
@@ -56,7 +60,7 @@ function _getListboxObjects(d) {
       }
       i += 1;
     }
-    return { listObject: res, listBox: currListBox };
+    return {listObject: res, listBox: currListBox};
   }
   return null;
 }
@@ -241,7 +245,7 @@ function createMyList(app, field, fields) {
     qListObjectDef: {
       qDef: {
         qFieldDefs: [field],
-        qSortCriterias: [{ qSortByState: 1, qSortByAscii: 1 }],
+        qSortCriterias: [{qSortByState: 1, qSortByAscii: 1}],
       },
       qShowAlternatives: true,
       qInitialDataFetch: [{
@@ -336,7 +340,7 @@ async function patchIt(val, id) {
   }
 }
 
-function createKpi(app, exp, label = 'kpi', elId) {
+function createKpi(app, exp, label = 'kpi', elId, index) {
   const props = {
     qInfo: {
       qType: 'kpi',
@@ -367,13 +371,16 @@ function createKpi(app, exp, label = 'kpi', elId) {
   const container = document.querySelectorAll('.kpi')[0];
   const elem = document.createElement('kpi-comp');
   elem.id = elId;
-  elem.color = cssColors[tableOrder.indexOf(label)];
+  const i = index ? index : tableOrder.indexOf(label);
+  elem.color = cssColors[i];
   container.append(elem);
   app.createSessionObject(props).then((model) => {
     const object = model;
     const update = () => object.getLayout().then((layout) => {
       const d = document.getElementById(elId);
-      if (d) { d.data = layout.qHyperCube.qDataPages[0].qMatrix; }
+      if (d) {
+        d.data = layout.qHyperCube.qDataPages[0].qMatrix;
+      }
     });
     object.on('changed', update);
     const d = document.getElementById(elId);
@@ -414,6 +421,7 @@ async function newDS(e) {
   titleFields.forEach((en, i) => {
     createKpi(app, `count(distinct ${en})/count(distinct {1} ${en})*100`, en, `kp${i + 1}`);
   });
+  createKpi(app, 'count(distinct Year)/count(distinct {1} Album)*100', 'Own KPI', `kp${titleFields.length + 1}`, titleFields.length);
 }
 
 async function init() {

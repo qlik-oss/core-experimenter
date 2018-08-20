@@ -100,7 +100,8 @@
   -ms-border-radius: 50%;
   -o-border-radius: 50%;
   border-radius: 50%;
-  background-color: whitesmoke;
+  background-color: whitesmoke; /*  Light theme */
+  /*background-color:#555555;  !* Dark theme *!*/
   width: 0.84em;
   height: 0.84em;
   -webkit-transition-property: all;
@@ -943,4 +944,59 @@
 }
 .c100.myPurple.dark:hover > span {
   color: rgba(151, 146, 227, 1)  ;
+}
+
+.c100.myYellow2 .bar, .c100.myYellow2 .fill {
+  border-color: #ffd23fCC !important;
+}
+.c100.myYellow2:hover > span {
+  color: #ffd23fCC ;
+}
+.c100.myYellow2.dark .bar, .c100.myYellow2.dark .fill {
+  border-color: #ffd23f !important;
+}
+.c100.myYellow2.dark:hover > span {
+  color:  #ffd23f ;
+}
+
+.c100.myPink .bar, .c100.myPink .fill {
+  border-color: #ee4266CC !important;
+}
+.c100.myPink:hover > span {
+  color: #ee4266CC ;
+}
+.c100.myPink.dark .bar, .c100.myPink.dark .fill {
+  border-color: #ee4266 !important;
+}
+.c100.myPink.dark:hover > span {
+  color:  #ee4266 ;
+}
+
+.c100.myCoralGreen2 .bar, .c100.myCoralGreen2 .fill {
+  border-color: #3bceacCC !important;
+}
+.c100.myCoralGreen2:hover > span {
+  color: #3bceacCC ;
+}
+.c100.myCoralGreen2.dark .bar, .c100.myCoralGreen2.dark .fill {
+  border-color: #3bceac !important;
+}
+.c100.myCoralGreen2.dark:hover > span {
+  color:  #3bceac ;
+}
+.c100.myPurple2 .bar, .c100.myPurple2 .fill {
+  border-color: #8b5a8fCC !important;
+}
+.c100.myPurple2:hover > span {
+  color: #8b5a8fCC ;
+}
+.c100.myPurple2.dark .bar, .c100.myPurple2.dark .fill {
+  border-color: #8b5a8f !important;
+}
+.c100.myPurple2.dark:hover > span {
+  color:  #8b5a8f ;
+}
+
+.state {
+  color:white;
 }

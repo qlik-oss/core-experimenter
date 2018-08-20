@@ -309,8 +309,10 @@ class Bubble extends HTMLElement {
           .attr('cx', this.stateCenters[e].x)
           .attr('cy', this.stateCenters[e].y)
           .attr('fill', 'none')
-          .attr('stroke-width', 1)
-          .attr('stroke', 'black')
+          .attr('stroke-width', 10)
+          .attr('stroke', '#8b8b8b') //Light theme
+          // .attr('stroke', 'white') //Dark theme
+          .attr('stroke-dasharray', 2)
           .attr('r', this.stateCircleR);
       });
       this.bubbles = this.svg.selectAll('.bubble')
@@ -319,7 +321,6 @@ class Bubble extends HTMLElement {
     }
     this.bubbles = this.bubbles.data(this.nodes, d => d.id);
     this.bubbles.exit().remove();
-    console.log(radiusPoint, this.stateCircleR);
     this.bubbles = this.bubbles.enter().append('circle')
       .classed('bubble', true)
       .attr('r', radiusPoint)
@@ -467,7 +468,9 @@ class Bubble extends HTMLElement {
     });
     this.svg.selectAll('.state')
       .attr('y', 30)
-      .attr('x', d => _this.stateTitleX[d]);
+      .attr('x', d => _this.stateTitleX[d])
+      // .attr('fill', 'white'); //Dark theme
+      .attr('fill', 'black'); //Light theme
     this.data = this.nodes;
     this.simulation.force('y', d3.forceY().strength(this.forceStrength).y(_this.center.y));
   }
