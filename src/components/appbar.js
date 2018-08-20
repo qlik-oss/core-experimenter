@@ -20,15 +20,13 @@ class Appbar extends HTMLElement {
     this.clearCallback = this.clearCallback || val.clearCallback;
     this.backCallback = this.backCallback || val.backCallback;
     this.forwardCallback = this.forwardCallback || val.forwardCallback;
-    this.listDisabled = false;
     this.invalidate();
   }
 
-  toggleListEnablement() {
-    this.listDisabled = !this.listDisabled;
+  toggleListEnablement(setDisabled) {
     if (this.shadowRoot.innerHTML.length > 0) {
       const list = this.shadowRoot.querySelector('.app-bar').querySelector('select');
-      if (this.listDisabled) {
+      if (setDisabled) {
         list.style.opacity = 0.5;
         list.disabled = true;
       } else {
