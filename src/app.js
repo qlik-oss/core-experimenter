@@ -56,7 +56,7 @@ function _getListboxObjects(d) {
       }
       i += 1;
     }
-    return {listObject: res, listBox: currListBox};
+    return { listObject: res, listBox: currListBox };
   }
   return null;
 }
@@ -234,7 +234,6 @@ function resize() {
 
 function createMyList(app, field, fields) {
   return new Promise((resolve) => {
-
     const properties = {
       qInfo: {
         qType: 'lb',
@@ -243,7 +242,7 @@ function createMyList(app, field, fields) {
       qListObjectDef: {
         qDef: {
           qFieldDefs: [field],
-          qSortCriterias: [{qSortByState: 1, qSortByAscii: 1}],
+          qSortCriterias: [{ qSortByState: 1, qSortByAscii: 1 }],
         },
         qShowAlternatives: true,
         qInitialDataFetch: [{
@@ -342,7 +341,6 @@ async function patchIt(val, id) {
 
 function createKpi(app, exp, label = 'kpi', elId) {
   return new Promise((resolve) => {
-
     const props = {
       qInfo: {
         qType: 'kpi',
@@ -408,6 +406,7 @@ async function newDS(e) {
   tableOrder = [];
   document.getElementsByClassName('listbox_cnt')[0].innerHTML = '';
   document.getElementById('one').data = [];
+  document.getElementById('one').fieldsCount = 0;
   const properties = {
     qInfo: {
       qType: 'flist',
@@ -418,17 +417,14 @@ async function newDS(e) {
   const obj = await app.createSessionObject(properties);
   const lay = await obj.getLayout();
   titleFields = lay.qFieldList.qItems.map(f => f.qName);
-  console.log('1', titleFields, titleFields.length);
   curApp = app;
   await createMyLists(app, titleFields);
-  console.log('2', titleFields, titleFields.length);
-  const ff = titleFields.slice(0);
   await createHyperCube(app, titleFields);
   const container = document.querySelectorAll('.kpi')[0];
   container.innerHTML = '';
   console.log('3', titleFields, titleFields.length);
-  var promises = [];
-  ff.forEach((en, i) => {
+  let promises = [];
+  titleFields.forEach((en, i) => {
     promises.push(createKpi(app, `count(distinct ${en})/count(distinct {1} ${en})*100`, en, `kp${i + 1}`));
   });
   Promise.all(promises).then(() => {
