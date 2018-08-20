@@ -23,6 +23,19 @@ class Appbar extends HTMLElement {
     this.invalidate();
   }
 
+  disableListEnablement(setDisabled) {
+    if (this.shadowRoot.innerHTML.length > 0) {
+      const list = this.shadowRoot.querySelector('.app-bar').querySelector('select');
+      if (setDisabled) {
+        list.style.opacity = 0.5;
+        list.disabled = true;
+      } else {
+        list.disabled = false;
+        list.style.opacity = '';
+      }
+    }
+  }
+
   _changeDS(e) {
     this.dsChangeCallBack(e.value);
   }
@@ -72,12 +85,20 @@ class Appbar extends HTMLElement {
                 <span class="app-title">Core Power Playground</span>
             <div>
               <div class="buttons">
-                <button on-click="${() => { this._clearCallback(); }}" >Clear all</button>
-                <button on-click="${() => { this._backCallback(); }}" >Back</button>
-                <button on-click="${() => { this._forwardCallback(); }}" >Forward</button>
+                <button on-click="${() => {
+      this._clearCallback();
+    }}" >Clear all</button>
+                <button on-click="${() => {
+      this._backCallback();
+    }}" >Back</button>
+                <button on-click="${() => {
+      this._forwardCallback();
+    }}" >Forward</button>
                 <div class="divider"></div>
                 <span>|</span>
-                <select onchange="${(e) => {this._changeDS(e.target);}}">
+                <select onchange="${(e) => {
+      this._changeDS(e.target);
+    }}">
                   ${repeat(this.ds, d => d.toString(), d => html` <option value="${d}">${d}</option>`)}
                 </select>
               </div>
@@ -87,4 +108,5 @@ class Appbar extends HTMLElement {
     /* eslint-enable */
   }
 }
+
 customElements.define('app-bar', Appbar);
