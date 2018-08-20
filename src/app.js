@@ -56,7 +56,7 @@ function _getListboxObjects(d) {
       }
       i += 1;
     }
-    return { listObject: res, listBox: currListBox };
+    return {listObject: res, listBox: currListBox};
   }
   return null;
 }
@@ -241,7 +241,7 @@ function createMyList(app, field, fields) {
     qListObjectDef: {
       qDef: {
         qFieldDefs: [field],
-        qSortCriterias: [{ qSortByState: 1, qSortByAscii: 1 }],
+        qSortCriterias: [{qSortByState: 1, qSortByAscii: 1}],
       },
       qShowAlternatives: true,
       qInitialDataFetch: [{
@@ -337,57 +337,63 @@ async function patchIt(val, id) {
 }
 
 function createKpi(app, exp, label = 'kpi', elId) {
-  const props = {
-    qInfo: {
-      qType: 'kpi',
-      qId: 'yes:-)',
-    },
-    type: 'my-kpi',
-    labels: true,
-    qHyperCubeDef: {
-      qDimensions: [],
-      qMeasures: [
-        {
-          qDef: {
-            qDef: `=${exp}`,
-            qLabel: label,
+  return new Promise((resolve) => {
+
+    const props = {
+      qInfo: {
+        qType: 'kpi',
+        qId: 'yes:-)',
+      },
+      type: 'my-kpi',
+      labels: true,
+      qHyperCubeDef: {
+        qDimensions: [],
+        qMeasures: [
+          {
+            qDef: {
+              qDef: `=${exp}`,
+              qLabel: label,
+            },
+            qSortBy: {
+              qSortByNumeric: -1,
+            },
           },
-          qSortBy: {
-            qSortByNumeric: -1,
-          },
-        },
-      ],
-      qInitialDataFetch: [{
-        qTop: 0, qHeight: 20, qLeft: 0, qWidth: 17,
-      }],
-      qSuppressZero: false,
-      qSuppressMissing: true,
-    },
-  };
-  const container = document.querySelectorAll('.kpi')[0];
-  const elem = document.createElement('kpi-comp');
-  elem.id = elId;
-  elem.color = cssColors[tableOrder.indexOf(label)];
-  container.append(elem);
-  app.createSessionObject(props).then((model) => {
-    const object = model;
-    const update = () => object.getLayout().then((layout) => {
+        ],
+        qInitialDataFetch: [{
+          qTop: 0, qHeight: 20, qLeft: 0, qWidth: 17,
+        }],
+        qSuppressZero: false,
+        qSuppressMissing: true,
+      },
+    };
+    const container = document.querySelectorAll('.kpi')[0];
+    const elem = document.createElement('kpi-comp');
+    elem.id = elId;
+    elem.color = cssColors[tableOrder.indexOf(label)];
+    container.append(elem);
+    app.createSessionObject(props).then((model) => {
+      const object = model;
+      const update = () => object.getLayout().then((layout) => {
+        const d = document.getElementById(elId);
+        if (d) {
+          d.data = layout.qHyperCube.qDataPages[0].qMatrix;
+        }
+      });
+      object.on('changed', update);
       const d = document.getElementById(elId);
-      if (d) { d.data = layout.qHyperCube.qDataPages[0].qMatrix; }
+      if (d) {
+        d.model = model;
+        d.title = label;
+        d.formula = exp;
+        d.inputChangeDelegate = patchIt;
+        d.allFields = tableOrder;
+        d.colorBy = colors.domain(tableOrder).range(rangeColor);
+        d.mouseover = hoverIn;
+        d.mouseout = hoverOut;
+      }
+      update();
+      resolve();
     });
-    object.on('changed', update);
-    const d = document.getElementById(elId);
-    if (d) {
-      d.model = model;
-      d.title = label;
-      d.formula = exp;
-      d.inputChangeDelegate = patchIt;
-      d.allFields = tableOrder;
-      d.colorBy = colors.domain(tableOrder).range(rangeColor);
-      d.mouseover = hoverIn;
-      d.mouseout = hoverOut;
-    }
-    update();
   });
 }
 
@@ -417,10 +423,13 @@ async function newDS(e) {
   const container = document.querySelectorAll('.kpi')[0];
   container.innerHTML = '';
   console.log('3', titleFields, titleFields.length);
+  var promises = [];
   ff.forEach((en, i) => {
-    createKpi(app, `count(distinct ${en})/count(distinct {1} ${en})*100`, en, `kp${i + 1}`);
+    promises.push(createKpi(app, `count(distinct ${en})/count(distinct {1} ${en})*100`, en, `kp${i + 1}`));
   });
-  appbar.toggleListEnablement(false);
+  Promise.all(promises).then(() => {
+    appbar.toggleListEnablement(false);
+  });
 }
 
 async function init() {
