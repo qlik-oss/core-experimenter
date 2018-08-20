@@ -418,11 +418,10 @@ async function newDS(e) {
   const lay = await obj.getLayout();
   titleFields = lay.qFieldList.qItems.map(f => f.qName);
   curApp = app;
-  await createMyLists(app, titleFields);
-  await createHyperCube(app, titleFields);
+  createMyLists(app, titleFields);
+  createHyperCube(app, titleFields);
   const container = document.querySelectorAll('.kpi')[0];
   container.innerHTML = '';
-  console.log('3', titleFields, titleFields.length);
   const promises = [];
   titleFields.forEach((en, i) => {
     promises.push(createKpi(app, `count(distinct ${en})/count(distinct {1} ${en})*100`, en, `kp${i + 1}`));
