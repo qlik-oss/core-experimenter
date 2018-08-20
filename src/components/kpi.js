@@ -26,6 +26,13 @@ class KPI extends HTMLElement {
     this.invalidate();
   }
 
+  disconnectedCallback() {
+    // cleaning all eventListeners (https://stackoverflow.com/questions/19469881/remove-all-event-listeners-of-specific-type/29930689)
+    const KPIel = this.root.children[1];
+    const elClone = KPIel.cloneNode(true);
+    KPIel.parentNode.replaceChild(elClone, KPIel);
+  }
+
   get title() {
     return this.getAttribute('title') ? this.getAttribute('title') : 'no title';
   }
