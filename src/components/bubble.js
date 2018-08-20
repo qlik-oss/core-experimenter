@@ -25,6 +25,7 @@ class Bubble extends HTMLElement {
     this.root = this.attachShadow({ mode: 'open' });
     this.nodes = [];
     this.fields = [];
+    this.fieldsCount = 0;
     this.simulation = d3.forceSimulation()
       .velocityDecay(0.27)
       .force('x', d3.forceX().strength(this.forceStrength).x(this.center.x))
@@ -71,12 +72,13 @@ class Bubble extends HTMLElement {
       }
       return found;
     });
-    this.fields.push(field);
-    if (this.fields.length === fields.length) {
+    if (this.fieldsCount === fields.length - 1) {
       setTimeout(() => {
         this.data = this.nodes;
         this.resize();
       }, 100);
+    } else {
+      this.fieldsCount += 1;
     }
     this.radiusPoint = radiusPoint;
   }
@@ -248,7 +250,7 @@ class Bubble extends HTMLElement {
     const res = _this._getListboxObjects(d).listObject;
     // res.style.background = d3.rgb(this.fillColor(d.field));
     // res.style.color = '#595959';
-    res.style.opacity = 0.8;
+    res.style.opacity = '';
   }
 
   highlightListBox(d) {
@@ -273,7 +275,7 @@ class Bubble extends HTMLElement {
             if (currentFields[k].className.indexOf(`field${this.fields.indexOf(d.field)}`) !== -1) {
               if (lightOption === 'highlight') {
                 currentFields[k].classList.add('highlightText');
-                currentFields[k].style.color = d3.rgb(this.fillColor(d.field)).darker();
+                currentFields[k].style.color = d3.rgb(this.fillColor(d.field)).darker(0.5);
               } else if (lightOption === 'lowlight') {
                 currentFields[k].classList.remove('highlightText');
                 currentFields[k].style.color = d3.rgb(this.fillColor(d.field));
