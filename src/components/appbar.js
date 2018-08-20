@@ -1,11 +1,11 @@
-import {render, html} from '../../node_modules/lit-html/lib/lit-extended';
+import { render, html } from '../../node_modules/lit-html/lib/lit-extended';
 import css from './appbar.css';
-import {repeat} from '../../node_modules/lit-html/lib/repeat';
+import { repeat } from '../../node_modules/lit-html/lib/repeat';
 
 class Appbar extends HTMLElement {
   constructor() {
     super();
-    this.root = this.attachShadow({mode: 'open'});
+    this.root = this.attachShadow({ mode: 'open' });
     this.ds = [];
   }
 

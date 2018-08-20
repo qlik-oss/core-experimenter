@@ -257,10 +257,10 @@ function createMyList(app, field, fields) {
     currentListBoxes = [];
     app.createSessionObject(properties).then((model) => {
       const object = model;
-      const updateBubbles = layout => new Promise((resolve/* , reject */) => {
+      const updateBubbles = layout => new Promise((resol/* , reject */) => {
         const d = document.getElementById('one');
         d.update(layout, field, fields, _this.hoverIn, _this.hoverOut);
-        resolve();
+        resol();
       });
       const updateListBoxes = (layout) => {
         function _createAndAppendListbox(_fieldName) {
@@ -423,7 +423,7 @@ async function newDS(e) {
   const container = document.querySelectorAll('.kpi')[0];
   container.innerHTML = '';
   console.log('3', titleFields, titleFields.length);
-  let promises = [];
+  const promises = [];
   titleFields.forEach((en, i) => {
     promises.push(createKpi(app, `count(distinct ${en})/count(distinct {1} ${en})*100`, en, `kp${i + 1}`));
   });
