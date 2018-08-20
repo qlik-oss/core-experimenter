@@ -403,15 +403,19 @@ async function newDS(e) {
     qFieldListDef: {},
   };
   const app = await connectEngine(`${e}.qvf`);
-  const obj = await app.createObject(properties);
+  const obj = await app.createSessionObject(properties);
   const lay = await obj.getLayout();
   titleFields = lay.qFieldList.qItems.map(f => f.qName);
+  console.log('1', titleFields, titleFields.length);
   curApp = app;
   await createMyLists(app, titleFields);
+  console.log('2', titleFields, titleFields.length);
+  const ff = titleFields.slice(0);
   await createHyperCube(app, titleFields);
   const container = document.querySelectorAll('.kpi')[0];
   container.innerHTML = '';
-  titleFields.forEach((en, i) => {
+  console.log('3', titleFields, titleFields.length);
+  ff.forEach((en, i) => {
     createKpi(app, `count(distinct ${en})/count(distinct {1} ${en})*100`, en, `kp${i + 1}`);
   });
 }
