@@ -403,7 +403,7 @@ function createKpi(app, exp, label = 'kpi', elId) {
 
 async function newDS(e) {
   const appbar = document.getElementsByTagName('app-bar')[0];
-  appbar.toggleListEnablement(true);
+  appbar.disableListEnablement(true);
   let titleFields = [];
   tableOrder = [];
   document.getElementsByClassName('listbox_cnt')[0].innerHTML = '';
@@ -432,7 +432,7 @@ async function newDS(e) {
     promises.push(createKpi(app, `count(distinct ${en})/count(distinct {1} ${en})*100`, en, `kp${i + 1}`));
   });
   Promise.all(promises).then(() => {
-    appbar.toggleListEnablement(false);
+    appbar.disableListEnablement(false);
   });
 }
 

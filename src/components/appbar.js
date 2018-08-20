@@ -23,7 +23,7 @@ class Appbar extends HTMLElement {
     this.invalidate();
   }
 
-  toggleListEnablement(setDisabled) {
+  disableListEnablement(setDisabled) {
     if (this.shadowRoot.innerHTML.length > 0) {
       const list = this.shadowRoot.querySelector('.app-bar').querySelector('select');
       if (setDisabled) {
