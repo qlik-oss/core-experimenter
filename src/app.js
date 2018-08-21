@@ -16,9 +16,8 @@ const engineHost = 'alteirac.hd.free.fr';
 const enginePort = '9076';
 const colors = d3.scaleOrdinal();
 const dataSources = ['music', 'fruit', 'car'];
-
-const rangeColor = ['#9792e3', '#ffcc00', '#ff7300', '#20cfbd'];
-const cssColors = ['myPurple', 'myYellow', 'myOrange', 'myCoralGreen'];
+const rangeColor = ['#ffd23f', '#ee414b', '#3bceac', '#3a568f'];
+const cssColors = ['myBlue', 'green', 'myPurple', 'myOrange', 'myPink', 'default', 'myYellow2', 'myYellow', 'myCoralGreen', 'myPurple2', 'myCoralGreen2'];
 let tableOrder = [];
 let currentListBoxes = [];
 let curApp;
@@ -120,7 +119,6 @@ function hoverOut(d) {
   lowLightListBox(d);
   lightChangeKPIs(d, 'lowlight');
 }
-
 
 async function connectEngine(appName) {
   const session = enigma.create({
@@ -332,7 +330,7 @@ async function patchIt(val, id) {
   }
 }
 
-function createKpi(app, exp, label = 'kpi', elId) {
+function createKpi(app, exp, label = 'kpi', elId, index) {
   return new Promise((resolve) => {
     const props = {
       qInfo: {
@@ -364,7 +362,8 @@ function createKpi(app, exp, label = 'kpi', elId) {
     const container = document.querySelectorAll('.kpi')[0];
     const elem = document.createElement('kpi-comp');
     elem.id = elId;
-    elem.color = cssColors[tableOrder.indexOf(label)];
+    const i = index || tableOrder.indexOf(label);
+    elem.color = cssColors[i];
     container.append(elem);
     app.createSessionObject(props).then((model) => {
       const object = model;
@@ -422,6 +421,7 @@ async function newDS(e) {
   Promise.all(promises).then(() => {
     appbar.disableListEnablement(false);
   });
+  createKpi(app, 'count(distinct Year)/count(distinct {1} Album)*100', 'Own KPI', `kp${titleFields.length + 1}`, titleFields.length);
 }
 
 async function init() {

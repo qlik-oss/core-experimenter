@@ -122,7 +122,7 @@ class CpTable extends HTMLElement {
         <table>
           <thead>
             <tr class="header">
-            ${repeat(this.headerValues, header => header.toString(), header => html`<th style="border-left: 2px solid ${this.colorBy(header)};">${header}</th>`)}
+            ${repeat(this.headerValues, header => header.toString(), header => html`<th style="background:${this.colorBy(header)}88;">${header}</th>`)}
             </tr>
           </thead>
           <tbody>

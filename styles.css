@@ -3,6 +3,8 @@ html, body{
   height: 100%;
   position: relative;
   font-family: "Open Sans", sans-serif;
+  background-color: white;
+  color:black;
 }
 body{
   margin: 0;

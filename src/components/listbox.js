@@ -42,7 +42,7 @@ class ListBox extends HTMLElement {
   }
 
   _mouseEnteredListbox() {
-    this.awaitSetInFocus(1000);
+    this.awaitSetInFocus(500);
   }
 
   _mouseLeftListbox() {
