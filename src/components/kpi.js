@@ -76,7 +76,7 @@ class KPI extends HTMLElement {
   }
 
   get data() {
-    return (this.dt != null && this.dt[0] && this.dt[0][0].qNum) ? this.dt[0][0].qNum : 0;
+    return (this.dt != null && this.dt[0] && this.dt[0][0].qNum && this.dt[0][0].qNum !== 'NaN') ? this.dt[0][0].qNum : 0;
   }
 
   set data(val) {
@@ -164,7 +164,7 @@ class KPI extends HTMLElement {
     this.unformatedText = e.innerHTML.indexOf('span') !== -1 ? this.formula : e.innerHTML;
     let res = this.unformatedText;
     this.allFields.forEach((field) => {
-      res = res.split(field).join(`<span class="field${this.allFields.indexOf(field)}" 
+      res = res.split(field).join(`<span class="field${this.allFields.indexOf(field)}"
       style="color:${this._getFieldColor(field)}; opacity: 0.8; font-weight:900">${field}</span>`);
     });
     e.innerHTML = res;
@@ -188,7 +188,7 @@ class KPI extends HTMLElement {
   template() {
     /* eslint-disable */
     return html`
-      <style>      
+      <style>
         ${cssKPI}
         ${cssCircle}
       </style>
@@ -201,8 +201,8 @@ class KPI extends HTMLElement {
                 <div class="fill"></div>
             </div>
         </div>
-        <div id="hej" class="textArea" contenteditable="true" 
-            on-blur="${(e) => { this._highlight(e.target) }}" 
+        <div id="hej" class="textArea" contenteditable="true"
+            on-blur="${(e) => { this._highlight(e.target) }}"
             on-focus="${(e) => { this._lowlight(e.target) }}"
             on-input="${(e) => { this._frm(e.target); }}">
             ${this.formula}
