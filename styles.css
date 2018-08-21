@@ -15,7 +15,7 @@ body{
   box-sizing: border-box;
   display: grid;
   width: 100%;
-  height: calc(100% - 70px);
+  height: calc(100% - 80px);
   grid-template-areas:
   "table table table table"
   "bubbles bubbles bubbles listbox"
