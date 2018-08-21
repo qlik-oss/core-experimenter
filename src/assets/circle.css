@@ -100,8 +100,7 @@
   -ms-border-radius: 50%;
   -o-border-radius: 50%;
   border-radius: 50%;
-  background-color: whitesmoke; /*  Light theme */
-  /*background-color:#555555;  !* Dark theme *!*/
+  background-color: whitesmoke;
   width: 0.84em;
   height: 0.84em;
   -webkit-transition-property: all;
