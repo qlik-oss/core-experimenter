@@ -21,7 +21,7 @@ const dataSources = ['music', 'fruit', 'car'];
 // const rangeColor = ['#ffcc00', '#50ae00', '#e5637f','#20cfbd'];
 const rangeColor = ['#ffd23f', '#ee414b', '#3bceac', '#3a568f'];
 // const cssColors = ['myPurple', 'myYellow', 'myOrange', 'myCoralGreen'];
-const cssColors = ['myYellow2', 'myPink', 'myCoralGreen2', 'myPurple2', 'myBlue', ''];
+const cssColors = ['myBlue', 'green', 'myPurple', 'myOrange', 'myPink', 'default', 'myYellow2','myYellow', 'myCoralGreen', 'myPurple2', 'myCoralGreen2'];
 let tableOrder = [];
 let currentListBoxes = [];
 let curApp;
