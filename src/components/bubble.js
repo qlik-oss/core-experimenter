@@ -80,6 +80,7 @@ class Bubble extends HTMLElement {
           this.resize();
         }
         this.move();
+        this.animate(radiusPoint);
       }, 100);
     } else {
       this.fieldsCount += 1;
@@ -349,6 +350,10 @@ class Bubble extends HTMLElement {
     if (this.nodes.length > 0) {
       this.simulation.nodes(this.nodes);
     }
+    this.move();
+  }
+
+  animate(radiusPoint) {
     this.bubbles
       .transition()
       .duration(500)
@@ -391,7 +396,6 @@ class Bubble extends HTMLElement {
         }
         return radiusPoint;
       });
-    this.move();
   }
 
   floatingTooltip(tooltipId, width) {
