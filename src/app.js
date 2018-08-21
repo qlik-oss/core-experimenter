@@ -16,10 +16,6 @@ const engineHost = 'alteirac.hd.free.fr';
 const enginePort = '9076';
 const colors = d3.scaleOrdinal();
 const dataSources = ['music', 'fruit', 'car'];
-
-
-// const rangeColor = ['#7aff6b','#ffe000', '#20cfbd', '#e32731'];
-// const rangeColor = ['#ffcc00', '#50ae00', '#e5637f','#20cfbd'];
 const rangeColor = ['#ffd23f', '#ee414b', '#3bceac', '#3a568f'];
 const cssColors = ['myBlue', 'green', 'myPurple', 'myOrange', 'myPink', 'default', 'myYellow2', 'myYellow', 'myCoralGreen', 'myPurple2', 'myCoralGreen2'];
 let tableOrder = [];
