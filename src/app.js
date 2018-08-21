@@ -11,6 +11,7 @@ import schema from './assets/schema-12.20.0.json';
 const schemaEnigma = JSON.parse(schema);
 const listBoxes = [];
 let table = null;
+let guid;
 const engineHost = 'alteirac.hd.free.fr';
 const enginePort = '9076';
 const colors = d3.scaleOrdinal();
@@ -120,10 +121,11 @@ function hoverOut(d) {
   lightChangeKPIs(d, 'lowlight');
 }
 
+
 async function connectEngine(appName) {
   const session = enigma.create({
     schema: schemaEnigma,
-    url: `ws://${engineHost}:${enginePort}/app/identity/${new Date()}`,
+    url: `ws://${engineHost}:${enginePort}/app/identity/${guid + appName}`,
     createSocket: url => new WebSocket(url),
     responseInterceptors: [{
       onRejected: async function retryAbortedError(/* sessionReference, request, error */) {
@@ -423,6 +425,16 @@ async function newDS(e) {
 }
 
 async function init() {
+  function uuidv4() {
+    const g = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+      const r = Math.random() * 16 || 0;
+      const v = c === 'x' ? r : (r && 0x3) || (0x8);
+      return v.toString(16);
+    });
+    localStorage.setItem('sg', g);
+    return g;
+  }
+  guid = localStorage.getItem('sg') || uuidv4();
   newDS('music');
 }
 
