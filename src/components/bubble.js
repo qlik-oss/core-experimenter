@@ -66,8 +66,8 @@ class Bubble extends HTMLElement {
           field,
           value: e.qText,
           state: this.stateMapping[e.qState],
-          x: this.stateCenters.optional.x + Math.random() * 50,
-          y: this.stateCenters.optional.y + Math.random() * 50,
+          x: this.stateCenters.optional.x + (Math.random() * 2 - 1) * this.stateCircleR * 1.5,
+          y: this.stateCenters.optional.y + (Math.random() * 2 - 1) * this.stateCircleR * 1.5,
         });
       }
       return found;
@@ -326,6 +326,7 @@ class Bubble extends HTMLElement {
       .attr('r', radiusPoint)
       .attr('st', d => d.state)
       .attr('cx', this.stateCenters.optional.x)
+      .attr('opacity', 0)
       .attr('cy', this.stateCenters.optional.y)
       .attr('mid', d => `${d.field}.${d.id}`)
       .attr('fld', d => `${d.field}`)
@@ -341,8 +342,17 @@ class Bubble extends HTMLElement {
     if (this.nodes.length > 0) {
       this.simulation.nodes(this.nodes);
     }
-    this.bubbles.transition()
-      .duration(1500)
+    this.bubbles
+      .transition()
+      .duration(500)
+      .attr('opacity', () => {
+        return 1;
+      })
+      .delay((d, i) => {
+        return Math.round(Math.random() * 250 + i * 2);
+      })
+      .transition()
+      .duration(500)
       .attr('stroke-width', (d) => {
         if (d.state === this.stateMapping.XS) {
           return 5;
