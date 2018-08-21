@@ -310,7 +310,7 @@ class Bubble extends HTMLElement {
           .attr('cy', this.stateCenters[e].y)
           .attr('fill', 'none')
           .attr('stroke-width', 10)
-          .attr('stroke', '#8b8b8b') //Light theme
+          .attr('stroke', '#8b8b8b')
           // .attr('stroke', 'white') //Dark theme
           .attr('stroke-dasharray', 2)
           .attr('r', this.stateCircleR);
@@ -470,7 +470,7 @@ class Bubble extends HTMLElement {
       .attr('y', 30)
       .attr('x', d => _this.stateTitleX[d])
       // .attr('fill', 'white'); //Dark theme
-      .attr('fill', 'black'); //Light theme
+      .attr('fill', 'black');
     this.data = this.nodes;
     this.simulation.force('y', d3.forceY().strength(this.forceStrength).y(_this.center.y));
   }

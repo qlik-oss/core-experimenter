@@ -20,8 +20,7 @@ const dataSources = ['music', 'fruit', 'car'];
 // const rangeColor = ['#7aff6b','#ffe000', '#20cfbd', '#e32731'];
 // const rangeColor = ['#ffcc00', '#50ae00', '#e5637f','#20cfbd'];
 const rangeColor = ['#ffd23f', '#ee414b', '#3bceac', '#3a568f'];
-// const cssColors = ['myPurple', 'myYellow', 'myOrange', 'myCoralGreen'];
-const cssColors = ['myBlue', 'green', 'myPurple', 'myOrange', 'myPink', 'default', 'myYellow2','myYellow', 'myCoralGreen', 'myPurple2', 'myCoralGreen2'];
+const cssColors = ['myBlue', 'green', 'myPurple', 'myOrange', 'myPink', 'default', 'myYellow2', 'myYellow', 'myCoralGreen', 'myPurple2', 'myCoralGreen2'];
 let tableOrder = [];
 let currentListBoxes = [];
 let curApp;
@@ -60,7 +59,7 @@ function _getListboxObjects(d) {
       }
       i += 1;
     }
-    return {listObject: res, listBox: currListBox};
+    return { listObject: res, listBox: currListBox };
   }
   return null;
 }
@@ -245,7 +244,7 @@ function createMyList(app, field, fields) {
     qListObjectDef: {
       qDef: {
         qFieldDefs: [field],
-        qSortCriterias: [{qSortByState: 1, qSortByAscii: 1}],
+        qSortCriterias: [{ qSortByState: 1, qSortByAscii: 1 }],
       },
       qShowAlternatives: true,
       qInitialDataFetch: [{
