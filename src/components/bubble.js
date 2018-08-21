@@ -25,6 +25,7 @@ class Bubble extends HTMLElement {
     this.root = this.attachShadow({ mode: 'open' });
     this.nodes = [];
     this.fields = [];
+    this.fieldsCount = 0;
     this.simulation = d3.forceSimulation()
       .velocityDecay(0.27)
       .force('x', d3.forceX().strength(this.forceStrength).x(this.center.x))
@@ -65,18 +66,19 @@ class Bubble extends HTMLElement {
           field,
           value: e.qText,
           state: this.stateMapping[e.qState],
-          x: Math.random() * 900,
-          y: Math.random() * 800,
+          x: this.stateCenters.optional.x + Math.random() * 50,
+          y: this.stateCenters.optional.y + Math.random() * 50,
         });
       }
       return found;
     });
-    this.fields.push(field);
-    if (this.fields.length === fields.length) {
+    if (this.fieldsCount === fields.length - 1) {
       setTimeout(() => {
         this.data = this.nodes;
         this.resize();
       }, 100);
+    } else {
+      this.fieldsCount += 1;
     }
     this.radiusPoint = radiusPoint;
   }
@@ -316,7 +318,6 @@ class Bubble extends HTMLElement {
       });
       this.bubbles = this.svg.selectAll('.bubble')
         .data(this.nodes, d => d.id);
-      this.simulation.nodes(this.nodes);
     }
     this.bubbles = this.bubbles.data(this.nodes, d => d.id);
     this.bubbles.exit().remove();
@@ -324,6 +325,8 @@ class Bubble extends HTMLElement {
       .classed('bubble', true)
       .attr('r', radiusPoint)
       .attr('st', d => d.state)
+      .attr('cx', this.stateCenters.optional.x)
+      .attr('cy', this.stateCenters.optional.y)
       .attr('mid', d => `${d.field}.${d.id}`)
       .attr('fld', d => `${d.field}`)
       .attr('fill', d => this.fillColor(d.field))
@@ -335,7 +338,9 @@ class Bubble extends HTMLElement {
       // .on('mouseout', this.lowLightListBox)
       .on('click', this.select)
       .merge(this.bubbles);
-    this.simulation.nodes(this.nodes);
+    if (this.nodes.length > 0) {
+      this.simulation.nodes(this.nodes);
+    }
     this.bubbles.transition()
       .duration(1500)
       .attr('stroke-width', (d) => {

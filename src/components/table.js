@@ -61,15 +61,55 @@ class CpTable extends HTMLElement {
   invalidate() {
     if (!this.needsRender) {
       this.needsRender = true;
-      Promise.resolve().then(() => {
+      return Promise.resolve().then(() => {
         this.needsRender = false;
         render(this.template(), this.root);
+        return true;
       });
     }
+    return Promise.resolve(true);
   }
 
   connectedCallback() {
-    this.invalidate();
+    this.invalidate().then(() => {
+      const tableElement = this.root.querySelectorAll('table')[0];
+      tableElement.addEventListener('mouseover', (e) => {
+        if (e.target && e.target.nodeName === 'TD') {
+          const params = {
+            field: this.headerValues[e.target.getAttribute('index')],
+            id: parseInt(e.target.getAttribute('data-elem'), 10),
+            value: e.target.getAttribute('index'),
+          };
+          this._mouseOver(params);
+        }
+      });
+      tableElement.addEventListener('mouseout', (e) => {
+        if (e.target && e.target.nodeName === 'TD') {
+          const params = {
+            field: this.headerValues[e.target.getAttribute('index')],
+            id: parseInt(e.target.getAttribute('data-elem'), 10),
+            value: e.target.getAttribute('index'),
+          };
+          this._mouseOut(params);
+        }
+      });
+      tableElement.addEventListener('click', (e) => {
+        if (e.target && e.target.nodeName === 'TD') {
+          const params = {
+            field: this.headerValues[e.target.getAttribute('index')],
+            id: parseInt(e.target.getAttribute('data-elem'), 10),
+          };
+          this._clickCallback(params);
+        }
+      });
+    });
+  }
+
+  disconnectedCallback() {
+    // cleaning all eventListeners (https://stackoverflow.com/questions/19469881/remove-all-event-listeners-of-specific-type/29930689)
+    const tableElement = this.root.querySelectorAll('table')[0];
+    const elClone = tableElement.cloneNode(true);
+    tableElement.parentNode.replaceChild(elClone, tableElement);
   }
 
   template() {
@@ -86,16 +126,19 @@ class CpTable extends HTMLElement {
             </tr>
           </thead>
           <tbody>
-          ${repeat(
-            this.dataValue,
-            tr => html`<tr>
-              ${repeat(
-                tr,
-                (item, i) => html`<td style="background-color:${this.colorBy(this.headerValues[i])};"
-                onmouseover="${(e) => { this._mouseOver({field: this.headerValues[i], id: item.qElemNumber, value: item.qText});}}"  onmouseout="${(e) => { this._mouseOut({field: this.headerValues[i], id: item.qElemNumber, value: item.qText});}}" class$="${item.qState}" on-click="${(e) => { this._clickCallback({field: this.headerValues[i], id: item.qElemNumber});}}">${item.qText}<span class="state" title="${utils.states[item.qState]}">(${item.qState})</span></td>`
-              )}
+          ${repeat(this.dataValue, tr => html`<tr>
+            ${repeat(tr, (item, i) => html`<td 
+                        style="background-color:${this.colorBy(this.headerValues[i])};"
+                        index$="${i}"
+                        data-text$="${item.qText}"
+                        data-elem$="${item.qElemNumber}"
+                        class$="${item.qState}" >
+                          ${item.qText}
+                          <span class="state" title="${utils.states[item.qState]}">(${item.qState})</span>
+                        </td>`
+        )}
             </tr>`
-          )}
+      )}
           </tbody>
         </table>
       </div>

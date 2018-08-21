@@ -11,6 +11,7 @@ import schema from './assets/schema-12.20.0.json';
 const schemaEnigma = JSON.parse(schema);
 const listBoxes = [];
 let table = null;
+let guid;
 const engineHost = 'alteirac.hd.free.fr';
 const enginePort = '9076';
 const colors = d3.scaleOrdinal();
@@ -135,7 +136,7 @@ function hoverOut(d) {
 async function connectEngine(appName) {
   const session = enigma.create({
     schema: schemaEnigma,
-    url: `ws://${engineHost}:${enginePort}/app/identity/${new Date()}`,
+    url: `ws://${engineHost}:${enginePort}/app/identity/${guid + appName}`,
     createSocket: url => new WebSocket(url),
     responseInterceptors: [{
       onRejected: async function retryAbortedError(/* sessionReference, request, error */) {
@@ -236,81 +237,84 @@ function resize() {
 }
 
 function createMyList(app, field, fields) {
-  const properties = {
-    qInfo: {
-      qType: 'lb',
-      id: 'flist',
-    },
-    qListObjectDef: {
-      qDef: {
-        qFieldDefs: [field],
-        qSortCriterias: [{ qSortByState: 1, qSortByAscii: 1 }],
+  return new Promise((resolve) => {
+    const properties = {
+      qInfo: {
+        qType: 'lb',
+        id: 'flist',
       },
-      qShowAlternatives: true,
-      qInitialDataFetch: [{
-        qTop: 0,
-        qHeight: 500,
-        qLeft: 0,
-        qWidth: 1,
-      }],
-    },
-  };
-  tableOrder.push(properties.qListObjectDef.qDef.qFieldDefs[0]);
-  currentListBoxes = [];
-  app.createSessionObject(properties).then((model) => {
-    const object = model;
-    const updateBubbles = layout => new Promise((resolve/* , reject */) => {
-      const d = document.getElementById('one');
-      d.update(layout, field, fields, _this.hoverIn, _this.hoverOut);
-      resolve();
-    });
-    const updateListBoxes = (layout) => {
-      function _createAndAppendListbox(_fieldName) {
-        const listbox = {
-          id: layout.qInfo.qId,
+      qListObjectDef: {
+        qDef: {
+          qFieldDefs: [field],
+          qSortCriterias: [{ qSortByState: 1, qSortByAscii: 1 }],
+        },
+        qShowAlternatives: true,
+        qInitialDataFetch: [{
+          qTop: 0,
+          qHeight: 500,
+          qLeft: 0,
+          qWidth: 1,
+        }],
+      },
+    };
+    tableOrder.push(properties.qListObjectDef.qDef.qFieldDefs[0]);
+    currentListBoxes = [];
+    app.createSessionObject(properties).then((model) => {
+      const object = model;
+      const updateBubbles = layout => new Promise((resol/* , reject */) => {
+        const d = document.getElementById('one');
+        d.update(layout, field, fields, _this.hoverIn, _this.hoverOut);
+        resol();
+      });
+      const updateListBoxes = (layout) => {
+        function _createAndAppendListbox(_fieldName) {
+          const listbox = {
+            id: layout.qInfo.qId,
+            fieldName: _fieldName,
+            element: document.createElement('list-box'),
+          };
+          return listbox;
+        }
+
+        const _fieldName = layout.qListObject.qDimensionInfo.qFallbackTitle;
+        listBoxes[layout.qInfo.qId] = listBoxes[layout.qInfo.qId]
+          || _createAndAppendListbox(_fieldName);
+        listBoxes[layout.qInfo.qId].element.data = {
           fieldName: _fieldName,
-          element: document.createElement('list-box'),
+          items: layout.qListObject.qDataPages[0].qMatrix,
+          clickCallback: select,
+          clearCallback: clearFieldSelections,
+          mouseOver: hoverIn,
+          mouseOut: hoverOut,
+          colorBy: colors.domain(fields).range(rangeColor),
         };
-        return listbox;
-      }
+        currentListBoxes.push(listBoxes[layout.qInfo.qId]);
 
-      const _fieldName = layout.qListObject.qDimensionInfo.qFallbackTitle;
-      listBoxes[layout.qInfo.qId] = listBoxes[layout.qInfo.qId]
-        || _createAndAppendListbox(_fieldName);
-      listBoxes[layout.qInfo.qId].element.data = {
-        fieldName: _fieldName,
-        items: layout.qListObject.qDataPages[0].qMatrix,
-        clickCallback: select,
-        clearCallback: clearFieldSelections,
-        mouseOver: hoverIn,
-        mouseOut: hoverOut,
-        colorBy: colors.domain(fields).range(rangeColor),
-      };
-      currentListBoxes.push(listBoxes[layout.qInfo.qId]);
-
-      if (currentListBoxes.length === tableOrder.length) {
-        const container = document.getElementsByClassName('listbox_cnt')[0];
-        for (let i = 0; i < tableOrder.length; i++) {
-          for (let j = 0; j < currentListBoxes.length; j++) {
-            if (tableOrder[i] === currentListBoxes[j].fieldName) {
-              container.append(currentListBoxes[j].element);
+        if (currentListBoxes.length === tableOrder.length) {
+          const container = document.getElementsByClassName('listbox_cnt')[0];
+          for (let i = 0; i < tableOrder.length; i++) {
+            for (let j = 0; j < currentListBoxes.length; j++) {
+              if (tableOrder[i] === currentListBoxes[j].fieldName) {
+                container.append(currentListBoxes[j].element);
+              }
             }
           }
+          container.style.left = 0; // reset container position
         }
-        container.style.left = 0; // reset container position
-      }
-    };
+      };
 
-    const update = () => object.getLayout().then((layout) => {
-      updateBubbles(layout);
-      updateListBoxes(layout);
+      const update = () => object.getLayout().then((layout) => {
+        updateBubbles(layout);
+        updateListBoxes(layout);
+      });
+      object.on('changed', update);
+      const d = document.getElementById('one');
+      d.selectDelegate = select;
+      d.fields = fields;
+      d.fillColor = colors.domain(fields).range(rangeColor);
+      update();
+      resolve();
     });
-    object.on('changed', update);
-    const d = document.getElementById('one');
-    d.selectDelegate = select;
-    d.fields = fields;
-    d.fillColor = colors.domain(fields).range(rangeColor);
-    update();
   });
 }
 
@@ -340,66 +344,74 @@ async function patchIt(val, id) {
 }
 
 function createKpi(app, exp, label = 'kpi', elId, index) {
-  const props = {
-    qInfo: {
-      qType: 'kpi',
-      qId: 'yes:-)',
-    },
-    type: 'my-kpi',
-    labels: true,
-    qHyperCubeDef: {
-      qDimensions: [],
-      qMeasures: [
-        {
-          qDef: {
-            qDef: `=${exp}`,
-            qLabel: label,
+  return new Promise((resolve) => {
+    const props = {
+      qInfo: {
+        qType: 'kpi',
+        qId: 'yes:-)',
+      },
+      type: 'my-kpi',
+      labels: true,
+      qHyperCubeDef: {
+        qDimensions: [],
+        qMeasures: [
+          {
+            qDef: {
+              qDef: `=${exp}`,
+              qLabel: label,
+            },
+            qSortBy: {
+              qSortByNumeric: -1,
+            },
           },
-          qSortBy: {
-            qSortByNumeric: -1,
-          },
-        },
-      ],
-      qInitialDataFetch: [{
-        qTop: 0, qHeight: 20, qLeft: 0, qWidth: 17,
-      }],
-      qSuppressZero: false,
-      qSuppressMissing: true,
-    },
-  };
-  const container = document.querySelectorAll('.kpi')[0];
-  const elem = document.createElement('kpi-comp');
-  elem.id = elId;
-  const i = index || tableOrder.indexOf(label);
-  elem.color = cssColors[i];
-  container.append(elem);
-  app.createSessionObject(props).then((model) => {
-    const object = model;
-    const update = () => object.getLayout().then((layout) => {
+        ],
+        qInitialDataFetch: [{
+          qTop: 0, qHeight: 20, qLeft: 0, qWidth: 17,
+        }],
+        qSuppressZero: false,
+        qSuppressMissing: true,
+      },
+    };
+    const container = document.querySelectorAll('.kpi')[0];
+    const elem = document.createElement('kpi-comp');
+    elem.id = elId;
+    const i = index || tableOrder.indexOf(label);
+    elem.color = cssColors[i];
+    container.append(elem);
+    app.createSessionObject(props).then((model) => {
+      const object = model;
+      const update = () => object.getLayout().then((layout) => {
+        const d = document.getElementById(elId);
+        if (d) {
+          d.data = layout.qHyperCube.qDataPages[0].qMatrix;
+        }
+      });
+      object.on('changed', update);
       const d = document.getElementById(elId);
-      if (d) { d.data = layout.qHyperCube.qDataPages[0].qMatrix; }
+      if (d) {
+        d.model = model;
+        d.title = label;
+        d.formula = exp;
+        d.inputChangeDelegate = patchIt;
+        d.allFields = tableOrder;
+        d.colorBy = colors.domain(tableOrder).range(rangeColor);
+        d.mouseover = hoverIn;
+        d.mouseout = hoverOut;
+      }
+      update();
+      resolve();
     });
-    object.on('changed', update);
-    const d = document.getElementById(elId);
-    if (d) {
-      d.model = model;
-      d.title = label;
-      d.formula = exp;
-      d.inputChangeDelegate = patchIt;
-      d.allFields = tableOrder;
-      d.colorBy = colors.domain(tableOrder).range(rangeColor);
-      d.mouseover = hoverIn;
-      d.mouseout = hoverOut;
-    }
-    update();
   });
 }
 
 async function newDS(e) {
+  const appbar = document.getElementsByTagName('app-bar')[0];
+  appbar.disableListEnablement(true);
   let titleFields = [];
   tableOrder = [];
   document.getElementsByClassName('listbox_cnt')[0].innerHTML = '';
   document.getElementById('one').data = [];
+  document.getElementById('one').fieldsCount = 0;
   const properties = {
     qInfo: {
       qType: 'flist',
@@ -407,21 +419,35 @@ async function newDS(e) {
     qFieldListDef: {},
   };
   const app = await connectEngine(`${e}.qvf`);
-  const obj = await app.createObject(properties);
+  const obj = await app.createSessionObject(properties);
   const lay = await obj.getLayout();
   titleFields = lay.qFieldList.qItems.map(f => f.qName);
   curApp = app;
-  await createMyLists(app, titleFields);
-  await createHyperCube(app, titleFields);
+  createMyLists(app, titleFields);
+  createHyperCube(app, titleFields);
   const container = document.querySelectorAll('.kpi')[0];
   container.innerHTML = '';
+  const promises = [];
   titleFields.forEach((en, i) => {
-    createKpi(app, `count(distinct ${en})/count(distinct {1} ${en})*100`, en, `kp${i + 1}`);
+    promises.push(createKpi(app, `count(distinct ${en})/count(distinct {1} ${en})*100`, en, `kp${i + 1}`));
+  });
+  Promise.all(promises).then(() => {
+    appbar.disableListEnablement(false);
   });
   createKpi(app, 'count(distinct Year)/count(distinct {1} Album)*100', 'Own KPI', `kp${titleFields.length + 1}`, titleFields.length);
 }
 
 async function init() {
+  function uuidv4() {
+    const g = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+      const r = Math.random() * 16 || 0;
+      const v = c === 'x' ? r : (r && 0x3) || (0x8);
+      return v.toString(16);
+    });
+    localStorage.setItem('sg', g);
+    return g;
+  }
+  guid = localStorage.getItem('sg') || uuidv4();
   newDS('music');
 }
 
