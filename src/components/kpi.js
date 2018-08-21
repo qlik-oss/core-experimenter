@@ -8,7 +8,7 @@ class KPI extends HTMLElement {
     this.root = this.attachShadow({ mode: 'open' });
     this.dt = null;
     this._error = null;
-    this.data = 100;
+    this.data = 0;
     this.inputChangeDelegate = () => {
     };
     this.unformatedText = null;

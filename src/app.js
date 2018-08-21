@@ -370,16 +370,14 @@ function createKpi(app, exp, label = 'kpi', elId, index) {
   const container = document.querySelectorAll('.kpi')[0];
   const elem = document.createElement('kpi-comp');
   elem.id = elId;
-  const i = index ? index : tableOrder.indexOf(label);
+  const i = index || tableOrder.indexOf(label);
   elem.color = cssColors[i];
   container.append(elem);
   app.createSessionObject(props).then((model) => {
     const object = model;
     const update = () => object.getLayout().then((layout) => {
       const d = document.getElementById(elId);
-      if (d) {
-        d.data = layout.qHyperCube.qDataPages[0].qMatrix;
-      }
+      if (d) { d.data = layout.qHyperCube.qDataPages[0].qMatrix; }
     });
     object.on('changed', update);
     const d = document.getElementById(elId);
