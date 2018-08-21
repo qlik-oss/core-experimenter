@@ -399,6 +399,7 @@ async function newDS(e) {
   document.getElementsByClassName('listbox_cnt')[0].innerHTML = '';
   document.getElementById('one').data = [];
   document.getElementById('one').fieldsCount = 0;
+  document.getElementById('one').first = true;
   const properties = {
     qInfo: {
       qType: 'flist',

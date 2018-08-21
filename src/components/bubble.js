@@ -75,7 +75,11 @@ class Bubble extends HTMLElement {
     if (this.fieldsCount === fields.length - 1) {
       setTimeout(() => {
         this.data = this.nodes;
-        this.resize();
+        if (this.first === true && this.nodes.length > 0) {
+          this.first = false;
+          this.resize();
+        }
+        this.move();
       }, 100);
     } else {
       this.fieldsCount += 1;
@@ -156,7 +160,10 @@ class Bubble extends HTMLElement {
   set data(val) {
     // ToDo: implement validation
     this.nodes = val;
-    this.chart('#vis', this.radiusPoint);
+    if (this.first === true) {
+      this.chart('#vis', this.radiusPoint);
+      this.invalidate();
+    }
     // this.invalidate();
   }
 
@@ -298,7 +305,7 @@ class Bubble extends HTMLElement {
   }
 
   chart(selector, radiusPoint) {
-    if (this.bubbles == null) {
+    if (this.bubbles === null) {
       this.svg = d3.select(this.root).select(selector)
         .append('svg')
         .attr('width', '100%')
@@ -331,8 +338,8 @@ class Bubble extends HTMLElement {
       .attr('mid', d => `${d.field}.${d.id}`)
       .attr('fld', d => `${d.field}`)
       .attr('fill', d => this.fillColor(d.field))
-      .attr('stroke', d => d3.rgb(this.fillColor(d.field)).darker())
       .attr('stroke-width', 2)
+      .attr('stroke', d => d3.rgb(this.fillColor(d.field)).darker())
       .on('mouseover', this.showDetail)
       // .on('mouseover', this.highlightListBox)
       .on('mouseout', this.hideDetail)
@@ -345,14 +352,11 @@ class Bubble extends HTMLElement {
     this.bubbles
       .transition()
       .duration(500)
-      .attr('opacity', () => {
-        return 1;
-      })
-      .delay((d, i) => {
-        return Math.round(Math.random() * 250 + i * 2);
-      })
+      .attr('opacity', () => 1)
+      .delay((d, i) => Math.round(Math.random() * 250 + i * 2))
       .transition()
       .duration(500)
+      .attr('stroke', d => d3.rgb(this.fillColor(d.field)).darker())
       .attr('stroke-width', (d) => {
         if (d.state === this.stateMapping.XS) {
           return 5;
@@ -484,7 +488,9 @@ class Bubble extends HTMLElement {
       .attr('y', 30)
       .attr('x', d => _this.stateTitleX[d])
       .attr('fill', 'black');
+    this.first = true;
     this.data = this.nodes;
+    this.first = false;
     this.simulation.force('y', d3.forceY().strength(this.forceStrength).y(_this.center.y));
   }
 
