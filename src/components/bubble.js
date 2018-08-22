@@ -80,7 +80,7 @@ class Bubble extends HTMLElement {
           this.resize();
         }
         this.move();
-        this.animate(radiusPoint);
+        this.animate(this.radiusPoint);
       }, 100);
     } else {
       this.fieldsCount += 1;
@@ -199,7 +199,9 @@ class Bubble extends HTMLElement {
   async select(d) {
     const all = _this.root.querySelectorAll('.states');
     for (let i = 0; i < all.length; i++) {
-      all[i].setAttribute('stroke', 'black');
+      if (!all[i].classList.contains('mainCircle')) {
+        all[i].setAttribute('stroke', 'black');
+      }
     }
     _this.selectDelegate(d);
     // let field = await curApp.getField(d.field);
@@ -315,6 +317,7 @@ class Bubble extends HTMLElement {
         this.svg.append('circle')
         // .attr('display', 'none')
           .classed('states', true)
+          .classed('mainCircle', true)
           .attr('sta', e)
           .attr('cx', this.stateCenters[e].x)
           .attr('cy', this.stateCenters[e].y)
