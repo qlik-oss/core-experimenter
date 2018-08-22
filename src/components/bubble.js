@@ -66,8 +66,8 @@ class Bubble extends HTMLElement {
           field,
           value: e.qText,
           state: this.stateMapping[e.qState],
-          x: this.stateCenters.optional.x + Math.random() * 50,
-          y: this.stateCenters.optional.y + Math.random() * 50,
+          x: this.stateCenters.optional.x + (Math.random() * 2 - 1) * this.stateCircleR * 1.5,
+          y: this.stateCenters.optional.y + (Math.random() * 2 - 1) * this.stateCircleR * 1.5,
         });
       }
       return found;
@@ -75,7 +75,12 @@ class Bubble extends HTMLElement {
     if (this.fieldsCount === fields.length - 1) {
       setTimeout(() => {
         this.data = this.nodes;
-        this.resize();
+        if (this.first === true && this.nodes.length > 0) {
+          this.first = false;
+          this.resize();
+        }
+        this.move();
+        this.animate(this.radiusPoint);
       }, 100);
     } else {
       this.fieldsCount += 1;
@@ -156,7 +161,10 @@ class Bubble extends HTMLElement {
   set data(val) {
     // ToDo: implement validation
     this.nodes = val;
-    this.chart('#vis', this.radiusPoint);
+    if (this.first === true) {
+      this.chart('#vis', this.radiusPoint);
+      this.invalidate();
+    }
     // this.invalidate();
   }
 
@@ -191,7 +199,9 @@ class Bubble extends HTMLElement {
   async select(d) {
     const all = _this.root.querySelectorAll('.states');
     for (let i = 0; i < all.length; i++) {
-      all[i].setAttribute('stroke', 'black');
+      if (!all[i].classList.contains('mainCircle')) {
+        all[i].setAttribute('stroke', 'black');
+      }
     }
     _this.selectDelegate(d);
     // let field = await curApp.getField(d.field);
@@ -298,7 +308,7 @@ class Bubble extends HTMLElement {
   }
 
   chart(selector, radiusPoint) {
-    if (this.bubbles == null) {
+    if (this.bubbles === null) {
       this.svg = d3.select(this.root).select(selector)
         .append('svg')
         .attr('width', '100%')
@@ -307,6 +317,7 @@ class Bubble extends HTMLElement {
         this.svg.append('circle')
         // .attr('display', 'none')
           .classed('states', true)
+          .classed('mainCircle', true)
           .attr('sta', e)
           .attr('cx', this.stateCenters[e].x)
           .attr('cy', this.stateCenters[e].y)
@@ -326,12 +337,13 @@ class Bubble extends HTMLElement {
       .attr('r', radiusPoint)
       .attr('st', d => d.state)
       .attr('cx', this.stateCenters.optional.x)
+      .attr('opacity', 0)
       .attr('cy', this.stateCenters.optional.y)
       .attr('mid', d => `${d.field}.${d.id}`)
       .attr('fld', d => `${d.field}`)
       .attr('fill', d => this.fillColor(d.field))
-      .attr('stroke', d => d3.rgb(this.fillColor(d.field)).darker())
       .attr('stroke-width', 2)
+      .attr('stroke', d => d3.rgb(this.fillColor(d.field)).darker())
       .on('mouseover', this.showDetail)
       // .on('mouseover', this.highlightListBox)
       .on('mouseout', this.hideDetail)
@@ -341,8 +353,18 @@ class Bubble extends HTMLElement {
     if (this.nodes.length > 0) {
       this.simulation.nodes(this.nodes);
     }
-    this.bubbles.transition()
-      .duration(1500)
+    this.move();
+  }
+
+  animate(radiusPoint) {
+    this.bubbles
+      .transition()
+      .duration(500)
+      .attr('opacity', () => 1)
+      .delay((d, i) => Math.round(Math.random() * 250 + i * 2))
+      .transition()
+      .duration(500)
+      .attr('stroke', d => d3.rgb(this.fillColor(d.field)).darker())
       .attr('stroke-width', (d) => {
         if (d.state === this.stateMapping.XS) {
           return 5;
@@ -377,7 +399,6 @@ class Bubble extends HTMLElement {
         }
         return radiusPoint;
       });
-    this.move();
   }
 
   floatingTooltip(tooltipId, width) {
@@ -474,7 +495,9 @@ class Bubble extends HTMLElement {
       .attr('y', 30)
       .attr('x', d => _this.stateTitleX[d])
       .attr('fill', 'black');
+    this.first = true;
     this.data = this.nodes;
+    this.first = false;
     this.simulation.force('y', d3.forceY().strength(this.forceStrength).y(_this.center.y));
   }
 
