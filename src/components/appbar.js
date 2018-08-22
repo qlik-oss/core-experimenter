@@ -95,7 +95,7 @@ class Appbar extends HTMLElement {
       this._forwardCallback();
     }}" >Forward</button>
                 <span>|</span>
-              <div title='Database' class="db-logo"></div>
+              <div title="Database" class="db-logo"></div>
                 <select onchange="${(e) => {
       this._changeDS(e.target);
     }}">
