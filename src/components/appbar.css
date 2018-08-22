@@ -46,8 +46,19 @@ select {
   height: 100%;
   font-size: 13px;
   margin-left: 10px;
-  border: 1px solid rgba(0,0,0,0.5);
+  border: none;
 
+}
+
+.db-logo {
+  display: inline-block;
+  margin-bottom: -3px;
+  margin-right: -10px;
+  margin-left:8px;
+  padding: 8px;
+  height:100%;
+  background: url(src/assets/database.svg) no-repeat;
+  background-size: 16px 16px;
 }
 
 button {
