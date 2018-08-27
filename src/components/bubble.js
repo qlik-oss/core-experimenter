@@ -358,6 +358,8 @@ class Bubble extends HTMLElement {
 
   animate(radiusPoint) {
     this.bubbles
+      .attr('mid', d => `${d.field}.${d.id}`)
+      .attr('fld', d => `${d.field}`)
       .transition()
       .duration(500)
       .attr('opacity', () => 1)
@@ -499,6 +501,7 @@ class Bubble extends HTMLElement {
     this.data = this.nodes;
     this.first = false;
     this.simulation.force('y', d3.forceY().strength(this.forceStrength).y(_this.center.y));
+    this.animate(this.radiusPoint);
   }
 
   template() {

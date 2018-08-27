@@ -72,7 +72,7 @@ class KPI extends HTMLElement {
   }
 
   _frm(el) {
-    this.inputChangeDelegate(this.unformatedText ? this.unformatedText : el.innerHTML, this.id);
+    this.inputChangeDelegate(this.unformatedText ? this.unformatedText.replace(/(<([^>]+)>)/ig, '') : el.innerHTML.replace(/(<([^>]+)>)/ig, ''), this.id);
   }
 
   get data() {
@@ -202,9 +202,9 @@ class KPI extends HTMLElement {
             </div>
         </div>
         <div id="hej" class="textArea" contenteditable="true"
-            on-blur="${(e) => { this._highlight(e.target) }}"
+            on-blur="${(e) => { this._highlight(e.target);this._frm(e.target); }}"
             on-focus="${(e) => { this._lowlight(e.target) }}"
-            on-input="${(e) => { this._frm(e.target); }}">
+            >
             ${this.formula}
         </div>
       </div>

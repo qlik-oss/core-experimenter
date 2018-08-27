@@ -1,7 +1,7 @@
 .app-bar {
     height: 60px;
     display: grid;
-    grid-template-areas: 'a b c';
+    grid-template-areas: 'a c d';
     grid-template-columns: 1fr 1fr 1fr;
     align-items: center;
     border-bottom: 1px solid rgba(0, 0, 0, 0.562);
@@ -9,18 +9,29 @@
 }
 .app-title {
     font-size: 20px;
-    grid-area:b;
+    grid-area:c;
     justify-self:center;
 }
 .icon {
     grid-area:a;
     height: 45px;
-    float:left;
 }
 .buttons {
-    grid-area:c;
+    grid-area:d;
     height: 100%;
     float:right;
+}
+
+#guideButtonHolder {
+  /*align-self: right;*/
+  grid-area: a;
+  margin-left: 150px;
+}
+
+#guideButton {
+  /*transition: all 1s;*/
+  color:black;
+  /*animation: guideButton 10s infinite;*/
 }
 
 .divider {
@@ -77,4 +88,22 @@ button {
 
 button:hover {
     background-color: rgb(245, 245, 245);
+}
+
+@keyframes guideButton {
+  0% { color: black }
+  10% { color: limegreen }
+  100% { color: black }
+  100% { color: black }
+}
+
+@keyframes blink {
+  0% { opacity: 1 }
+  10% { opacity: 1 }
+  11% { opacity: 0 }
+  12% { opacity: 1 }
+  13% { opacity: 0 }
+  14% { opacity: 1 }
+  15% { opacity: 1 }
+  100% { opacity: 1 }
 }

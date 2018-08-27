@@ -21,22 +21,23 @@ thead{
 }
 tbody {
   overflow: auto;
+  overflow-y: scroll;
   display: block;
   width: 100%;
   height: calc(100% - 65px);
 }
 
-tbody::-webkit-scrollbar { 
-  width: 5px !important 
+tbody::-webkit-scrollbar {
+  width: 5px !important
 }
 tbody::-webkit-scrollbar-track {
-  background: white; 
+  background: white;
 }
 tbody::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.527); 
+  background: rgba(0, 0, 0, 0.527);
 }
 tbody::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 0, 0, 0.527); 
+  background: rgba(0, 0, 0, 0.527);
 }
 
 th, td {
@@ -82,7 +83,7 @@ td span.state{
 
 td.S{
   background-color: #e2e2e2;
-  color: #fff;
+  /*color: #fff;*/
 }
 
 /* tr:nth-child(even){background-color: #f2f2f2} */

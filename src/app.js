@@ -5,6 +5,8 @@ import './components/kpi';
 import './components/appbar';
 import * as d3 from 'd3';
 import 'enigma.js';
+import 'intro.js';
+// import 'intro.js/introjs.css';
 
 import schema from './assets/schema-12.20.0.json';
 
@@ -15,18 +17,23 @@ let guid;
 const engineHost = 'alteirac.hd.free.fr';
 const enginePort = '9076';
 const colors = d3.scaleOrdinal();
-const dataSources = ['music', 'fruit', 'car'];
+const dataSources = ['fruit', 'music', 'car'];
 const rangeColor = ['#ffd23f', '#ee414b', '#3bceac', '#3a568f'];
-const cssColors = ['myBlue', 'green', 'myPurple', 'myOrange', 'myPink', 'default', 'myYellow2', 'myYellow', 'myCoralGreen', 'myPurple2', 'myCoralGreen2'];
+// const cssColors = ['myBlue', 'green', 'myPurple', 'myOrange', 'myPink', 'default', 'myYellow2', 'myYellow', 'myCoralGreen', 'myPurple2', 'myCoralGreen2'];
+const cssColors = ['myYellow2', 'myPink', 'myCoralGreen2', 'myBlue2'];
 let tableOrder = [];
 let currentListBoxes = [];
 let curApp;
 const _this = this;
+let notInGuideMode = true;
+let intro = null;
 
 
-async function select(d) {
-  const field = await curApp.getField(d.field);
-  field.lowLevelSelect([d.id], true, false);
+async function select(d, helpGuideOveride) {
+  if (notInGuideMode || helpGuideOveride) {
+    const field = await curApp.getField(d.field);
+    field.lowLevelSelect([d.id], true, false);
+  }
 }
 
 async function clearFieldSelections(fieldName) {
@@ -95,19 +102,24 @@ function lightChangeKPIs(d, lightOption) {
   }
 }
 
+function _getListbox(field) {
+  let currListBox = null;
+  const lbs = document.getElementsByTagName('list-box');
+  for (let i = 0; i < lbs.length; i++) {
+    if (lbs[i].titleValue === field) {
+      currListBox = lbs[i];
+    }
+  }
+  return currListBox;
+}
+
 function hoverIn(d) {
   const b = document.getElementById('one');
   b.highlight(d);
   highlightListBox(d);
   lightChangeKPIs(d, 'highlight');
 
-  let currListBox = null;
-  const lbs = document.getElementsByTagName('list-box');
-  for (let i = 0; i < lbs.length; i++) {
-    if (lbs[i].titleValue === d.field) {
-      currListBox = lbs[i];
-    }
-  }
+  const currListBox = _getListbox(d.field);
   if (currListBox && d.source !== 'listBox') {
     currListBox.awaitSetInFocus(0);
   }
@@ -137,17 +149,200 @@ async function connectEngine(appName) {
   return app;
 }
 
-function clear() {
-  curApp.clearAll();
+function clear(helpGuideOverride) {
+  if (notInGuideMode || helpGuideOverride) {
+    curApp.clearAll();
+  }
 }
 
-function back() {
-  curApp.back();
+function back(helpGuideOverride) {
+  if (notInGuideMode || helpGuideOverride) {
+    curApp.back();
+  }
 }
 
-function forward() {
-  curApp.forward();
+function forward(helpGuideOverride) {
+  if (notInGuideMode || helpGuideOverride) {
+    curApp.forward();
+  }
 }
+
+function _helpGuideCallback() {
+  if (intro) {
+    switch (intro._currentStep) {
+      case 1:
+        document.getElementsByClassName('introjs-tooltip')[0].style.maxWidth = '300px';
+        document.getElementsByClassName('introjs-tooltip')[0].style.minWidth = '250px';
+        break;
+      case 3:
+        select({ id: 1, field: 'Type' }, true);
+        _getListbox('Type').awaitSetInFocus(0);
+        break;
+      case 8:
+        select({ id: 0, field: 'Color' }, true);
+        break;
+      case 13:
+        select({ id: 2, field: 'Color' }, true);
+        break;
+      case 14:
+        back(true);
+        break;
+      case 15:
+        forward(true);
+        break;
+      case 16:
+        clear(true);
+        break;
+      case 18:
+        select({ id: 0, field: 'Color' }, true);
+        select({ id: 2, field: 'Color' }, true);
+        select({ id: 3, field: 'Color' }, true);
+        select({ id: 0, field: 'Type' }, true);
+        select({ id: 1, field: 'Type' }, true);
+        break;
+      case 20:
+        clear(true);
+        break;
+      default:
+
+        break;
+    }
+  }
+}
+
+function setSize() {
+  if (intro) {
+    switch (intro._currentStep) {
+      case 0:
+        if (intro._direction === 'backward') {
+          document.getElementsByClassName('introjs-tooltip')[0].style.maxWidth = '500px';
+          document.getElementsByClassName('introjs-tooltip')[0].style.minWidth = '500px';
+        }
+        break;
+      default:
+        break;
+    }
+  }
+}
+
+function _helpGuide() {
+  clear();
+  notInGuideMode = false;
+  intro = introJs();
+  intro.onexit(() => {
+    notInGuideMode = true;
+    clear();
+  });
+  intro.onafterchange(_helpGuideCallback);
+  intro.onbeforechange(setSize);
+  intro.setOption('tooltipPosition', 'auto');
+  intro.setOption('showProgress', true);
+  intro.setOption('positionPrecedence', ['left', 'right', 'top', 'bottom']);
+  intro.setOption('tooltipClass', 'customDefault');
+  intro.setOptions({
+    steps: [
+      {
+        intro: `Welcome to Qlik Core Power Playground!<br><br>When dealing with data in software development,
+        it's most of the time static representations with text/table or charts.<br><br>Let the user or system interacts with
+        data implies specific logic to be developed.<br><br>Qlik Core will manage data interactivity for you!`,
+      },
+      {
+        element: '#bubbles',
+        intro: 'These are the bubbles with all the data points from the raw table above. Try hovering one to see information',
+      },
+      {
+        element: '#listboxes',
+        intro: 'Here are list boxes with all the data',
+      },
+      {
+        element: '#listboxes',
+        intro: `We will select <b style="color:${rangeColor[2]}">Fruit</b> in the
+<b class="introListbox" style="background-color:${rangeColor[2]};">Type</b> listbox`,
+      },
+      {
+        element: '#bubbles',
+        intro: `We can see that <b style="color:${rangeColor[2]}">Fruit</b> is now in the <i>Selected</i> circle, and that <b
+style="color:${rangeColor[2]}">Vegetable</b> is in the <i>alternative</i> circle.<br><br>Qlik Core automatically calculate the states.`,
+      },
+      {
+        element: '#bubbles',
+        intro: `Since <b style="color:${rangeColor[2]}">Fruit</b> is selected, all the
+        fields in <b class="introListbox" style="background:${rangeColor[0]}">Name</b> that belong to <b style="color:${rangeColor[2]}">
+        Vegetable</b> are in the <i>Excluded</i> circle.`,
+      },
+      {
+        element: '#bubbles',
+        intro: `And since <b style="color:${rangeColor[2]}">Fruit</b> is selected, all the still possible values are in the <i>optional</i> circle`,
+      },
+      {
+        element: '#bubbles',
+        intro: `Now we will select a <b class="introListbox" style="background-color:${rangeColor[1]};">Color</b> in
+the <i>optional</i> circle.`,
+      },
+      {
+        element: '#bubbles',
+        intro: `Let's select the red bubble with the field value <b style="color: ${rangeColor[1]}">Green</b>.`,
+      },
+      {
+        element: '#bubbles',
+        intro: 'In the <i>Optional</i> circle we now see all the green fruits.',
+      },
+      {
+        element: '#table',
+        intro: 'We also see all the green fruits in the table. This table is filtered on selections.',
+      },
+      {
+        element: '#listboxes',
+        intro: `And in the listbox we can see all values. The state of a field is shown to the right in the table. <span
+class="nowrap"></br>S for
+<i>Selected</i></span>, </br><span class="nowrap">O for <i>Optional</i></span>, </br><span class="nowrap">
+X for <i>Excluded</i></span>, </br><span class="nowrap">A for <i>Alternative</i></span>, </br><span
+class="nowrap">XS for <i>Excluded Selected</i></span>.`,
+      },
+      {
+        element: '#bubbles',
+        intro: `You can add additional alternatives to the selections. Let's add another <b class="introListbox" style="background-color:${rangeColor[1]};">Color</b>!`,
+      },
+      {
+        element: '#bubbles',
+        intro: `<b style="color: ${rangeColor[1]}">Orange</b> was selected! We now see all green and orange fruits in the optional circle!`,
+      },
+      {
+        element: '#backButton',
+        intro: 'You can go back one step. Click <b style="text-transform: uppercase;">Back</b> to undo the color selection.',
+      },
+      {
+        element: '#forwardButton',
+        intro: 'And click <b style="text-transform: uppercase;">Forward</b> to go redo the color selection again.',
+      },
+      {
+        element: '#clearButton',
+        intro: 'You can clear all selections by clicking <b style="text-transform: uppercase;">Clear All</b>.',
+      },
+      {
+        element: '#kpis',
+        intro: 'These are calculations on the selections, automatically updated by Qlik Core.',
+      },
+      {
+        element: '#bubbles',
+        intro: 'Let\'s make a few selections!',
+      },
+      {
+        element: '#kpis',
+        intro: 'We see calculations have been updated',
+      },
+      {
+        element: '#database',
+        intro: 'You can change the data set here.<br>Showing the logic is handled by Qlik Core in a totally generic way.',
+      },
+      {
+        intro: 'Have fun exploring the power of Qlik Core!',
+      },
+    ],
+  });
+  intro.start();
+}
+
 
 function createHyperCube(app, fields) {
   let object;
@@ -203,6 +398,7 @@ function createHyperCube(app, fields) {
       clearCallback: clear,
       backCallback: back,
       forwardCallback: forward,
+      helpGuide: _helpGuide,
     };
   }
 
@@ -406,9 +602,12 @@ async function newDS(e) {
     },
     qFieldListDef: {},
   };
-  const app = await connectEngine(`${e}.qvf`);
-  const obj = await app.createSessionObject(properties);
-  const lay = await obj.getLayout();
+  const app = await
+  connectEngine(`${e}.qvf`);
+  const obj = await
+  app.createSessionObject(properties);
+  const lay = await
+  obj.getLayout();
   titleFields = lay.qFieldList.qItems.map(f => f.qName);
   curApp = app;
   createMyLists(app, titleFields);
@@ -419,10 +618,12 @@ async function newDS(e) {
   titleFields.forEach((en, i) => {
     promises.push(createKpi(app, `count(distinct ${en})/count(distinct {1} ${en})*100`, en, `kp${i + 1}`));
   });
-  Promise.all(promises).then(() => {
+  return Promise.all(promises).then(() => {
     appbar.disableListEnablement(false);
+    _helpGuide();
   });
-  createKpi(app, 'count(distinct Year)/count(distinct {1} Album)*100', 'Own KPI', `kp${titleFields.length + 1}`, titleFields.length);
+
+  // createKpi(app, 'count(distinct Year)/count(distinct {1} Album)*100', 'Own KPI', `kp${titleFields.length + 1}`, titleFields.length);
 }
 
 async function init() {
@@ -435,10 +636,11 @@ async function init() {
     localStorage.setItem('sg', g);
     return g;
   }
+
   guid = localStorage.getItem('sg') || uuidv4();
-  newDS('music');
+  newDS('fruit');
 }
+
 
 window.onresize = (resize);
 init();
-console.log('app running');

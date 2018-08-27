@@ -71,7 +71,7 @@ body{
 .scrollArea {
   width:40px;
   margin-left:-20px;
-  opacity:0.5;
+  opacity:0.9;
   position:absolute;
   height:100%;
   z-index: 1;
@@ -94,7 +94,7 @@ list-box{
   padding: 10px;
   width: 220px;
   font-size: 12px;
-  z-index: 10;
+  z-index: 9999999; /* Higher than IntroJS */
 }
 
 .tooltip .title {
@@ -112,3 +112,67 @@ kpi-comp{
   padding: 0 50px;
 }
 
+.introjs-tooltip {
+  padding:50px 50px 20px 50px !important;
+  font-size: 15px;
+  border-radius: 0 0 50px 0 !important;
+  background:white;
+  background: linear-gradient(to left, rgba(59, 206, 172, 0.75) 8px, rgba(238, 65, 75, 0.75) 8px, rgba(238, 65, 75, 0.75) 16px, rgba(255, 210, 63, 0.75) 16px,  rgba(255, 210, 63, 0.75) 24px, white 24px);
+}
+
+.introjs-tooltiptext {
+  font-size: 20px;
+}
+
+.nowrap {
+  white-space: nowrap;
+}
+
+.customDefault .introjs-button {
+  background:white;
+  border: none;
+  border-radius: 0;
+  text-shadow:none;
+  text-transform: uppercase;
+  font-family: "Open Sans", sans-serif;
+  font-size: 13px;
+}
+
+.introjs-bullets ul {
+  display:none !important;
+}
+
+
+.introjs-progress {
+  margin-top: 40px !important;
+  border-radius: 50px 0 50px 0 !important;
+}
+
+.introjs-skipbutton {
+  float:left;
+}
+
+.introjs-progressbar {
+  background-color: #999 !important;
+}
+
+.customDefault .introjs-button:hover {
+  background:rgb(245, 245, 245);
+  box-shadow: none;
+  user-select:none;
+}
+
+.customDefault .introjs-button:focus {
+  background-image: none;
+}
+
+
+.introjs-helperNumberLayer{
+  background:white !important;
+  color:black !important;
+}
+
+.introListbox {
+  padding: 0 2px;
+  color:white;
+}
