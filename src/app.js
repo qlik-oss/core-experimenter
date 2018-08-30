@@ -17,7 +17,7 @@ const schemaEnigma = JSON.parse(schema);
 const listBoxes = [];
 let table = null;
 let guid;
-const engineHost = 'alteirac.hd.free.fr';
+const engineHost = 'localhost';
 const enginePort = '9076';
 const colors = d3.scaleOrdinal();
 const dataSources = ['fruit', 'music', 'car'];
@@ -141,8 +141,12 @@ async function connectEngine(appName) {
     url: `ws://${engineHost}:${enginePort}/app/identity/${guid + appName}`,
     createSocket: url => new WebSocket(url),
     responseInterceptors: [{
-      onRejected: async function retryAbortedError(sessionReference, request) {
-        request.retry();
+      onRejected: async function retryAbortedError(sessionReference, request, error) {
+        if (error && error.code === 15) {
+          request.retry();
+        } else {
+          console.error(error);
+        }
       },
     }],
   });
@@ -610,12 +614,9 @@ async function newDS(e, land = false) {
     },
     qFieldListDef: {},
   };
-  const app = await
-  connectEngine(`${e}.qvf`);
-  const obj = await
-  app.createSessionObject(properties);
-  const lay = await
-  obj.getLayout();
+  const app = await connectEngine(`${e}.qvf`);
+  const obj = await app.createSessionObject(properties);
+  const lay = await obj.getLayout();
   titleFields = lay.qFieldList.qItems.map(f => f.qName);
   curApp = app;
   createMyLists(app, titleFields);

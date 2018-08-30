@@ -4,8 +4,9 @@
   "description": "Playground for showing the power of Qlik Engine",
   "main": "index.js",
   "scripts": {
-    "start": "live-server . --watch=dist,index.html,styles.css",
-    "watch": "concurrently --kill-others \"rollup -c --watch\" \"live-server . --watch=dist,index.html,styles.css\"",
+    "start": "concurrently --kill-others \"node scripts/start-docker.js\" \"npm run start:app\"",
+    "start:app": "live-server . --watch=dist,index.html,styles.css",
+    "watch": "concurrently --kill-others \"rollup -c --watch\" \"npm run start:app\" \"node scripts/start-docker.js\"",
     "lint": "eslint .",
     "build": "rollup -c",
     "test": "echo \"Error: no test specified\" && exit 1"
