@@ -6,6 +6,7 @@
     align-items: center;
     border-bottom: 1px solid rgba(0, 0, 0, 0.562);
     padding:0 50px 0 50px;
+    transition: all 700ms;
 }
 .app-title {
     font-size: 20px;
@@ -20,6 +21,7 @@
     grid-area:d;
     height: 100%;
     float:right;
+    transition: all 700ms;
 }
 
 #guideButtonHolder {
@@ -35,11 +37,8 @@
 }
 
 .divider {
-  height: 100%;
-  width:1px;
-  margin-right: 10px;
-  background:rgba(0, 0, 0, 0.562);
-  display:inline-block;
+  margin: 0 10px;
+  transition: all 700ms;
 }
 
 select {
@@ -58,7 +57,7 @@ select {
   font-size: 13px;
   margin-left: 10px;
   border: none;
-
+  transition: all 700ms;
 }
 
 .db-logo {
@@ -72,22 +71,37 @@ select {
   background-size: 16px 16px;
 }
 
-button {
-    background: none;
-    color: inherit;
-    border: none;
-    padding: 0 10 0 10;
-    font: inherit;
-    cursor: pointer;
-    outline: inherit;
-    height: 100%;
-    font-size: 13px;
-    margin-left: 10px;
-    text-transform: uppercase;
+button, .swicth, slot {
+  background: none;
+  color: inherit;
+  border: none;
+  padding: 0 10 0 10;
+  font: inherit;
+  cursor: pointer;
+  outline: inherit;
+  height: 100%;
+  font-size: 13px;
+  margin-left: 10px;
+  text-transform: uppercase;
 }
 
-button:hover {
-    background-color: rgb(245, 245, 245);
+button:hover, .switch:hover {
+  background-color: rgb(245, 245, 245);
+}
+
+/*DARK THEME*/
+.app-bar.dark{
+  background-color: #2A2B2E;
+  color: white;  
+}
+.app-bar.dark .app-title{
+  font-family: monospace;
+}
+.app-bar.dark img.icon{
+  visibility: hidden;
+}
+.app-bar.dark button, .app-bar.dark .db-logo, .app-bar.dark select, .app-bar.dark .divider {
+  display: none;
 }
 
 @keyframes guideButton {

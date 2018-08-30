@@ -10,20 +10,26 @@
 </head>
 
 <body>
-  <div  class="appbar">
-    <app-bar app-bar-title="Core Power Playground"></app-bar>
+  <div class="appbar">
+    <app-bar app-bar-title="Core Power Playground">
+      <label class="switch">CODE</label><cpp-switch checked="false" title="Flip2Code" onclick="toggleView(event);"></cpp-switch>
+    </app-bar>
   </div>
   <div class="container">
-    <div id="kpis" class="kpi"></div>
-    <div id="bubbles" class="bubbles">
-      <bubble-chart id="one"></bubble-chart>
+    <div class="code_view">
+      <cpp-codeview></cpp-codeview>
     </div>
-    <div id="table" class="table"></div>
-    <div id="listboxes" class="listbox">
-      <div class="listbox_cnt"></div>
-    </div>
+    <div class="vis_view">
+      <div id="kpis" class="kpi"></div>
+      <div id="bubbles" class="bubbles">
+        <bubble-chart id="one"></bubble-chart>
+      </div>
+      <div id="table" class="table"></div>
+      <div id="listboxes" class="listbox">
+        <div class="listbox_cnt"></div>
+      </div>
+    </div>    
   </div>
-
   <script src="dist/app.js"></script>
 </body>
 

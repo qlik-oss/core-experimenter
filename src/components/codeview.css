@@ -1,0 +1,60 @@
+:host{
+  width:100%;
+  height:100%;
+  display:block;
+}
+
+section{
+  margin: 2% 0 0 25%;
+  /* position: fixed; */
+  width: 75%;
+  
+}
+
+.navigation {
+  position: absolute;
+  margin: 2%;
+  color: #fff;
+}
+.navigation__link {
+  display: block;
+  color: #ddd;
+  text-decoration: none;
+  padding: 3px;
+}
+.navigation__link:hover {
+  background-color: #aaa;
+  color: black;
+  font-weight: bold;
+}
+.navigation__link.active {
+  color: white;
+  background-color: rgba(0, 0, 0, 0.1);
+}
+.page-section {
+  min-height: 480px;
+  margin: 2em 0;
+  width: 65%;
+  padding: 3em;
+  color: white;
+  border: 1px solid grey;
+  box-shadow: 0px 3px 10px 0px rgba(0, 0, 0, 0.5);
+}
+.scroller{
+  transition: all 700ms;
+  overflow-y: scroll;
+  position:fixed;
+  height:100%;
+  width:100%;
+}
+.scroller a{
+  text-decoration: none;
+  color: white;
+  font-weight: bold;
+}
+.scroller a:hover{
+  text-decoration: underline;
+}
+code{
+  font-size: 18px;
+}

@@ -5,7 +5,27 @@ import { repeat } from '../../node_modules/lit-html/lib/repeat';
 class Appbar extends HTMLElement {
   constructor() {
     super();
+    this.root = this.attachShadow({ mode: 'open' });
     this.ds = [];
+  }
+
+  static get observedAttributes() {
+    return ['variant', 'app-bar-title'];
+  }
+
+  attributeChangedCallback(name, oldValue, newValue) {
+    if (oldValue !== newValue && name === 'variant') {
+      this.root.querySelector('.app-bar').classList.toggle('dark');
+    }
+    if (oldValue !== newValue && name === 'app-bar-title') {
+      this.title = newValue;
+      this.invalidate();
+    }
+  }
+
+  /* exposing gelements to the outside */
+  getElementById(id) {
+    return this.root.querySelector(`#${id}`);
   }
 
   get data() {
@@ -24,8 +44,9 @@ class Appbar extends HTMLElement {
   }
 
   disableListEnablement(setDisabled) {
-    if (this.innerHTML.length > 0) {
-      const list = this.querySelector('.app-bar').querySelector('select');
+    const appBarEl = this.root.querySelector('.app-bar');
+    if (appBarEl && appBarEl.innerHTML.length > 0) {
+      const list = appBarEl.querySelector('#database');
       if (setDisabled) {
         list.style.opacity = 0.5;
         list.disabled = true;
@@ -61,24 +82,17 @@ class Appbar extends HTMLElement {
       this.needsRender = true;
       Promise.resolve().then(() => {
         this.needsRender = false;
-        render(this.template(), this);
+        render(this.template(), this.root);
       });
     }
     if (this.helpGuide) {
-      const btn = document.getElementById('guideButton');
+      const btn = this.root.getElementById('guideButton');
       btn.disabled = false;
       btn.style.opacity = '';
     }
   }
 
   connectedCallback() {
-    this.invalidate();
-  }
-
-  attributeChangedCallback(name, oldValue, newValue) {
-    if (name === 'app-bar-title') {
-      this.title = newValue;
-    }
     this.invalidate();
   }
 
@@ -91,29 +105,20 @@ class Appbar extends HTMLElement {
         <div class="app-bar">
                 <img class="icon" src="src/assets/cppg.svg" alt="Core Power Playground">
                 <div id="guideButtonHolder">
-                 <button id="guideButton" style="opacity: 0" disabled on-click="${() => {
-      this._helpGuide()
-    }}">Guide</button></div>
+                 <button id="guideButton" style="opacity: 0" disabled on-click="${() => { this._helpGuide(); }}">Guide</button></div>
                 <span class="app-title">Core Power Playground</span>
             <div>
               <div class="buttons">
-                <button id="clearButton"
-                on-click="${() => {
-      this._clearCallback();
-    }}" >Clear all</button>
-                <button id="backButton" on-click="${() => {
-      this._backCallback();
-    }}" >Back</button>
-                <button id="forwardButton" on-click="${() => {
-      this._forwardCallback();
-    }}" >Forward</button>
-                <span>|</span>
-              <div title="Database" class="db-logo"></div>
-                <select  id="database" onchange="${(e) => {
-      this._changeDS(e.target);
-    }}">
+                <button id="clearButton" on-click="${() => { this._clearCallback(); }}" >Clear all</button>
+                <button id="backButton" on-click="${() => { this._backCallback(); }}" >Back</button>
+                <button id="forwardButton" on-click="${() => { this._forwardCallback(); }}" >Forward</button>
+                <span class="divider">|</span>
+                <div title="Database" class="db-logo"></div>
+                <select id="database" onchange="${(e) => this._changeDS(e.target)}">
                   ${repeat(this.ds, d => d.toString(), d => html` <option value="${d}">${d}</option>`)}
                 </select>
+                <span class="divider">|</span>
+                <slot></slot>
               </div>
             </div>
         </div>

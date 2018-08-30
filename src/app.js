@@ -3,9 +3,12 @@ import './components/bubble';
 import './components/table';
 import './components/kpi';
 import './components/appbar';
+import './components/switch';
+import './components/codeview';
 import * as d3 from 'd3';
-import 'enigma.js';
-import 'intro.js';
+
+import introJs from 'intro.js';
+import enigma from '../node_modules/enigma.js/enigma';
 // import 'intro.js/introjs.css';
 
 import schema from './assets/schema-12.20.0.json';
@@ -138,8 +141,8 @@ async function connectEngine(appName) {
     url: `ws://${engineHost}:${enginePort}/app/identity/${guid + appName}`,
     createSocket: url => new WebSocket(url),
     responseInterceptors: [{
-      onRejected: async function retryAbortedError(/* sessionReference, request, error */) {
-        console.warn('retryAborted callback ?');
+      onRejected: async function retryAbortedError(sessionReference, request) {
+        request.retry();
       },
     }],
   });
@@ -170,7 +173,8 @@ function forward(helpGuideOverride) {
 function _helpGuideCallback() {
   if (intro) {
     switch (intro._currentStep) {
-      case 1:
+      case 0:
+      case 2:
         document.getElementsByClassName('introjs-tooltip')[0].style.maxWidth = '300px';
         document.getElementsByClassName('introjs-tooltip')[0].style.minWidth = '250px';
         break;
@@ -213,11 +217,9 @@ function _helpGuideCallback() {
 function setSize() {
   if (intro) {
     switch (intro._currentStep) {
-      case 0:
-        if (intro._direction === 'backward') {
-          document.getElementsByClassName('introjs-tooltip')[0].style.maxWidth = '500px';
-          document.getElementsByClassName('introjs-tooltip')[0].style.minWidth = '500px';
-        }
+      case 1:
+        document.getElementsByClassName('introjs-tooltip')[0].style.maxWidth = '500px';
+        document.getElementsByClassName('introjs-tooltip')[0].style.minWidth = '500px';
         break;
       default:
         break;
@@ -226,6 +228,8 @@ function setSize() {
 }
 
 function _helpGuide() {
+  // await newDS('fruit');
+  const appbar = document.getElementsByTagName('app-bar')[0];
   clear();
   notInGuideMode = false;
   intro = introJs();
@@ -242,7 +246,11 @@ function _helpGuide() {
   intro.setOptions({
     steps: [
       {
-        intro: `Welcome to Qlik Core Power Playground!<br><br>When dealing with data in software development,
+        intro: `Welcome to Qlik Core Power Playground!<br><br>
+        Follow the guide and unleash the power !`,
+      },
+      {
+        intro: `When dealing with data in software development,
         it's most of the time static representations with text/table or charts.<br><br>Let the user or system interacts with
         data implies specific logic to be developed.<br><br>Qlik Core will manage data interactivity for you!`,
       },
@@ -308,15 +316,15 @@ class="nowrap">XS for <i>Excluded Selected</i></span>.`,
         intro: `<b style="color: ${rangeColor[1]}">Orange</b> was selected! We now see all green and orange fruits in the optional circle!`,
       },
       {
-        element: '#backButton',
+        element: appbar.getElementById('backButton'),
         intro: 'You can go back one step. Click <b style="text-transform: uppercase;">Back</b> to undo the color selection.',
       },
       {
-        element: '#forwardButton',
+        element: appbar.getElementById('forwardButton'),
         intro: 'And click <b style="text-transform: uppercase;">Forward</b> to go redo the color selection again.',
       },
       {
-        element: '#clearButton',
+        element: appbar.getElementById('clearButton'),
         intro: 'You can clear all selections by clicking <b style="text-transform: uppercase;">Clear All</b>.',
       },
       {
@@ -587,7 +595,7 @@ function createKpi(app, exp, label = 'kpi', elId, index) {
   });
 }
 
-async function newDS(e) {
+async function newDS(e, land = false) {
   const appbar = document.getElementsByTagName('app-bar')[0];
   appbar.disableListEnablement(true);
   let titleFields = [];
@@ -620,11 +628,19 @@ async function newDS(e) {
   });
   return Promise.all(promises).then(() => {
     appbar.disableListEnablement(false);
-    _helpGuide();
+    if (land === true) _helpGuide();
   });
 
   // createKpi(app, 'count(distinct Year)/count(distinct {1} Album)*100', 'Own KPI', `kp${titleFields.length + 1}`, titleFields.length);
 }
+
+window.toggleView = () => {
+  document.querySelector('.container .vis_view').classList.toggle('fadeout');
+  document.querySelector('.container .code_view').classList.toggle('fadein');
+  const cppCodeView = document.querySelector('app-bar');
+  // eslint-disable-next-line no-unused-expressions
+  cppCodeView.getAttribute('variant') ? cppCodeView.removeAttribute('variant') : cppCodeView.setAttribute('variant', 'dark');
+};
 
 async function init() {
   function uuidv4() {
@@ -638,7 +654,7 @@ async function init() {
   }
 
   guid = localStorage.getItem('sg') || uuidv4();
-  newDS('fruit');
+  newDS('fruit', true);
 }
 
 

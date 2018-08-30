@@ -5,17 +5,31 @@ html, body{
   font-family: "Open Sans", sans-serif;
   background-color: white;
   color:black;
+  overflow: hidden;
 }
 body{
   margin: 0;
 }
 /* GRID CSS */
 .container {
+  position: relative;
   padding: 0 50px;
+  padding-top: 10px;
   box-sizing: border-box;
-  display: grid;
   width: 100%;
-  height: calc(100% - 80px);
+  height: calc(100% - 61px);
+}
+
+.container .vis_view, .container .code_view{
+  position:absolute;
+  top: 0px;
+  left:0px;
+  width:100%;
+  height:100%;
+  transition:opacity .5s ease-in;  
+}
+.container .vis_view{
+  display: grid;
   grid-template-areas:
   "table table table table"
   "bubbles bubbles bubbles listbox"
@@ -23,10 +37,19 @@ body{
   ;
   grid-template-columns: 1fr 2fr 4fr 4fr;
   grid-template-rows: 5fr 5fr 3fr;
+  opacity: 1;
 }
-
-.appbar {
-  padding-bottom:10px;
+.container .vis_view.fadeout{
+  opacity: 0.3;
+}
+.container .code_view{
+  opacity: 0;
+  z-index: -1;
+  background-color: black;
+}
+.container .code_view.fadein{
+  opacity: 0.8;
+  z-index: 1;
 }
 .kpi {
   grid-area: kpi;
