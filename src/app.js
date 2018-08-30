@@ -244,6 +244,7 @@ function _helpGuide() {
   intro.onafterchange(_helpGuideCallback);
   intro.onbeforechange(setSize);
   intro.setOption('tooltipPosition', 'auto');
+  intro.setOption('showStepNumbers', false);
   intro.setOption('showProgress', true);
   intro.setOption('positionPrecedence', ['left', 'right', 'top', 'bottom']);
   intro.setOption('tooltipClass', 'customDefault');
@@ -344,8 +345,12 @@ class="nowrap">XS for <i>Excluded Selected</i></span>.`,
         intro: 'We see calculations have been updated',
       },
       {
-        element: '#database',
+        element: appbar.getElementById('database'),
         intro: 'You can change the data set here.<br>Showing the logic is handled by Qlik Core in a totally generic way.',
+      },
+      {
+        element: '.codesw',
+        intro: 'You can view code snippets here<br>Showing how easy it is to get great data interactions!',
       },
       {
         intro: 'Have fun exploring the power of Qlik Core!',
