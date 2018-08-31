@@ -218,8 +218,9 @@ app.createSessionObject(properties).then((object) => {
 </code>
                 </pre>
               </div>
+              <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
             </div>
-          </section>
+          </section>          
         <div>
       `;
     /* eslint-enable */
