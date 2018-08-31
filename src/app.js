@@ -182,33 +182,33 @@ function _helpGuideCallback() {
         document.getElementsByClassName('introjs-tooltip')[0].style.maxWidth = '300px';
         document.getElementsByClassName('introjs-tooltip')[0].style.minWidth = '250px';
         break;
-      case 3:
+      case 4:
         select({ id: 1, field: 'Type' }, true);
         _getListbox('Type').awaitSetInFocus(0);
         break;
-      case 8:
+      case 9:
         select({ id: 0, field: 'Color' }, true);
         break;
-      case 13:
+      case 14:
         select({ id: 2, field: 'Color' }, true);
         break;
-      case 14:
+      case 15:
         back(true);
         break;
-      case 15:
+      case 16:
         forward(true);
         break;
-      case 16:
+      case 17:
         clear(true);
         break;
-      case 18:
+      case 19:
         select({ id: 0, field: 'Color' }, true);
         select({ id: 2, field: 'Color' }, true);
         select({ id: 3, field: 'Color' }, true);
         select({ id: 0, field: 'Type' }, true);
         select({ id: 1, field: 'Type' }, true);
         break;
-      case 20:
+      case 21:
         clear(true);
         break;
       default:
