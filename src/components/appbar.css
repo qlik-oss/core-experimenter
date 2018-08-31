@@ -23,7 +23,6 @@
     float:right;
     transition: all 700ms;
 }
-
 #guideButtonHolder {
   /*align-self: right;*/
   grid-area: a;
@@ -41,6 +40,10 @@
   transition: all 700ms;
 }
 
+select.introjs-showElement{
+  z-index: 9999999 !important;
+  position: relative;
+}
 select {
   margin-right: 10px;
   padding: 0 20px 2px 10px;
@@ -48,6 +51,7 @@ select {
   -moz-appearance: none;
   appearance: none;
   background: url(src/assets/dropdown.svg) calc(100% - 5px) / 15% no-repeat rgb(255, 255, 255);
+  background-color: transparent;
   text-transform: uppercase;
   color: inherit;
   font: inherit;
@@ -71,7 +75,9 @@ select {
   background-size: 16px 16px;
 }
 
-button, .swicth, slot {
+button, .switch, slot {
+  z-index: 9999999 !important;
+  position: relative;
   background: none;
   color: inherit;
   border: none;
@@ -92,7 +98,7 @@ button:hover, .switch:hover {
 /*DARK THEME*/
 .app-bar.dark{
   background-color: #2A2B2E;
-  color: white;  
+  color: white;
 }
 .app-bar.dark .app-title{
   font-family: monospace;

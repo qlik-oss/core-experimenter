@@ -7,6 +7,7 @@
     "start": "concurrently --kill-others \"node scripts/start-docker.js\" \"npm run start:app\"",
     "start:app": "live-server . --watch=dist,index.html,styles.css",
     "watch": "concurrently --kill-others \"rollup -c --watch\" \"npm run start:app\" \"node scripts/start-docker.js\"",
+    "watchno": "concurrently --kill-others \"rollup -c --watch\" \"npm run start:app\"",
     "lint": "eslint .",
     "build": "rollup -c",
     "test": "echo \"Error: no test specified\" && exit 1"

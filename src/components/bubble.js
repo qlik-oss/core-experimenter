@@ -322,9 +322,9 @@ class Bubble extends HTMLElement {
           .attr('cx', this.stateCenters[e].x)
           .attr('cy', this.stateCenters[e].y)
           .attr('fill', 'none')
-          .attr('stroke-width', 10)
+          .attr('stroke-width', 5)
           .attr('stroke', '#8b8b8b')
-          .attr('stroke-dasharray', 2)
+          .attr('stroke-dasharray', 3)
           .attr('r', this.stateCircleR);
       });
       this.bubbles = this.svg.selectAll('.bubble')
@@ -494,7 +494,7 @@ class Bubble extends HTMLElement {
         .attr('r', this.stateCircleR);
     });
     this.svg.selectAll('.state')
-      .attr('y', 30)
+      .attr('y', 20)
       .attr('x', d => _this.stateTitleX[d])
       .attr('fill', 'black');
     this.first = true;
