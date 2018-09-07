@@ -20,8 +20,8 @@ let guid;
 const engineHost = 'localhost';
 const enginePort = '9076';
 const colors = d3.scaleOrdinal();
-const dataSources = ['fruit', 'music', 'car'];
-const rangeColor = ['#ffd23f', '#ee414b', '#3bceac', '#3a568f'];
+const dataSources = ['car', 'fruit', 'music'];
+const rangeColor = ['#ffd23f', '#ee414b', '#3bceac', '#3a568f', '#9a308e'];
 // const cssColors = ['myBlue', 'green', 'myPurple', 'myOrange', 'myPink', 'default', 'myYellow2', 'myYellow', 'myCoralGreen', 'myPurple2', 'myCoralGreen2'];
 const cssColors = ['myYellow2', 'myPink', 'myCoralGreen2', 'myBlue2'];
 let tableOrder = [];
@@ -183,14 +183,15 @@ function _helpGuideCallback() {
         document.getElementsByClassName('introjs-tooltip')[0].style.minWidth = '250px';
         break;
       case 4:
-        select({ id: 1, field: 'Type' }, true);
-        _getListbox('Type').awaitSetInFocus(0);
+        select({ id: 10, field: 'Make' }, true);
+        _getListbox('Make').awaitSetInFocus(0);
         break;
       case 9:
-        select({ id: 0, field: 'Color' }, true);
+        select({ id: 1, field: 'PriceRange' }, true);
         break;
       case 14:
-        select({ id: 2, field: 'Color' }, true);
+        select({ id: 0, field: 'PriceRange' }, true);
+        select({ id: 5, field: 'Make' }, true);
         break;
       case 15:
         back(true);
@@ -201,12 +202,16 @@ function _helpGuideCallback() {
       case 17:
         clear(true);
         break;
-      case 19:
-        select({ id: 0, field: 'Color' }, true);
-        select({ id: 2, field: 'Color' }, true);
-        select({ id: 3, field: 'Color' }, true);
-        select({ id: 0, field: 'Type' }, true);
-        select({ id: 1, field: 'Type' }, true);
+      case 20:
+        setTimeout(() => {
+          select({ id: 1, field: 'PriceRange' }, true);
+          setTimeout(() => {
+            select({ id: 0, field: 'PriceRange' }, true);
+            setTimeout(() => {
+              select({ id: 7, field: 'TopSpeed' }, true);
+            }, 900);
+          }, 900);
+        }, 900);
         break;
       case 21:
         clear(true);
@@ -269,40 +274,40 @@ function _helpGuide() {
       },
       {
         element: '#listboxes',
-        intro: `We will select <b style="color:${rangeColor[2]}">Fruit</b> in the
-<b class="introListbox" style="background-color:${rangeColor[2]};">Type</b> listbox`,
+        intro: `We will select <b style="color:${rangeColor[0]}">Audi</b> in the
+<b class="introListbox" style="background-color:${rangeColor[0]};">Make</b> listbox`,
       },
       {
         element: '#bubbles',
-        intro: `We can see that <b style="color:${rangeColor[2]}">Fruit</b> is now in the <i>Selected</i> circle, and that <b
-style="color:${rangeColor[2]}">Vegetable</b> is in the <i>alternative</i> circle.<br><br>Qlik Core automatically calculate the states.`,
+        intro: `We can see that <b style="color:${rangeColor[0]}">Audi</b> is now in the <i>Selected</i> circle, and that <b
+style="color:${rangeColor[0]}">other brands</b> are in the <i>alternative</i> circle.<br><br>Qlik Core automatically calculate the states.`,
       },
       {
         element: '#bubbles',
-        intro: `Since <b style="color:${rangeColor[2]}">Fruit</b> is selected, all the
-        fields in <b class="introListbox" style="background:${rangeColor[0]}">Name</b> that belong to <b style="color:${rangeColor[2]}">
-        Vegetable</b> are in the <i>Excluded</i> circle.`,
+        intro: `Since <b style="color:${rangeColor[0]}">Audi</b> is selected, all the
+        fields values not associated with <b style="color:${rangeColor[0]}">
+        Audi</b> are in the <i>Excluded</i> circle.`,
       },
       {
         element: '#bubbles',
-        intro: `And since <b style="color:${rangeColor[2]}">Fruit</b> is selected, all the still possible values are in the <i>optional</i> circle`,
+        intro: `And since <b style="color:${rangeColor[0]}">Audi</b> is selected, all associated values are in the <i>optional</i> circle`,
       },
       {
         element: '#bubbles',
-        intro: `Now we will select a <b class="introListbox" style="background-color:${rangeColor[1]};">Color</b> in
-the <i>optional</i> circle.`,
+        intro: `Now we will select a <b class="introListbox" style="background-color:${rangeColor[4]};">PriceRange</b> in
+the <i>optional</i> circle.<br> All values can be selected, in any order !`,
       },
       {
         element: '#bubbles',
-        intro: `Let's select the red bubble with the field value <b style="color: ${rangeColor[1]}">Green</b>.`,
+        intro: `Let's select the bubble with the field value <b style="color: ${rangeColor[4]}">[50 000, 100 000]</b>.`,
       },
       {
         element: '#bubbles',
-        intro: 'In the <i>Optional</i> circle we now see all the green fruits.',
+        intro: `In the <i>Optional</i> circle we now see all <b style="color: ${rangeColor[0]}">Audi</b> cars with a price between $50 000 and $100 000.`,
       },
       {
         element: '#table',
-        intro: 'We also see all the green fruits in the table. This table is filtered on selections.',
+        intro: 'We also see the associated cars in the table. This table is filtered on selections.',
       },
       {
         element: '#listboxes',
@@ -314,11 +319,14 @@ class="nowrap">XS for <i>Excluded Selected</i></span>.`,
       },
       {
         element: '#bubbles',
-        intro: `You can add additional alternatives to the selections. Let's add another <b class="introListbox" style="background-color:${rangeColor[1]};">Color</b>!`,
+        intro: `You can add additional alternatives to the selections. Let's add another  <b class="introListbox" style="background-color:${rangeColor[0]};">Make</b>
+        and <b style="color: ${rangeColor[4]}">PriceRange</b>!`,
       },
       {
         element: '#bubbles',
-        intro: `<b style="color: ${rangeColor[1]}">Orange</b> was selected! We now see all green and orange fruits in the optional circle!`,
+        intro: `<b style="color: ${rangeColor[0]}">Jaguar</b> and <b style="color: ${rangeColor[4]}">[0, 50 000]]</b>has been selected!
+        We now see all <b style="color: ${rangeColor[0]}">Audi</b> and <b style="color: ${rangeColor[0]}">Jaguar</b> with a
+        Price lower than <b style="color: ${rangeColor[4]}">$100 000</b> in the optional circle!`,
       },
       {
         element: appbar.getElementById('backButton'),
@@ -342,7 +350,7 @@ class="nowrap">XS for <i>Excluded Selected</i></span>.`,
       },
       {
         element: '#kpis',
-        intro: 'We see calculations have been updated',
+        intro: 'We see calculations being updated',
       },
       {
         element: appbar.getElementById('database'),
@@ -660,7 +668,7 @@ async function init() {
   }
 
   guid = localStorage.getItem('sg') || uuidv4();
-  newDS('fruit', true);
+  newDS('car', true);
 }
 
 
