@@ -1,8 +1,7 @@
-# Core Power Playground
-A playground aiming to show the power of the engine (qlik-core)
+# Core Experimenter
+An experiment aiming to show the power of the engine (qlik-core)
 
-[![CircleCI](https://circleci.com/gh/qlik-trial/core-power-playground.svg?style=shield&circle-token=7c4e7d48566afdaf2689f2cf49e292018cb57486)](https://circleci.com/gh/qlik-trial/core-power-playground)
-
+[![CircleCI](https://circleci.com/gh/qlik-oss/core-experimenter.svg?style=shield&circle-token=2cae0992d86b3a7c6960b1f5d912e1295f23104f)](https://circleci.com/gh/qlik-oss/core-experimenter)
 
 ## How to run locally
 
@@ -14,22 +13,11 @@ $ npm start
 
 ## Available commands
 
-* ### Linting
-  ```
-  $ npm run lint
-  ```
-* ### Watch with dev server
-  ```
-  $ npm run watch
-  ```
-
-## core-power-playground metadata
-| tag | value |
-|--------|--------|
-| componentId | core-power-playground |
-| componentType | web application |
-| componentOwner | Open Tooling |
-| slackChannel | #developer_xperience |
-| productionBuild | N/A |
-| integrationPipeline | N/A |
-| gitRepository | git@github.com:qlik-trial/core-power-playground.git |
+### Linting
+```
+$ npm run lint
+```
+### Watch with dev server
+```
+$ npm run watch
+```
