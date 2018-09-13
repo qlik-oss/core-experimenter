@@ -256,7 +256,7 @@ function _helpGuide() {
   intro.setOptions({
     steps: [
       {
-        intro: `Welcome to Qlik Core Power Playground!<br><br>
+        intro: `Welcome to Qlik Core Experimenter!<br><br>
         Follow the guide and unleash the power !`,
       },
       {
