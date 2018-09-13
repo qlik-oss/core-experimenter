@@ -103,10 +103,10 @@ class Appbar extends HTMLElement {
         ${css}
         </style>
         <div class="app-bar">
-                <img class="icon" src="src/assets/cppg.svg" alt="Core Power Playground">
+                <img class="icon" src="src/assets/cppg.svg" alt="Qlik Core Experimenter">
                 <div id="guideButtonHolder">
                  <button id="guideButton" style="opacity: 0" disabled on-click="${() => { this._helpGuide(); }}">Guide</button></div>
-                <span class="app-title">Core Power Playground</span>
+                <span class="app-title">Qlik Core Experimenter</span>
             <div>
               <div class="buttons">
                 <button id="clearButton" on-click="${() => { this._clearCallback(); }}" >Clear all</button>

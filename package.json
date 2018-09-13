@@ -1,27 +1,25 @@
 {
-  "name": "core-power-playground",
+  "name": "core-experimenter",
   "version": "0.0.1",
   "description": "Playground for showing the power of Qlik Engine",
   "main": "index.js",
   "scripts": {
-    "start": "concurrently --kill-others \"node scripts/start-docker.js\" \"npm run start:app\"",
+    "start": "concurrently --kill-others \"rollup -c --watch\" \"npm run start:app\"",
     "start:app": "live-server . --watch=dist,index.html,styles.css",
-    "watch": "concurrently --kill-others \"rollup -c --watch\" \"npm run start:app\" \"node scripts/start-docker.js\"",
-    "watchno": "concurrently --kill-others \"rollup -c --watch\" \"npm run start:app\"",
     "lint": "eslint .",
     "build": "rollup -c",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/qlik-trial/core-power-playground.git"
+    "url": "git+https://github.com/qlik-oss/core-experimenter.git"
   },
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
-    "url": "https://github.com/qlik-trial/core-power-playground/issues"
+    "url": "https://github.com/qlik-oss/core-experimenter/issues"
   },
-  "homepage": "https://github.com/qlik-trial/core-power-playground#readme",
+  "homepage": "https://github.com/qlik-oss/core-experimenter#readme",
   "devDependencies": {
     "babel-core": "^6.26.3",
     "concurrently": "^3.6.0",

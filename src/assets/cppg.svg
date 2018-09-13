@@ -2,7 +2,7 @@
   <defs>
     <style>
       .cls-1 {
-        clip-path: url(#clip-Core_Power_Playground_Icon);
+        clip-path: url(#clip-Core_Experimenter_Icon);
       }
 
       .cls-2, .cls-9 {
@@ -38,11 +38,11 @@
         stroke: none;
       }
     </style>
-    <clipPath id="clip-Core_Power_Playground_Icon">
+    <clipPath id="clip-Core_Experimenter_Icon">
       <rect width="480" height="150"/>
     </clipPath>
   </defs>
-  <g id="Core_Power_Playground_Icon" data-name="Core Power Playground Icon" class="cls-1">
+  <g id="Core_Experimenter_Icon" data-name="Core Experimenter Icon" class="cls-1">
     <rect class="cls-10" width="480" height="150"/>
     <g id="Group_1" data-name="Group 1" transform="translate(-4 -48)">
       <g id="P2" transform="translate(218)">
