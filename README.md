@@ -7,7 +7,7 @@ An experiment aiming to show the power of the engine.
 
 _Be sure to run `npm install` the first time._
 
-Note that you must accept the [Qlik Core EULA](https://core.qlik.com/beta/) by setting the `ACCEPT_EULA`
+Note that you must accept the [Qlik Core EULA](https://core.qlik.com/eula/) by setting the `ACCEPT_EULA`
 environment variable.
 
 ```sh
