@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "concurrently --kill-others \"rollup -c --watch\" \"npm run start:app\"",
-    "start:app": "live-server . --watch=dist,index.html,styles.css",
+    "start:app": "live-server ./dist --watch=dist,index.html",
     "lint": "eslint .",
     "build": "rollup -c",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -30,6 +30,8 @@
     "rollup": "^0.63.2",
     "rollup-plugin-babel": "^3.0.7",
     "rollup-plugin-commonjs": "^9.1.6",
+    "rollup-plugin-copy-glob": "^0.2.2",
+    "rollup-plugin-fill-html": "^1.1.0",
     "rollup-plugin-node-resolve": "^3.3.0",
     "rollup-plugin-string": "^2.0.2",
     "rollup-watch": "^4.3.1"
