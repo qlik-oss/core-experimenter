@@ -103,7 +103,7 @@ class Appbar extends HTMLElement {
         ${css}
         </style>
         <div class="app-bar">
-                <img class="icon" src="src/assets/cppg.svg" alt="Qlik Core Experimenter">
+                <img class="icon" src="assets/cppg.svg" alt="Qlik Core Experimenter">
                 <div id="guideButtonHolder">
                  <button id="guideButton" style="opacity: 0" disabled on-click="${() => { this._helpGuide(); }}">Guide</button></div>
                 <span class="app-title">Qlik Core Experimenter</span>
