@@ -3,6 +3,7 @@ import nodeResolve from 'rollup-plugin-node-resolve';
 import commonjs from 'rollup-plugin-commonjs';
 import copy from 'rollup-plugin-copy-glob';
 import html from 'rollup-plugin-fill-html';
+import replace from 'rollup-plugin-replace';
 
 export default [{
   input: 'src/app.js',
@@ -26,6 +27,10 @@ export default [{
     html({
       template: 'index.html',
       filename: 'index.html',
+    }),
+    replace({
+      'process.env.NODE_ENV': process.env.NODE_ENV,
+      'process.env.BACKEND': process.env.BACKEND,
     }),
   ],
 }];
