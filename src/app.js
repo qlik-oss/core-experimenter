@@ -151,12 +151,9 @@ async function connectEngine(appId) {
   });
   const qix = await session.open();
   let app;
-  try {
-    app = await qix.openDoc(appId);
-  } catch (err) {
-    if (err.code === schemaEnigma.enums.LocalizedErrorCode.LOCERR_APP_ALREADY_OPEN) {
-      app = qix.getActiveDoc();
-    }
+  app = await qix.openDoc(appId);
+  if (app instanceof Error && app.code === schemaEnigma.enums.LocalizedErrorCode.LOCERR_APP_ALREADY_OPEN) {
+    app = qix.getActiveDoc();
   }
   curApp = app;
   return app;
