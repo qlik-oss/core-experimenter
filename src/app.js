@@ -16,7 +16,7 @@ import schema from './assets/schema-12.20.0.json';
 const schemaEnigma = JSON.parse(schema);
 const listBoxes = [];
 let table = null;
-const engineHost = process.env.NODE_ENV === 'production' ? `${process.env.BACKEND}/app/doc` : 'localhost:9076/app/identity';
+const engineHost = 'process.env.NODE_ENV' === 'production' ? `${process.env.BACKEND}/app/doc` : 'localhost:9076/app/identity';
 const colors = d3.scaleOrdinal();
 const dataSources = ['car', 'fruit', 'music'];
 const rangeColor = ['#ffd23f', '#ee414b', '#3bceac', '#3a568f', '#9a308e'];
@@ -638,7 +638,7 @@ async function newDS(e, land = false) {
     fruit: '6fbb0a5c-f02a-4b40-b859-51bb62fdd7c7',
     music: '9d765859-b606-43c6-8836-2da68a257259',
   };
-  const appId = process.env.NODE_ENV === 'production' ? appIdMap[e] : `${e}.qvf`;
+  const appId = 'process.env.NODE_ENV' === 'production' ? appIdMap[e] : `${e}.qvf`;
   const app = await connectEngine(appId);
   const obj = await app.createSessionObject(properties);
   const lay = await obj.getLayout();
