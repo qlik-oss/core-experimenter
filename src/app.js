@@ -136,7 +136,7 @@ function hoverOut(d) {
 async function connectEngine(appId) {
   const session = enigma.create({
     schema: schemaEnigma,
-    url: `ws://${engineHost}/${appId}`,
+    url: `${window.location.protocol.replace('http', 'ws')}://${engineHost}/${appId}`,
     createSocket: url => new WebSocket(url),
     responseInterceptors: [{
       onRejected: async function retryAbortedError(sessionReference, request, error) {
