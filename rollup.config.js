@@ -30,6 +30,7 @@ export default [{
     }),
     replace({
       'process.env.NODE_ENV': process.env.NODE_ENV,
+      'process.env.BACKEND': process.env.BACKEND,
     }),
   ],
 }];
