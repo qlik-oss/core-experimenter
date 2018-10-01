@@ -16,9 +16,7 @@ import schema from './assets/schema-12.20.0.json';
 const schemaEnigma = JSON.parse(schema);
 const listBoxes = [];
 let table = null;
-let guid;
-const engineHost = 'localhost';
-const enginePort = '9076';
+const engineHost = process.env.NODE_ENV === 'production' ? `${process.env.BACKEND}/app/doc` : 'localhost:9076/app/identity';
 const colors = d3.scaleOrdinal();
 const dataSources = ['car', 'fruit', 'music'];
 const rangeColor = ['#ffd23f', '#ee414b', '#3bceac', '#3a568f', '#9a308e'];
@@ -135,10 +133,10 @@ function hoverOut(d) {
   lightChangeKPIs(d, 'lowlight');
 }
 
-async function connectEngine(appName) {
+async function connectEngine(appId) {
   const session = enigma.create({
     schema: schemaEnigma,
-    url: `ws://${engineHost}:${enginePort}/app/identity/${guid + appName}`,
+    url: `ws://${engineHost}/${appId}`,
     createSocket: url => new WebSocket(url),
     responseInterceptors: [{
       onRejected: async function retryAbortedError(sessionReference, request, error) {
@@ -147,11 +145,19 @@ async function connectEngine(appName) {
         } else {
           console.error(error);
         }
+        return error;
       },
     }],
   });
   const qix = await session.open();
-  const app = await qix.openDoc(appName);
+  let app;
+  try {
+    app = qix.openDoc(appId);
+  } catch (err) {
+    if (err.code === schemaEnigma.enums.LocalizedErrorCode.LOCERR_APP_ALREADY_OPEN) {
+      app = qix.getActiveDoc();
+    }
+  }
   curApp = app;
   return app;
 }
@@ -627,7 +633,13 @@ async function newDS(e, land = false) {
     },
     qFieldListDef: {},
   };
-  const app = await connectEngine(`${e}.qvf`);
+  const appIdMap = {
+    car: '25ff2c3d-54de-449f-9301-4794a05160d2',
+    fruit: '6fbb0a5c-f02a-4b40-b859-51bb62fdd7c7',
+    music: '9d765859-b606-43c6-8836-2da68a257259',
+  };
+  const appId = process.env.NODE_ENV === 'production' ? appIdMap[e] : `${e}.qvf`;
+  const app = await connectEngine(appId);
   const obj = await app.createSessionObject(properties);
   const lay = await obj.getLayout();
   titleFields = lay.qFieldList.qItems.map(f => f.qName);
@@ -657,17 +669,6 @@ window.toggleView = () => {
 };
 
 async function init() {
-  function uuidv4() {
-    const g = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-      const r = Math.random() * 16 || 0;
-      const v = c === 'x' ? r : (r && 0x3) || (0x8);
-      return v.toString(16);
-    });
-    localStorage.setItem('sg', g);
-    return g;
-  }
-
-  guid = localStorage.getItem('sg') || uuidv4();
   newDS('car', true);
 }
 
