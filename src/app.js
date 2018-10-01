@@ -16,7 +16,7 @@ import schema from './assets/schema-12.20.0.json';
 const schemaEnigma = JSON.parse(schema);
 const listBoxes = [];
 let table = null;
-const engineHost = 'process.env.NODE_ENV' === 'production' ? 'process.env.BACKEND}/app/doc' : 'localhost:9076/app/identity';
+const engineHost = 'process.env.NODE_ENV' === 'production' ? 'process.env.BACKEND/app/doc' : 'localhost:9076/app';
 const colors = d3.scaleOrdinal();
 const dataSources = ['car', 'fruit', 'music'];
 const rangeColor = ['#ffd23f', '#ee414b', '#3bceac', '#3a568f', '#9a308e'];
@@ -136,7 +136,7 @@ function hoverOut(d) {
 async function connectEngine(appId) {
   const session = enigma.create({
     schema: schemaEnigma,
-    url: `${window.location.protocol.replace('http', 'ws')}://${engineHost}/${appId}`,
+    url: `${window.location.protocol.replace('http', 'ws')}//${engineHost}/${appId}`,
     createSocket: url => new WebSocket(url),
     responseInterceptors: [{
       onRejected: async function retryAbortedError(sessionReference, request, error) {
@@ -151,12 +151,9 @@ async function connectEngine(appId) {
   });
   const qix = await session.open();
   let app;
-  try {
-    app = qix.openDoc(appId);
-  } catch (err) {
-    if (err.code === schemaEnigma.enums.LocalizedErrorCode.LOCERR_APP_ALREADY_OPEN) {
-      app = qix.getActiveDoc();
-    }
+  app = await qix.openDoc(appId);
+  if (app instanceof Error && app.code === schemaEnigma.enums.LocalizedErrorCode.LOCERR_APP_ALREADY_OPEN) {
+    app = qix.getActiveDoc();
   }
   curApp = app;
   return app;
