@@ -3,7 +3,7 @@ services:
   engine:
     image: qlikcore/engine:12.225.0
     restart: always
-    command: -S DocumentDirectory=/docs -S AcceptEULA=yes
+    command: -S DocumentDirectory=/docs -S AcceptEULA=${ACCEPT_EULA}
     volumes:
        - ./apps:/docs
     ports:
