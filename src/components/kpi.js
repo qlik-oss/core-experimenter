@@ -1,4 +1,5 @@
-import { render, html } from '../../node_modules/lit-html/lib/lit-extended';
+import { render, html } from 'lit-html';
+
 import cssCircle from '../assets/circle.css';
 import cssKPI from './kpi.css';
 
@@ -194,7 +195,7 @@ class KPI extends HTMLElement {
       </style>
       <div>
         <h2>${this.title}</h2>
-        <div class$="c100 p${parseInt(this.data)} ${this.size} ${this.theme} ${this.color} center">
+        <div class="c100 p${parseInt(this.data)} ${this.size} ${this.theme} ${this.color} center">
             <span>${parseFloat(this.data.toFixed(2))}%</span>
             <div class="slice">
                 <div class="bar"></div>
@@ -202,8 +203,8 @@ class KPI extends HTMLElement {
             </div>
         </div>
         <div id="hej" class="textArea" contenteditable="true"
-            on-blur="${(e) => { this._highlight(e.target);this._frm(e.target); }}"
-            on-focus="${(e) => { this._lowlight(e.target) }}"
+            @blur="${(e) => { this._highlight(e.target);this._frm(e.target); }}"
+            @focus="${(e) => { this._lowlight(e.target) }}"
             >
             ${this.formula}
         </div>

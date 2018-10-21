@@ -8,7 +8,7 @@ import './components/codeview';
 import * as d3 from 'd3';
 
 import introJs from 'intro.js';
-import enigma from '../node_modules/enigma.js/enigma';
+import enigma from 'enigma.js';
 // import 'intro.js/introjs.css';
 
 import schema from './assets/schema-12.20.0.json';
@@ -16,7 +16,7 @@ import schema from './assets/schema-12.20.0.json';
 const schemaEnigma = JSON.parse(schema);
 const listBoxes = [];
 let table = null;
-const engineHost = 'process.env.NODE_ENV' === 'production' ? 'process.env.BACKEND/app/doc' : 'localhost:9076/app';
+const engineHost = process.env.NODE_ENV === 'production' ? `${process.env.BACKEND}/app/doc` : 'localhost:9076/app';
 const colors = d3.scaleOrdinal();
 const dataSources = ['car', 'fruit', 'music'];
 const rangeColor = ['#ffd23f', '#ee414b', '#3bceac', '#3a568f', '#9a308e'];
@@ -45,7 +45,7 @@ async function clearFieldSelections(fieldName) {
 function _getListboxObjects(d) {
   const currListBox = Array.from(document.getElementsByTagName('list-box')).filter(lbx => lbx.titleValue === d.field)[0];
   if (currListBox) {
-    const lis = currListBox.shadowRoot.childNodes[3].getElementsByTagName('ul')[0].getElementsByTagName('li');
+    const lis = currListBox.shadowRoot.childNodes[4].getElementsByTagName('ul')[0].getElementsByTagName('li');
     let i = 0;
     let found = false;
     let res;
@@ -141,18 +141,18 @@ async function connectEngine(appId) {
     responseInterceptors: [{
       onRejected: async function retryAbortedError(sessionReference, request, error) {
         if (error && error.code === 15) {
-          request.retry();
-        } else {
-          console.error(error);
+          return request.retry();
         }
-        return error;
+        window.console.error(error);
+        throw error;
       },
     }],
   });
   const qix = await session.open();
   let app;
-  app = await qix.openDoc(appId);
-  if (app instanceof Error && app.code === schemaEnigma.enums.LocalizedErrorCode.LOCERR_APP_ALREADY_OPEN) {
+  try {
+    app = await qix.openDoc(appId);
+  } catch (err) {
     app = qix.getActiveDoc();
   }
   curApp = app;
@@ -635,7 +635,7 @@ async function newDS(e, land = false) {
     fruit: '6fbb0a5c-f02a-4b40-b859-51bb62fdd7c7',
     music: '9d765859-b606-43c6-8836-2da68a257259',
   };
-  const appId = 'process.env.NODE_ENV' === 'production' ? appIdMap[e] : `${e}.qvf`;
+  const appId = process.env.NODE_ENV === 'production' ? appIdMap[e] : `${e}.qvf`;
   const app = await connectEngine(appId);
   const obj = await app.createSessionObject(properties);
   const lay = await obj.getLayout();

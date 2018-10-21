@@ -1,6 +1,6 @@
+import { render, html } from 'lit-html';
+import { repeat } from 'lit-html/directives/repeat';
 
-import { render, html } from '../../node_modules/lit-html/lib/lit-extended';
-import { repeat } from '../../node_modules/lit-html/lib/repeat';
 import css from './table.css';
 import utils from '../utils/utils';
 
@@ -24,7 +24,7 @@ class CpTable extends HTMLElement {
   set data(val) {
     this.headerValues = val.headers;
     this.dataValue = val.items;
-    this.colorBy = val.colorBy || function () { return 'white'; };
+    this.colorBy = val.colorBy || function defaultColor() { return 'white'; };
     this.mouseOver = this.mouseOver || val.mouseOver;
     this.mouseOut = this.mouseOut || val.mouseOut;
     this.clickCallback = this.clickCallback || val.clickCallback;
@@ -129,10 +129,10 @@ class CpTable extends HTMLElement {
           ${repeat(this.dataValue, tr => html`<tr>
             ${repeat(tr, (item, i) => html`<td 
                         style="background-color:${this.colorBy(this.headerValues[i])};"
-                        index$="${i}"
-                        data-text$="${item.qText}"
-                        data-elem$="${item.qElemNumber}"
-                        class$="${item.qState}" >
+                        index="${i}"
+                        data-text="${item.qText}"
+                        data-elem="${item.qElemNumber}"
+                        class="${item.qState}" >
                           ${item.qText}
                           <span class="state" title="${utils.states[item.qState]}">(${item.qState})</span>
                         </td>`

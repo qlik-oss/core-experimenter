@@ -1,6 +1,6 @@
 import highlight from 'highlight.js';
+import { render, html } from 'lit-html';
 
-import { render, html } from '../../node_modules/lit-html/lib/lit-extended';
 import css from './codeview.css';
 import highlightCss from '../../node_modules/highlight.js/styles/agate.css';
 

@@ -1,6 +1,6 @@
-import { render, html } from '../../node_modules/lit-html/lib/lit-extended';
+import { render, html } from 'lit-html';
+import { repeat } from 'lit-html/directives/repeat';
 import css from './appbar.css';
-import { repeat } from '../../node_modules/lit-html/lib/repeat';
 
 class Appbar extends HTMLElement {
   constructor() {
@@ -105,13 +105,13 @@ class Appbar extends HTMLElement {
         <div class="app-bar">
                 <img class="icon" src="assets/cppg.svg" alt="Qlik Core Experimenter">
                 <div id="guideButtonHolder">
-                 <button id="guideButton" style="opacity: 0" disabled on-click="${() => { this._helpGuide(); }}">Guide</button></div>
+                 <button id="guideButton" style="opacity: 0" disabled @click="${() => { this._helpGuide(); }}">Guide</button></div>
                 <span class="app-title">Qlik Core Experimenter</span>
             <div>
               <div class="buttons">
-                <button id="clearButton" on-click="${() => { this._clearCallback(); }}" >Clear all</button>
-                <button id="backButton" on-click="${() => { this._backCallback(); }}" >Back</button>
-                <button id="forwardButton" on-click="${() => { this._forwardCallback(); }}" >Forward</button>
+                <button id="clearButton" @click="${() => { this._clearCallback(); }}" >Clear all</button>
+                <button id="backButton" @click="${() => { this._backCallback(); }}" >Back</button>
+                <button id="forwardButton" @click="${() => { this._forwardCallback(); }}" >Forward</button>
                 <span class="divider">|</span>
                 <div title="Database" class="db-logo"></div>
                 <select id="database" onchange="${(e) => this._changeDS(e.target)}">

@@ -1,5 +1,5 @@
 import * as d3 from 'd3';
-import { render, html } from '../../node_modules/lit-html/lib/lit-extended';
+import { render, html } from 'lit-html';
 
 import utils from '../utils/utils';
 
@@ -11,8 +11,7 @@ class Bubble extends HTMLElement {
     _this = this;
     this.simTime = null;
     this.hovTime = null;
-    this.selectDelegate = function () {
-    };
+    this.selectDelegate = function noop() {};
     this.first = true;
     this.bubbles = null;
     this.svg = null;
@@ -36,8 +35,8 @@ class Bubble extends HTMLElement {
     this.simulation.stop();
     this.fillColor = d3.scaleOrdinal(d3.schemeCategory10);
     this.tooltip = this.floatingTooltip('idf', 240);
-    d3.selection.prototype.moveToFront = function () {
-      return this.each(function () {
+    d3.selection.prototype.moveToFront = function moveToFront() {
+      return this.each(function each() {
         this.parentNode.appendChild(this);
       });
     };
@@ -252,7 +251,7 @@ class Bubble extends HTMLElement {
         currListBox = lbs[i];
       }
     }
-    const lis = currListBox.shadowRoot.childNodes[3].getElementsByTagName('ul')[0].getElementsByTagName('li');
+    const lis = currListBox.shadowRoot.childNodes[4].getElementsByTagName('ul')[0].getElementsByTagName('li');
     let i = 0;
     let found = false;
     let res;
