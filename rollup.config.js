@@ -29,8 +29,8 @@ export default [{
       filename: 'index.html',
     }),
     replace({
-      'process.env.NODE_ENV': process.env.NODE_ENV,
-      'process.env.BACKEND': process.env.BACKEND,
+      'process.env.NODE_ENV': `'${process.env.NODE_ENV}'`,
+      'process.env.BACKEND': `'${process.env.BACKEND}'`,
     }),
   ],
 }];

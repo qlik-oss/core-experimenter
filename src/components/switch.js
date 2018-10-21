@@ -1,4 +1,4 @@
-import { render, html } from '../../node_modules/lit-html/lib/lit-extended';
+import { render, html } from 'lit-html';
 
 class Switch extends HTMLElement {
   constructor() {

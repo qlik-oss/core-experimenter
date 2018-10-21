@@ -1,7 +1,7 @@
-import { render, html } from '../../node_modules/lit-html/lib/lit-extended';
-import { repeat } from '../../node_modules/lit-html/lib/repeat';
-import css from './listbox.css';
+import { render, html } from 'lit-html';
+import { repeat } from 'lit-html/directives/repeat';
 
+import css from './listbox.css';
 import utils from '../utils/utils';
 
 class ListBox extends HTMLElement {
@@ -174,20 +174,20 @@ class ListBox extends HTMLElement {
       <div class="list-box">
         <div class="header" style="background-color:${this.colorBy(this.titleValue)};" >
           <div class="title" style="color:white">
-            ${this.titleValue}<div class="icon clear_selections" on-click="${() => { this._clearCallback(); }}">clear</div>
+            ${this.titleValue}<div class="icon clear_selections" @click="${() => { this._clearCallback(); }}">clear</div>
           </div>
           <div class="filter"  style="background-color:white">
             <div class="icon search">&#x26B2;</div>
-            <input class="search_input" maxlength="255" placeholder="Filter" spellcheck="false" type="text" on-keyup="${(e) => { this._searchFilter(e.target); }}"/>
-            <div class="icon cancel" on-click="${() => { this._cancelFilter(); }}">x</div>
+            <input class="search_input" maxlength="255" placeholder="Filter" spellcheck="false" type="text" @keyup="${(e) => { this._searchFilter(e.target); }}"/>
+            <div class="icon cancel" @click="${() => { this._cancelFilter(); }}">x</div>
           </div>
         </div>
         <ul>
           ${repeat(Object.keys(this.data).filter(key => this.data[key][0].qText.toLowerCase().indexOf(this.filterQuery.toLowerCase()) !== -1), key => this.data[key][0].qText, (key) => {
         return html`<li
                   title="${this.data[key][0].qText}"
-                  data-elem$="${this.data[key][0].qElemNumber}"
-                  class$="${this.data[key][0].qState}">
+                  data-elem="${this.data[key][0].qElemNumber}"
+                  class="${this.data[key][0].qState}">
                     <span class="state" title="${utils.states[this.data[key][0].qState]}">${this.data[key][0].qState}</span>
                     <div class="titleText">${this.data[key][0].qText} </div>
                   </li>`;

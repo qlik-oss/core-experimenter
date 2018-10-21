@@ -7,6 +7,7 @@
     "start": "concurrently --kill-others \"rollup -c --watch\" \"npm run start:app\"",
     "start:app": "live-server ./dist --watch=dist,index.html",
     "lint": "eslint .",
+    "lint:fix": "eslint --fix .",
     "build": "cross-env NODE_ENV=production rollup -c",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
