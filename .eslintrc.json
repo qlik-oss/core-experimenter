@@ -1,22 +1,12 @@
 {
-  "extends": "airbnb-base",
+  "parser": "babel-eslint",
+  "extends": "airbnb",
   "env": {
     "browser": true
   },
-  "globals": {
-    "enigma": true,
-    "d3": true,
-    "introJs": true
-  },
   "rules": {
-    "class-methods-use-this": 0,
-    "no-underscore-dangle": 0,
-    "no-param-reassign": 0,
-    "no-restricted-properties": 0,
-    "no-plusplus": [2, {
-      "allowForLoopAfterthoughts": true
-    }],
-    "arrow-body-style": 1,
-    "max-len": ["error", { "code": 200}]
+    "jsx-a11y/click-events-have-key-events": 0,
+    "jsx-a11y/no-noninteractive-element-interactions": 0,
+    "react/forbid-prop-types": 0
   }
 }

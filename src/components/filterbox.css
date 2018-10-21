@@ -1,0 +1,38 @@
+.filterbox {
+  width: 15vw;
+  font-size: 2rem;
+  height: 100%;
+  overflow: auto;
+  flex-grow: 1;
+  padding: 0 1rem;
+}
+
+.filterbox p {
+  font-size: 2rem;
+  font-weight: bold;
+  padding: 0.5rem;
+  margin: 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.filterbox ul {
+  margin: 0;
+  padding: 0;
+}
+
+.filterbox li {
+  padding: 0.5rem;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+
+.filterbox .selected {
+  /*background: rgba(50, 190, 50, 0.7);*/
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.filterbox .excluded {
+  /*background: rgba(200, 200, 200, 0.7);*/
+  opacity: 0.35;
+}
+
