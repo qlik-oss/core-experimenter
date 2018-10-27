@@ -23,7 +23,7 @@
   "homepage": "https://github.com/qlik-oss/core-experimenter#readme",
   "devDependencies": {
     "babel-core": "6.26.3",
-    "concurrently": "3.6.1",
+    "concurrently": "4.0.1",
     "cross-env": "5.2.0",
     "eslint": "4.19.1",
     "eslint-config-airbnb-base": "13.1.0",
