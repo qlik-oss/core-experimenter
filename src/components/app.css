@@ -1,0 +1,19 @@
+.content {
+  height: calc(100vh - 40px);
+}
+
+.content > div {
+  display: flex;
+}
+
+.content .filters {
+  height: 20%;
+}
+
+.content .circles {
+  height: 40%;
+}
+
+.content .gauges {
+  height: 40%;
+}
