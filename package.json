@@ -44,6 +44,6 @@
     "enigma.js": "^2.2.1",
     "highlight.js": "^9.12.0",
     "intro.js": "^2.9.3",
-    "lit-html": "^0.12.0"
+    "lit-html": "^0.13.0"
   }
 }
