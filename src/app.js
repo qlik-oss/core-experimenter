@@ -631,9 +631,9 @@ async function newDS(e, land = false) {
     qFieldListDef: {},
   };
   const appIdMap = {
-    car: '25ff2c3d-54de-449f-9301-4794a05160d2',
-    fruit: '6fbb0a5c-f02a-4b40-b859-51bb62fdd7c7',
-    music: '9d765859-b606-43c6-8836-2da68a257259',
+    car: 'e9d5d8ce-5f17-4976-9da4-c67eb4efe805',
+    fruit: 'e2b9afdf-bdec-49af-abb1-aa4852874780',
+    music: '3bbc2107-973d-4a51-80bc-d79f87fb38c2',
   };
   const appId = process.env.NODE_ENV === 'production' ? appIdMap[e] : `${e}.qvf`;
   const app = await connectEngine(appId);
