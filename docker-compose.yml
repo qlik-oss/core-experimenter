@@ -1,7 +1,7 @@
 version: "3.3"
 services:
   engine:
-    image: qlikcore/engine:12.350.0
+    image: qlikcore/engine:12.368.0
     restart: always
     command: -S DocumentDirectory=/docs -S AcceptEULA=${ACCEPT_EULA}
     volumes:
