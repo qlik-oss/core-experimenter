@@ -16,8 +16,8 @@ class ListBox extends HTMLElement {
       mouseOverCallback: null,
       mouseOutCallback: null,
     };
-    this.onmouseleave = e => this._mouseLeftListbox(e);
-    this.onmouseenter = e => this._mouseEnteredListbox(e);
+    this.onmouseleave = (e) => this._mouseLeftListbox(e);
+    this.onmouseenter = (e) => this._mouseEnteredListbox(e);
     this.colorBy = null;
     this.myTimeout = null;
     this.root = this.attachShadow({ mode: 'open' });

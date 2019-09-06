@@ -30,7 +30,7 @@ class Bubble extends HTMLElement {
       .force('x', d3.forceX().strength(this.forceStrength).x(this.center.x))
       .force('y', d3.forceY().strength(this.forceStrength).y(this.center.y))
       .force('charge', d3.forceManyBody().strength(this.charge))
-      .force('collision', d3.forceCollide().radius(d => d.radius))
+      .force('collision', d3.forceCollide().radius((d) => d.radius))
       .on('tick', this.ticked);
     this.simulation.stop();
     this.fillColor = d3.scaleOrdinal(d3.schemeCategory10);
@@ -125,8 +125,8 @@ class Bubble extends HTMLElement {
       .transition()
       .duration(300)
       .attr('r', this._calculateBubbleRadius())
-      .attr('stroke', c => d3.rgb(_this.fillColor(c.field)).darker())
-      .attr('fill', c => d3.rgb(_this.fillColor(c.field)));
+      .attr('stroke', (c) => d3.rgb(_this.fillColor(c.field)).darker())
+      .attr('fill', (c) => d3.rgb(_this.fillColor(c.field)));
   }
 
   highlight(d) {
@@ -139,8 +139,8 @@ class Bubble extends HTMLElement {
       .attr('opacity', 1)
       .duration(300)
       .attr('r', this._calculateBubbleRadius() * 1.5)
-      .attr('stroke', c => d3.rgb(_this.fillColor(c.field)).darker())
-      .attr('fill', c => d3.rgb(_this.fillColor(c.field)).brighter());
+      .attr('stroke', (c) => d3.rgb(_this.fillColor(c.field)).darker())
+      .attr('fill', (c) => d3.rgb(_this.fillColor(c.field)).brighter());
   }
 
   charge(d) {
@@ -149,8 +149,8 @@ class Bubble extends HTMLElement {
 
   ticked() {
     _this.bubbles
-      .attr('cx', d => d.x)
-      .attr('cy', d => d.y);
+      .attr('cx', (d) => d.x)
+      .attr('cy', (d) => d.y);
   }
 
   get data() {
@@ -222,7 +222,7 @@ class Bubble extends HTMLElement {
 
     states.enter().append('text')
       .attr('class', 'state')
-      .attr('x', d => _this.stateTitleX[d])
+      .attr('x', (d) => _this.stateTitleX[d])
       .attr('y', 30)
       .attr('text-anchor', 'middle')
       .text((d) => {
@@ -327,22 +327,22 @@ class Bubble extends HTMLElement {
           .attr('r', this.stateCircleR);
       });
       this.bubbles = this.svg.selectAll('.bubble')
-        .data(this.nodes, d => d.id);
+        .data(this.nodes, (d) => d.id);
     }
-    this.bubbles = this.bubbles.data(this.nodes, d => d.id);
+    this.bubbles = this.bubbles.data(this.nodes, (d) => d.id);
     this.bubbles.exit().remove();
     this.bubbles = this.bubbles.enter().append('circle')
       .classed('bubble', true)
       .attr('r', radiusPoint)
-      .attr('st', d => d.state)
+      .attr('st', (d) => d.state)
       .attr('cx', this.stateCenters.optional.x)
       .attr('opacity', 0)
       .attr('cy', this.stateCenters.optional.y)
-      .attr('mid', d => `${d.field}.${d.id}`)
-      .attr('fld', d => `${d.field}`)
-      .attr('fill', d => this.fillColor(d.field))
+      .attr('mid', (d) => `${d.field}.${d.id}`)
+      .attr('fld', (d) => `${d.field}`)
+      .attr('fill', (d) => this.fillColor(d.field))
       .attr('stroke-width', 2)
-      .attr('stroke', d => d3.rgb(this.fillColor(d.field)).darker())
+      .attr('stroke', (d) => d3.rgb(this.fillColor(d.field)).darker())
       .on('mouseover', this.showDetail)
       // .on('mouseover', this.highlightListBox)
       .on('mouseout', this.hideDetail)
@@ -357,15 +357,15 @@ class Bubble extends HTMLElement {
 
   animate(radiusPoint) {
     this.bubbles
-      .attr('mid', d => `${d.field}.${d.id}`)
-      .attr('fld', d => `${d.field}`)
+      .attr('mid', (d) => `${d.field}.${d.id}`)
+      .attr('fld', (d) => `${d.field}`)
       .transition()
       .duration(500)
       .attr('opacity', () => 1)
       .delay((d, i) => Math.round(Math.random() * 250 + i * 2))
       .transition()
       .duration(500)
-      .attr('stroke', d => d3.rgb(this.fillColor(d.field)).darker())
+      .attr('stroke', (d) => d3.rgb(this.fillColor(d.field)).darker())
       .attr('stroke-width', (d) => {
         if (d.state === this.stateMapping.XS) {
           return 5;
@@ -494,7 +494,7 @@ class Bubble extends HTMLElement {
     });
     this.svg.selectAll('.state')
       .attr('y', 20)
-      .attr('x', d => _this.stateTitleX[d])
+      .attr('x', (d) => _this.stateTitleX[d])
       .attr('fill', 'black');
     this.first = true;
     this.data = this.nodes;
