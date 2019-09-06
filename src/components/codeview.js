@@ -30,7 +30,7 @@ class CodeView extends HTMLElement {
   _scrollTo(element, to, duration) {
     if (duration <= 0) return;
     const difference = to - element.scrollTop;
-    const perTick = difference / duration * 10;
+    const perTick = (difference / duration) * 10;
 
     setTimeout(() => {
       element.scrollTop += perTick;

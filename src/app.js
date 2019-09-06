@@ -43,7 +43,7 @@ async function clearFieldSelections(fieldName) {
 }
 
 function _getListboxObjects(d) {
-  const currListBox = Array.from(document.getElementsByTagName('list-box')).filter(lbx => lbx.titleValue === d.field)[0];
+  const currListBox = Array.from(document.getElementsByTagName('list-box')).filter((lbx) => lbx.titleValue === d.field)[0];
   if (currListBox) {
     const lis = currListBox.shadowRoot.childNodes[4].getElementsByTagName('ul')[0].getElementsByTagName('li');
     let i = 0;
@@ -137,7 +137,7 @@ async function connectEngine(appId) {
   const session = enigma.create({
     schema: schemaEnigma,
     url: `${window.location.protocol.replace('http', 'ws')}//${engineHost}/${appId}`,
-    createSocket: url => new WebSocket(url),
+    createSocket: (url) => new WebSocket(url),
     responseInterceptors: [{
       onRejected: async function retryAbortedError(sessionReference, request, error) {
         if (error && error.code === 15) {
@@ -376,7 +376,7 @@ function createHyperCube(app, fields) {
   let object;
 
   function _fieldsToqDef(flds) {
-    return flds.map(field => ({
+    return flds.map((field) => ({
       qDef: {
         qFieldDefs: [field],
       },
@@ -408,7 +408,7 @@ function createHyperCube(app, fields) {
 
     table = table || _createTable();
     table.data = {
-      headers: layout.qHyperCube.qDimensionInfo.map(dim => dim.qFallbackTitle),
+      headers: layout.qHyperCube.qDimensionInfo.map((dim) => dim.qFallbackTitle),
       items: layout.qHyperCube.qDataPages[0].qMatrix,
       colorBy: colors.domain(fields).range(rangeColor),
       clickCallback: select,
@@ -472,7 +472,7 @@ function createMyList(app, field, fields) {
     currentListBoxes = [];
     app.createSessionObject(properties).then((model) => {
       const object = model;
-      const updateBubbles = layout => new Promise((resol/* , reject */) => {
+      const updateBubbles = (layout) => new Promise((resol/* , reject */) => {
         const d = document.getElementById('one');
         d.update(layout, field, fields, _this.hoverIn, _this.hoverOut);
         resol();
@@ -530,7 +530,7 @@ function createMyList(app, field, fields) {
 }
 
 async function createMyLists(app, fields) {
-  const promiseArr = fields.map(field => createMyList(app, field, fields));
+  const promiseArr = fields.map((field) => createMyList(app, field, fields));
   return Promise.all(promiseArr);
 }
 
@@ -631,15 +631,15 @@ async function newDS(e, land = false) {
     qFieldListDef: {},
   };
   const appIdMap = {
-    car: 'e9d5d8ce-5f17-4976-9da4-c67eb4efe805',
-    fruit: 'e2b9afdf-bdec-49af-abb1-aa4852874780',
-    music: '3bbc2107-973d-4a51-80bc-d79f87fb38c2',
+    car: 'car.qvf',
+    fruit: 'fruit.qvf',
+    music: 'music.qvf',
   };
   const appId = process.env.NODE_ENV === 'production' ? appIdMap[e] : `${e}.qvf`;
   const app = await connectEngine(appId);
   const obj = await app.createSessionObject(properties);
   const lay = await obj.getLayout();
-  titleFields = lay.qFieldList.qItems.map(f => f.qName);
+  titleFields = lay.qFieldList.qItems.map((f) => f.qName);
   curApp = app;
   createMyLists(app, titleFields);
   createHyperCube(app, titleFields);
