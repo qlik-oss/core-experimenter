@@ -631,9 +631,9 @@ async function newDS(e, land = false) {
     qFieldListDef: {},
   };
   const appIdMap = {
-    car: 'car.qvf',
-    fruit: 'fruit.qvf',
-    music: 'music.qvf',
+    car: 'e9d5d8ce-5f17-4976-9da4-c67eb4efe805',
+    fruit: 'e2b9afdf-bdec-49af-abb1-aa4852874780',
+    music: '3bbc2107-973d-4a51-80bc-d79f87fb38c2',
   };
   const appId = process.env.NODE_ENV === 'production' ? appIdMap[e] : `${e}.qvf`;
   const app = await connectEngine(appId);
