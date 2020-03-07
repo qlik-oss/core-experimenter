@@ -30,7 +30,7 @@
     "eslint-plugin-import": "2.20.1",
     "live-server": "1.2.1",
     "rollup": "1.32.1",
-    "rollup-plugin-babel": "4.3.3",
+    "rollup-plugin-babel": "4.4.0",
     "rollup-plugin-commonjs": "10.1.0",
     "rollup-plugin-copy-glob": "0.3.1",
     "rollup-plugin-fill-html": "1.1.0",
