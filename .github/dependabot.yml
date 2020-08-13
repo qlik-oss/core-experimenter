@@ -6,4 +6,8 @@ updates:
     interval: daily
     time: "09:00"
     timezone: Europe/Stockholm
+  automerged_updates:
+    - match:
+        dependency_type: 'all'
+        update_type: 'semver:minor'
   open-pull-requests-limit: 99
