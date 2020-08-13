@@ -42,7 +42,7 @@
   "dependencies": {
     "d3": "^5.5.0",
     "enigma.js": "^2.2.1",
-    "highlight.js": "^9.12.0",
+    "highlight.js": "^10.0.0",
     "intro.js": "^2.9.3",
     "lit-html": "^1.0.0"
   }
