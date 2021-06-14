@@ -40,7 +40,7 @@
     "rollup-watch": "4.3.1"
   },
   "dependencies": {
-    "d3": "^5.16.0",
+    "d3": "^7.0.0",
     "enigma.js": "^2.7.1",
     "highlight.js": "^10.1.2",
     "intro.js": "^2.9.3",
